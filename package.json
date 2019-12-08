@@ -1,0 +1,33 @@
+{
+  "name": "wazana-game",
+  "description": "Strategy online game",
+  "repository": "https://gitlab.com/PichouPichou/WAZANA.git",
+  "license": "UNLICENSED",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "dev": "set NODE_ENV=development",
+    "start": "npm run clean && npm run dev && parcel index.html",
+    "prod": "npm run clean && parcel build index.html --public-url ./",
+    "build-all-viewer": "npm run clean && npm run build-engine && npm run build-worker && npm run build-viewer",
+    "build-engine": "parcel build engine/index.ts --global StarEngine -o engine.js",
+    "build-worker": "parcel build engine/worker.ts -o worker.js",
+    "build-viewer": "parcel build engine/viewer.ts --global star -o viewer.js"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^4.1.0-beta.4",
+    "@babylonjs/gui": "^4.1.0-beta.4",
+    "@babylonjs/materials": "^4.1.0-beta.4",
+    "@naker/services": "file:../naker-services",
+    "axios": "^0.18.0",
+    "hotkeys-js": "^3.3.8",
+    "js-cookie": "^2.2.0",
+    "lodash": "^4.17.11",
+    "redom": "^3.16.1",
+    "socket.io-client": "^2.2.0"
+  },
+  "devDependencies": {
+    "node-sass": "^4.11.0",
+    "parcel-bundler": "^1.10.3",
+    "typescript": "^2.9.2"
+  }
+}
