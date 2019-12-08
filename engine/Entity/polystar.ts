@@ -44,6 +44,7 @@ export class Star {
 
     constructor(system: System, options: StarInterface) {
         this.system = system;
+
         this.animation = new Animation(this.system.animationManager);
 
         this.key = "star1";

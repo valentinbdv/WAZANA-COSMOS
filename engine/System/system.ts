@@ -94,7 +94,7 @@ export class System {
         this.buildScene();
         this.addSky();
         // this.addLight();
-        this.addControl();
+        // this.addControl();
         this.addGlow();
     }
 
@@ -121,7 +121,7 @@ export class System {
         this.scene.ambientColor = new Color3(0.0, 0.0, 0.0);
         // this.scene.clearColor = new Color4(0.0, 0.0, 0.0, 0.0);
 
-        this.camera = new ArcRotateCamera('camera', 0, 0, 40, Vector3.Zero(), this.scene);
+        this.camera = new ArcRotateCamera('camera', 0, Math.PI/4, 40, Vector3.Zero(), this.scene);
         this.camera.setTarget(Vector3.Zero());
     }
 
