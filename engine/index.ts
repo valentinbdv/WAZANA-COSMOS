@@ -1,5 +1,5 @@
 
-import { System } from './System/system'
+import { SystemUI } from './System/systemUI'
 import { Star } from './Entity/polystar'
 import { Animation } from './System/animation'
 
@@ -13,13 +13,13 @@ export interface GameInterface {
 
 export class GameEngine {
 
-    system: System;
+    system: SystemUI;
     animation: Animation;
     star: Star;
 
     constructor(starOptions: GameInterface) {
-        this.system = new System(starOptions.canvas);
-        let star1 = new Star(this.system, { color: [255, 0, 0], size: 0.5, position: { x: 0, y: 0, z: -5 } });
+        this.system = new SystemUI(starOptions.canvas);
+        let star1 = new Star(this.system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: -5 } });
         // let star2 = new Star(this.system, { color: [0, 255, 0], size: 1, position: { x: 0, y: 0, z: 0 } });
         // let star3 = new Star(this.system, { color: [0, 0, 255], size: 2, position: { x: 0, y: 0, z: 5 } });
         
@@ -27,12 +27,21 @@ export class GameEngine {
         star1.addPlanet();
         star1.addPlanet();
 
-        // setTimeout(() => {
-        //     star1.updateSize(0.5);
-        // }, 2000);
+        setTimeout(() => {
+            star1.shine();
+        }, 2000);
         // this.animation = new Animation(this.system.animationManager);
         // this.animation.infinite(() => {
         // });
+
+        this.system.addSlider(3000, 30000, (value) => {
+            star1.setTemperature(value);
+        });
+
+        this.system.addSlider(0.2, 1, (value) => {
+            star1.setSize(value);
+        });
+
 
         this.system.launchRender();
         }

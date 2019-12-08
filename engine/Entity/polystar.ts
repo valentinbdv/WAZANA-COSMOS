@@ -13,7 +13,6 @@ import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { IEasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/easing';
 
 export interface StarInterface {
-    name: Array<number>,
     temperature: number,
     size: number,
     texture?: string,
@@ -49,13 +48,12 @@ export class Star {
 
         this.key = "star1";
         this.addPivot();
-        // let color = this.getColor(options.temperature);
 
-        let color = Color3.FromInts(options.color[0], options.color[1], options.color[2]);
-        this.addHeart(color);
-        this.addSurface(color);
-        this.addLight(color);
-        this.addSecondLight(color);
+        // let color = Color3.FromInts(options.color[0], options.color[1], options.color[2]);
+        this.addHeart();
+        this.addSurface();
+        this.addLight();
+        this.addSecondLight();
 
         let p = options.position;
         this.pivot.position = new Vector3(p.x, p.y, p.z);
@@ -65,6 +63,7 @@ export class Star {
         // this.setFireColor(color);
         // this.setFlareColor(color);
         // this.setGlareColor(color);
+        this.setTemperature(options.temperature);
 
         let int = 0;
         this.system.scene.registerBeforeRender(() => {
@@ -72,6 +71,7 @@ export class Star {
                 const planet = this.planets[i];
                 planet.mesh.position.x = (this.size + planet.radius) * Math.cos(planet.velocity * int / 100);
                 planet.mesh.position.z = (this.size + planet.radius) * Math.sin(planet.velocity * int / 100);
+                planet.mesh.rotation.y = planet.velocity * ( int / 100 );
                 // planet.mesh.position.y = (this.size + planet.radius) * Math.sin(planet.velocity * int / 100);
             }
             int += 1 / Math.sqrt(this.size);
@@ -81,15 +81,26 @@ export class Star {
         // this.curve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
     }
 
-    getColor(temperature: number): Color3 {
+    setTemperature(temperature: number) {
+        let color = this.getColorFromTemperature(temperature);
+        this.heartMaterial.emissiveColor = color;
+        this.surfaceMaterial.reflectivityColor = color;
+        this.secondLight.diffuse = color;
+        this.light.diffuse = color;
+    }
+
+    // Follow this map color http://cdn.eso.org/images/screen/eso0728c.jpg
+    getColorFromTemperature(temperature: number): Color3 {
         temperature = Math.max(3000, temperature);
         temperature = Math.min(30000, temperature);
         if (temperature < 8000) {
-            let perc = 1 - (8000 - temperature) / 5000;
-            return new Color3(1, perc, perc);
+            let perc = (8000 - temperature) / 5000;
+            let g = Math.min(1, 2 - perc * 2);
+            let b = Math.max(0, 1 - perc * 2);
+            return new Color3(1, g, b);
         } else {
-            let perc = 1 - (temperature - 8000) / 22000;
-            return new Color3(perc, perc, 1);
+            let perc = 1 - Math.pow(((temperature - 8000) / 22000), 2);
+            return new Color3(perc, perc, 0.8);
         }
     }
 
@@ -100,12 +111,11 @@ export class Star {
 
     heart: Mesh;
     heartMaterial: StandardMaterial;
-    addHeart(color: Color3) {
+    addHeart() {
         // this.heart = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         this.heart = MeshBuilder.CreateSphere(this.key + "star", { diameter: 2.5 }, this.system.scene);
         this.heartMaterial = new StandardMaterial(this.key + "material", this.system.scene);
         // this.heartMaterial.roughness = 1;
-        this.heartMaterial.emissiveColor = color;
         // this.heartMaterial.emissiveColor = Color3.Black();
         // console.log(this.heartMaterial);
         this.system.glowLayer.addIncludedOnlyMesh(this.heart);
@@ -117,7 +127,7 @@ export class Star {
 
     surface: Mesh;
     surfaceMaterial: PBRMaterial;
-    addSurface(color: Color3) {
+    addSurface() {
         // this.surface = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 4, flat: true, subdivisions: 2 }, this.system.scene);
 
         var heptagonalPrism = {
@@ -152,7 +162,6 @@ export class Star {
         this.surfaceMaterial.indexOfRefraction = 0;
         // this.surfaceMaterial.alpha = 0;
         this.surfaceMaterial.microSurface = 1;
-        this.surfaceMaterial.reflectivityColor = color;
 
         this.surface.material = this.surfaceMaterial;
         this.surface.parent = this.pivot;
@@ -162,9 +171,8 @@ export class Star {
     }
 
     light: PointLight
-    addLight(color: Color3) {
+    addLight() {
         this.light = new PointLight('light', new Vector3(0, 0, 0), this.system.scene);
-        this.light.diffuse = color;
         this.light.intensity = 1000;
         this.light.radius = 0.1;
         this.light.shadowEnabled = false;
@@ -175,16 +183,15 @@ export class Star {
     }
 
     secondLight: PointLight
-    addSecondLight(color: Color3) {
+    addSecondLight() {
         this.secondLight = new PointLight('secondLight', new Vector3(0, 0, 0), this.system.scene);
-        this.secondLight.diffuse = color;
         this.secondLight.intensity = 50;
         this.secondLight.radius = 10;
         this.secondLight.shadowEnabled = false;
         this.secondLight.parent = this.pivot;
         // this.secondLight.parent = this.system.camera;
         this.secondLight.excludedMeshes.push(this.surface)
-        console.log(this.secondLight);
+        // console.log(this.secondLight);
     }
 
     setSurfaceColor(color: Color3) {
@@ -212,7 +219,7 @@ export class Star {
         this.heart.scaling = sizeVector;
         this.surface.scaling = sizeVector;
         this.light.intensity = 1000 * size;
-        this.secondLight.intensity = 50 * size;
+        this.secondLight.intensity = 100 * size;
     }
 
     updateSize(size: number) {

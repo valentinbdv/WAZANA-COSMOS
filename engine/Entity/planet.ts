@@ -33,7 +33,7 @@ export class Planet {
 
         this.key = "star1";
 
-        let color = Color3.FromInts(10 + options.color[0] / 20, 10 + options.color[1] / 20, 10 + options.color[2] / 20);
+        let color = Color3.FromInts(5 + options.color[0] / 20, 5 + options.color[1] / 20, 5 + options.color[2] / 20);
         this.addMesh(color);
 
         if (options.radius && options.velocity) this.setGeostationnaryMovement(options.radius, options.velocity);
@@ -42,7 +42,7 @@ export class Planet {
 
     setGeostationnaryMovement(radius: number, velocity: number) {
         this.radius = radius;
-        this.velocity = velocity;
+        this.velocity = velocity + Math.random() / 2;
     }
 
     meshMaterial: PBRMaterial;
