@@ -22,6 +22,8 @@ export class GameEngine {
 
         let star1 = new Star(this.system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: -5 } });
         let star2 = new Star(this.system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 5 } });
+        star1.secondLight.excludedMeshes.push(this.gravityField.ribbon);
+        star2.secondLight.excludedMeshes.push(this.gravityField.ribbon);
 
         // this.animation = new Animation(this.system.animationManager);
         // this.animation.infinite(() => {

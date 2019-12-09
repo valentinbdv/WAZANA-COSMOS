@@ -75,6 +75,7 @@ export class Star {
                 planet.mesh.rotation.y = planet.velocity * ( int / 100 );
                 // planet.mesh.position.y = (this.size + planet.radius) * Math.sin(planet.velocity * int / 100);
             }
+            this.surface.rotation.y = int / 200;
             int += 1 / Math.sqrt(this.size);
         });
 
@@ -144,11 +145,6 @@ export class Star {
         // this.surface = MeshBuilder.CreatePolyhedron("p", { type: 7, size: 4 }, this.system.scene);
 
         this.surface.convertToFlatShadedMesh();
-        let int = 0;
-        this.system.scene.registerBeforeRender(() => {
-            this.surface.rotation.y = int / 200;
-            int++;
-        });
         this.surfaceMaterial = new PBRMaterial(this.key + "material", this.system.scene);
         this.surfaceMaterial.backFaceCulling = false;
         // this.surfaceMaterial.roughness = 0.5;
@@ -167,8 +163,7 @@ export class Star {
         this.surface.material = this.surfaceMaterial;
         this.surface.parent = this.pivot;
         this.surface.isBlocker = false;
-        // this.surface.isVisible = false;
-        console.log(this.surfaceMaterial);
+        // console.log(this.surfaceMaterial);
     }
 
     light: PointLight
@@ -178,7 +173,6 @@ export class Star {
         this.light.radius = 0.1;
         this.light.shadowEnabled = false;
         this.light.parent = this.pivot;
-        // this.light.parent = this.system.camera;
         this.light.includedOnlyMeshes.push(this.surface)	
         // console.log(this.light);
     }
@@ -190,7 +184,6 @@ export class Star {
         this.secondLight.radius = 10;
         this.secondLight.shadowEnabled = false;
         this.secondLight.parent = this.pivot;
-        // this.secondLight.parent = this.system.camera;
         this.secondLight.excludedMeshes.push(this.surface)
         // console.log(this.secondLight);
     }

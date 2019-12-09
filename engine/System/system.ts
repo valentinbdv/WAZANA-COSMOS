@@ -93,9 +93,9 @@ export class System {
         this.animationManager = new AnimationManager();
         this.buildScene();
         this.addSky();
-        // this.addLight();
-        // this.addControl();
         this.addGlow();
+        // this.addLight();
+        this.addControl();
     }
 
     addControl() {
@@ -137,7 +137,7 @@ export class System {
 
         var hdrTexture = CubeTexture.CreateFromPrefilteredData(asseturl + 'dds/' + mapcolor + '.dds', this.scene);
         hdrTexture.gammaSpace = false;
-        // this.scene.environmentTexture = hdrTexture;
+        this.scene.environmentTexture = hdrTexture;
         this.skyboxMaterial.roughness = 0.2;
         this.skyboxMaterial.reflectionTexture = hdrTexture;
         this.skyboxMaterial.reflectionTexture.level = 0.2;

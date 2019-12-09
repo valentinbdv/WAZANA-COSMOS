@@ -22,7 +22,7 @@ export class Player {
     }
 
     followMouse = true;
-    currentPosition: Vector3 = Vector3.Zero();
+    position: Vector3 = Vector3.Zero();
     currentMousePosition: Vector2 = Vector2.Zero();
     addMouseEvent() {
         this.mouseCatcher = new MouseCatcher(this.system.animationManager);
@@ -30,10 +30,7 @@ export class Player {
             let navigationMousepos = mousepos.divideInPlace(new Vector2(5, 5));
             this.currentMousePosition = navigationMousepos;
             // this.currentMousePosition = mousepos;
-            if (this.followMouse) {
-                this.currentPosition = this.currentPosition.add(new Vector3(navigationMousepos.y, 0, navigationMousepos.x));
-                this.star.pivot.position = this.currentPosition;
-            }
+            if (this.followMouse) this.move(navigationMousepos);
         });
 
         this.mouseCatcher.start();
@@ -52,5 +49,21 @@ export class Player {
         setTimeout(() => {
             this.star.shine();
         }, 2000);
+
+        this.star.secondLight.excludedMeshes.push(this.gravityField.ribbon);
+    }
+
+    gravityPoint: Array< Vector3 > = [];
+    move(mousepos: Vector2) {
+        this.eraseGravity();
+        this.position = this.position.add(new Vector3(mousepos.y, 0, mousepos.x));
+        this.star.pivot.position = this.position;
+        this.gravityPoint = this.gravityField.setStarPoint(new Vector2(this.position.x, this.position.z), this.star.size);
+    }
+
+    eraseGravity() {
+        for (let i = 0; i < this.gravityPoint.length; i++) {
+            this.gravityPoint[i].y = 0;
+        }
     }
 }
