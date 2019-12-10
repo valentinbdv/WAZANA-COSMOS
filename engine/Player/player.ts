@@ -23,15 +23,16 @@ export class Player {
 
     followMouse = true;
     position: Vector3 = Vector3.Zero();
-    currentMousePosition: Vector2 = Vector2.Zero();
     addMouseEvent() {
         this.mouseCatcher = new MouseCatcher(this.system.animationManager);
-        this.mouseCatcher.addListener((mousepos: Vector2) => {
-            let navigationMousepos = mousepos.divideInPlace(new Vector2(5, 5));
-            this.currentMousePosition = navigationMousepos;
-            // this.currentMousePosition = mousepos;
-            if (this.followMouse) this.move(navigationMousepos);
+        this.mouseCatcher.addListener((mousepos: Vector2, step: Vector2) => {
+            step = step.multiplyInPlace(new Vector2(5, 5));
+            if (this.followMouse) this.move(step);
         });
+
+        // setTimeout(() => {
+        //     this.followMouse = false;
+        // }, 2000)
 
         this.mouseCatcher.start();
     }

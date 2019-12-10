@@ -103,7 +103,7 @@ export class MouseCatcher {
     /**
     * Spped of the progress used when mousewheel or drag on phone
     */
-    accuracy = 0.002;
+    accuracy = 0.0002;
     /**
     * Set the speed of the progressCatcher
     * @param speed The new speed
@@ -118,14 +118,15 @@ export class MouseCatcher {
     catch(mouse: Vector2) {
         this.mouseReal = mouse;
         this.animation.infinite(() => {
-            let gapmouse = this.mouseReal.subtract(this.mouseCatch);
+            // let gapmouse = this.mouseReal.subtract(this.mouseCatch);
+            let gapmouse = this.mouseReal;
             this.step = gapmouse.clone();
             this.step.multiplyInPlace(this.speedVector);
             this.mouseCatch.addInPlace(this.step);
             if (Math.abs(gapmouse.x) < this.accuracy && Math.abs(gapmouse.y) < this.accuracy) this.animation.running = false;
             for (let i = 0; i < this.listeners.length; i++) {
                 // Clone to make sure there is not something which can alter real mouseCatch
-                this.listeners[i](this.mouseCatch.clone());
+                this.listeners[i](this.mouseCatch.clone(), this.step.clone());
             }
         });
     }

@@ -12,6 +12,8 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { IEasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/easing';
 
+// https://www.youtube.com/watch?v=i4RtO_qIQHk
+
 export interface StarInterface {
     temperature: number,
     size: number,
@@ -140,6 +142,7 @@ export class Star {
         };
 
         this.surface = MeshBuilder.CreatePolyhedron("h", { custom: heptagonalPrism, size: 2, sideOrientation: Mesh.DOUBLESIDE }, this.system.scene);
+        // this.surface.renderingGroupId = 1;
 
         // Cool Poly 2, 3, 
         // this.surface = MeshBuilder.CreatePolyhedron("p", { type: 7, size: 4 }, this.system.scene);
@@ -150,8 +153,8 @@ export class Star {
         // this.surfaceMaterial.roughness = 0.5;
         // this.surfaceMaterial.metallic = 1;
         this.surfaceMaterial.alpha = 0.9;
-        this.surfaceMaterial.reflectionTexture = this.system.skyboxMaterial.reflectionTexture.clone();
-        this.surfaceMaterial.refractionTexture = this.system.skyboxMaterial.reflectionTexture.clone();
+        this.surfaceMaterial.reflectionTexture = this.system.scene.environmentTexture.clone();
+        this.surfaceMaterial.refractionTexture = this.system.scene.environmentTexture.clone();
         this.setReflectionLevel(0);
         this.system.glowLayer.addIncludedOnlyMesh(this.surface);
 

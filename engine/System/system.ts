@@ -15,7 +15,7 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { CubeTexture } from '@babylonjs/core/Materials/Textures/cubetexture';
 import '@babylonjs/core/Misc/dds';
 import '@babylonjs/core/Materials/Textures/Loaders/ddsTextureLoader';
-import { PointLight } from '@babylonjs/core/Lights/pointLight';
+import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
 
 /**
@@ -92,8 +92,8 @@ export class System {
 
         this.animationManager = new AnimationManager();
         this.buildScene();
-        this.addSky();
         this.addGlow();
+        this.addSky();
         // this.addLight();
         this.addControl();
     }
@@ -139,16 +139,16 @@ export class System {
         hdrTexture.gammaSpace = false;
         this.scene.environmentTexture = hdrTexture;
         this.skyboxMaterial.roughness = 0.2;
-        this.skyboxMaterial.reflectionTexture = hdrTexture;
+        this.skyboxMaterial.reflectionTexture = hdrTexture.clone();
         this.skyboxMaterial.reflectionTexture.level = 0.2;
         this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
     }
 
-    light: PointLight
+    light: DirectionalLight
     addLight() {
-        this.light = new PointLight('light', new Vector3(0, 2, 0), this.scene);
-        this.light.diffuse = new Color3(0, 0, 1);
-        this.light.intensity = 2;
+        this.light = new DirectionalLight('light', new Vector3(1, -1, 0), this.scene);
+        this.light.diffuse = new Color3(1, 1, 1);
+        this.light.intensity = 0.5;
         console.log(this.light);
     }
 
