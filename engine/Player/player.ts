@@ -32,7 +32,11 @@ export class Player {
 
         // setTimeout(() => {
         //     this.followMouse = false;
-        // }, 2000)
+        // }, 2000);
+
+        setInterval(() => {
+            this.gravityField.setCenterMap(new Vector2(this.position.x, this.position.z));
+        }, 500);
 
         this.mouseCatcher.start();
     }

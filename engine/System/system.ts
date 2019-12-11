@@ -121,7 +121,7 @@ export class System {
         this.scene.ambientColor = new Color3(0.0, 0.0, 0.0);
         // this.scene.clearColor = new Color4(0.0, 0.0, 0.0, 0.0);
 
-        this.camera = new ArcRotateCamera('camera', 0, Math.PI/4, 40, Vector3.Zero(), this.scene);
+        this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 40, Vector3.Zero(), this.scene);
         this.camera.setTarget(Vector3.Zero());
     }
 
@@ -133,7 +133,7 @@ export class System {
         this.skybox.material = this.skyboxMaterial;
 
         let asseturl = 'https://asset.wazana.io/';
-        let mapcolor = 'mapcolor2';
+        let mapcolor = 'mapcolor3';
 
         var hdrTexture = CubeTexture.CreateFromPrefilteredData(asseturl + 'dds/' + mapcolor + '.dds', this.scene);
         hdrTexture.gammaSpace = false;
@@ -198,12 +198,15 @@ export class System {
     /**
      * @ignore
      */
+    frameTest = false;
     startRender() {
         this.rendering = true;
         this.engine.stopRenderLoop();
         this.engine.runRenderLoop(() => {
             this.animationManager.runAnimations(this.engine.getFps());
             this.scene.render();
+            // if (this.frameTest) this.scene.render();
+            // this.frameTest = !this.frameTest;
         });
     }
 

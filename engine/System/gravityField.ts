@@ -101,22 +101,43 @@ export class GravityField {
         this.paths = mainpath;
     }
 
+    center = new Vector2(0, 0);
+    setCenterMap(pos: Vector2) {
+        let halfMap = this.mapDetail / 2;
+        this.step = this.mapSize / this.mapDetail;
+        // this.center = pos;
+        let xRound = Math.round(pos.x);
+        let yRound = Math.round(-pos.y);
+        this.center.x = xRound;
+        this.center.y = -yRound;
+        var mainpath = [];
+        for (let i = xRound - halfMap; i < xRound + halfMap; i += this.step) {
+            var linepath = [];
+            for (let j = yRound - halfMap; j < yRound + halfMap; j += this.step) {
+                linepath.push(new Vector3(i, 0, j));
+            }
+            mainpath.push(linepath);
+        }
+        this.paths = mainpath;
+    }
+
     pointDepth = 5;
     pointSize = 5;
     setStarPoint(pos: Vector2, size: number): Array< Vector3 > {
         let halfMap = this.mapDetail / 2
-        let xRound = (Math.round(pos.x) / this.step) + halfMap;
-        let zRound = (Math.round(-pos.y) / this.step) + halfMap;
+        let mapPos = pos.subtract(this.center);
+        let xRound = (Math.round(mapPos.x) / this.step) + halfMap;
+        let yRound = (Math.round(-mapPos.y) / this.step) + halfMap;
         let alteredPoints: Array < Vector3 > = [];
         let depth = size * this.pointDepth;
         let width = Math.round(size * this.pointSize * this.mapDetail / 20);
         for (let x = xRound - width; x < xRound + width; x += this.step) {
             let xX = x - xRound;
-            for (let z = zRound - width; z < zRound + width; z += this.step) {
-                let zX = z - zRound;
-                let dist = Vector2.Distance(pos, new Vector2(x - halfMap, -(z - halfMap)));
-                this.paths[x][z].y = Math.max(depth - depth * this.curve.ease(dist / width), 0);
-                alteredPoints.push(this.paths[x][z]);
+            for (let y = yRound - width; y < yRound + width; y += this.step) {
+                let yX = y - yRound;
+                let dist = Vector2.Distance(mapPos, new Vector2(x - halfMap, -(y - halfMap)));
+                this.paths[x][y].y = Math.max(depth - depth * this.curve.ease(dist / width), 0);
+                alteredPoints.push(this.paths[x][y]);
             }
         }
         return alteredPoints;
