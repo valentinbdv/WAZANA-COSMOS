@@ -1,18 +1,18 @@
 
 import { Animation, AnimationManager } from '../System/animation';
+import { MoveCatcher } from './moveCatcher';
 
-import remove from 'lodash/remove';
 import { Vector2, Quaternion } from '@babylonjs/core/Maths/math';
 import { Tools } from '@babylonjs/core/Misc/Tools';
 
-export class MouseCatcher {
+export class MouseCatcher extends MoveCatcher {
 
     mousecatch = new Vector2(0, 0);
     catching = true;
     animation: Animation;
 
     constructor(animationManager: AnimationManager) {
-        this.animation = new Animation(animationManager, 10);
+        super(animationManager);
         window.addEventListener("mousemove", (evt) => { this.mouseOrientation(evt) });
         window.addEventListener("deviceorientation", (evt) => { this.deviceOrientation(evt) });
         window.addEventListener("orientationchange", () => { this.orientationChanged() });
@@ -76,67 +76,5 @@ export class MouseCatcher {
             pos.y = 2 * (evt.y - h / 2) / h;
             this.catch(pos);
         }
-    }
-
-    start() {
-        this.catching = true;
-    }
-
-    stop() {
-        this.catching = false;
-    }
-
-    /**
-    * Spped of the progress used when mousewheel or drag on phone
-    */
-    speed = 0.05;
-    speedVector = new Vector2(0.05, 0.05);
-    /**
-    * Set the speed of the progressCatcher
-    * @param speed The new speed
-    */
-    setSpeed(speed: number) {
-        this.speed = speed;
-        this.speedVector = new Vector2(speed, speed);
-    }
-
-    /**
-    * Spped of the progress used when mousewheel or drag on phone
-    */
-    accuracy = 0.0002;
-    /**
-    * Set the speed of the progressCatcher
-    * @param speed The new speed
-    */
-    setAccuracy(accuracy: number) {
-        this.accuracy = accuracy;
-    }
-
-    step = new Vector2(0, 0);
-    mouseReal = new Vector2(0, 0);
-    mouseCatch = new Vector2(0, 0);
-    catch(mouse: Vector2) {
-        this.mouseReal = mouse;
-        this.animation.infinite(() => {
-            // let gapmouse = this.mouseReal.subtract(this.mouseCatch);
-            let gapmouse = this.mouseReal;
-            this.step = gapmouse.clone();
-            this.step.multiplyInPlace(this.speedVector);
-            this.mouseCatch.addInPlace(this.step);
-            if (Math.abs(gapmouse.x) < this.accuracy && Math.abs(gapmouse.y) < this.accuracy) this.animation.running = false;
-            for (let i = 0; i < this.listeners.length; i++) {
-                // Clone to make sure there is not something which can alter real mouseCatch
-                this.listeners[i](this.mouseCatch.clone(), this.step.clone());
-            }
-        });
-    }
-
-    listeners: Array<Function> = [];
-    addListener(callback: Function) {
-        this.listeners.push(callback);
-    }
-
-    removeListener(callback: Function) {
-        remove(this.listeners, (c) => { c == callback });
     }
 }

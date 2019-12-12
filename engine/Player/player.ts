@@ -1,5 +1,4 @@
 import { System } from '../System/system';
-import { MouseCatcher } from './mouseCatcher';
 import { GravityField } from '../System/gravityField';
 import { Star } from '../Entity/polystar'
 
@@ -9,36 +8,13 @@ export class Player {
 
     system: System;
     gravityField: GravityField;
-    mouseCatcher: MouseCatcher;
+    key: string;
 
     constructor(system: System, gravityField: GravityField) {
         this.system = system;
         this.gravityField = gravityField;
-
-        this.addMouseEvent();
         this.addStar();
-
-        this.system.camera.parent = this.star.pivot;
-    }
-
-    followMouse = true;
-    position: Vector3 = Vector3.Zero();
-    addMouseEvent() {
-        this.mouseCatcher = new MouseCatcher(this.system.animationManager);
-        this.mouseCatcher.addListener((mousepos: Vector2, step: Vector2) => {
-            step = step.multiplyInPlace(new Vector2(5, 5));
-            if (this.followMouse) this.move(step);
-        });
-
-        // setTimeout(() => {
-        //     this.followMouse = false;
-        // }, 2000);
-
-        setInterval(() => {
-            this.gravityField.setCenterMap(new Vector2(this.position.x, this.position.z));
-        }, 500);
-
-        this.mouseCatcher.start();
+        this.key = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
 
     star: Star;
@@ -50,25 +26,14 @@ export class Player {
         this.star.addPlanet();
         this.star.addPlanet();
         this.star.addPlanet();
-
-        setTimeout(() => {
-            this.star.shine();
-        }, 2000);
-
         this.star.secondLight.excludedMeshes.push(this.gravityField.ribbon);
     }
 
-    gravityPoint: Array< Vector3 > = [];
+    position: Vector2 = Vector2.Zero();
     move(mousepos: Vector2) {
-        this.eraseGravity();
-        this.position = this.position.add(new Vector3(mousepos.y, 0, mousepos.x));
-        this.star.pivot.position = this.position;
-        this.gravityPoint = this.gravityField.setStarPoint(new Vector2(this.position.x, this.position.z), this.star.size);
-    }
-
-    eraseGravity() {
-        for (let i = 0; i < this.gravityPoint.length; i++) {
-            this.gravityPoint[i].y = 0;
-        }
+        this.position = this.position.add(new Vector2(mousepos.y, mousepos.x));
+        this.star.pivot.position.x = this.position.x;
+        this.star.pivot.position.z = this.position.y;
+        this.gravityField.setStarPoint(this.key, this.position, this.star.size);
     }
 }
