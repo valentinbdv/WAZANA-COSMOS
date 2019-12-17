@@ -27,9 +27,9 @@ export class RealPlayer extends Player {
         //     this.followMouse = false;
         // }, 2000);
 
-        // setInterval(() => {
-        //     this.gravityField.setCenterMap(this.position);
-        // }, 500);
+        setInterval(() => {
+            this.gravityField.setCenterMap(this.position);
+        }, 500);
 
         this.mouseCatcher.start();
     }
