@@ -3,7 +3,7 @@ import { System } from '../System/system';
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from './planet';
 
-import { Vector3, Color3 } from '@babylonjs/core/Maths/math';
+import { Vector2, Vector3, Color3 } from '@babylonjs/core/Maths/math';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { MeshBuilder } from '@babylonjs/core/Meshes/MeshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/Mesh';
@@ -30,7 +30,7 @@ export class Star {
     key: string;
 
     system: System;
-    animation: Animation;
+    shineAnimation: Animation;
     curve: IEasingFunction;
 
     texture: string;
@@ -44,10 +44,13 @@ export class Star {
     direction2: point3D = {x: 0, y: 0, z: 0};
     power: number;
 
+    // rotateProgress = 0;
+    cycleProgress = 0;
+    
     constructor(system: System, options: StarInterface) {
         this.system = system;
 
-        this.animation = new Animation(this.system.animationManager);
+        this.shineAnimation = new Animation(this.system.animationManager);
 
         this.key = "star1";
         this.addPivot();
@@ -68,17 +71,18 @@ export class Star {
         // this.setGlareColor(color);
         this.setTemperature(options.temperature);
 
-        let int = 0;
         this.system.scene.registerBeforeRender(() => {
             for (let i = 0; i < this.planets.length; i++) {
                 const planet = this.planets[i];
-                planet.mesh.position.x = (this.size + planet.radius) * Math.cos(planet.velocity * int / 100);
-                planet.mesh.position.z = (this.size + planet.radius) * Math.sin(planet.velocity * int / 100);
-                planet.mesh.rotation.y = planet.velocity * ( int / 100 );
-                // planet.mesh.position.y = (this.size + planet.radius) * Math.sin(planet.velocity * int / 100);
+                planet.mesh.position.x = (this.size + planet.radius) * Math.cos((planet.velocity * planet.cycle) / 100 + planet.offset);
+                planet.mesh.position.z = (this.size + planet.radius) * Math.sin((planet.velocity * planet.cycle) / 100 + planet.offset);
+                planet.mesh.rotation.y = planet.velocity * ( this.cycleProgress / 100 );
+                planet.cycle += this.cycleProgress;
+                // planet.mesh.position.y = (this.size + planet.radius) * Math.sin(planet.velocity * this.rotateProgress / 100);
             }
-            this.surface.rotation.y = int / 200;
-            int += 1 / Math.sqrt(this.size);
+            this.surface.rotation.y += this.cycleProgress / 200;
+            // this.rotateProgress += 1 / Math.sqrt(this.size);
+            // this.rotateProgress = this.rotateProgress % Math.PI;
         });
 
         this.curve = new BezierCurveEase(0.32, -0.73, 0.69, 1.59);
@@ -196,7 +200,7 @@ export class Star {
     }
 
     shine() {
-        this.animation.simple(50, (count, x) => {
+        this.shineAnimation.simple(50, (count, x) => {
             let y = 1 - 4 * Math.pow(x - 0.5, 2);
             this.setReflectionLevel(y);
         }, () => {
@@ -217,12 +221,13 @@ export class Star {
         this.surface.scaling = sizeVector;
         this.light.intensity = 1000 * size;
         this.secondLight.intensity = 100 * size;
+        this.cycleProgress = 1 / Math.sqrt(this.size);
     }
 
     updateSize(size: number) {
         let currentsize = this.size;
         let change = size - currentsize;
-        this.animation.simple(100, (count, perc) => {
+        this.shineAnimation.simple(100, (count, perc) => {
             let newsize = currentsize + this.curve.ease(perc) * change;
             this.setSize(newsize);
         }, () => {
@@ -258,14 +263,9 @@ export class Star {
     // }
 
     planets: Array<Planet> = [];
-    addPlanet() {
-        let planetNumber = this.planets.length;
-        let radius = 2 + planetNumber;
-        let velocity = 5 / (1 + planetNumber/2);
-        let planetInterface: PlanetInterface = { color: [0, 0, 0], radius: radius, size: 1, velocity: velocity };
-        let planet = new Planet(this.system, planetInterface);
+    fixePlanet(planet: Planet) {
+        console.log('fixe');
         planet.setParent(this.pivot);
         this.planets.push(planet);
     }
-
 }

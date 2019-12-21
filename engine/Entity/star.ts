@@ -6,7 +6,6 @@ import { Vector3, Color4, Color3 } from '@babylonjs/core/Maths/math';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { ParticleSystemSet } from "@babylonjs/core/Particles/particleSystemSet";
-import cloneDeep from 'lodash/cloneDeep';
 
 export interface starInterface {
     texture?: string,

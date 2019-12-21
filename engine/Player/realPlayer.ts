@@ -12,7 +12,7 @@ export class RealPlayer extends Player {
     constructor(system: System, gravityField: GravityField) {
         super(system, gravityField);
         this.addMouseEvent();
-        this.system.camera.parent = this.star.pivot;
+        this.system.camera.parent = this.pivot;
     }
 
     followMouse = true;

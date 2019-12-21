@@ -124,42 +124,6 @@ export class GravityField {
         this.pathToKeys = newPathToKeys;
     }
 
-    // setCenterMap(pos: Vector2) {
-    //     let xRound = Math.round(pos.x / this.step) * this.step;
-    //     let yRound = Math.round(-pos.y / this.step) * this.step;
-    //     let newCenter = new Vector2(xRound, -yRound);
-    //     if (this.center.x == newCenter.x && this.center.y == newCenter.y) return;
-        
-    //     let change = this.center.subtract(newCenter);
-    //     let newPaths = [];
-    //     let newPathToKeys = [];
-    //     for (let x = xRound - this.halfSize; x < xRound + this.halfSize; x += this.step) {
-    //         var linepath = [];
-    //         var linekey = [];
-    //         let pathX = x - change.x + this.halfSize;
-    //         for (let y = yRound - this.halfSize; y < yRound + this.halfSize; y += this.step) {
-    //             let pathY = y - change.y + this.halfSize;
-    //             let newY = (this.paths[pathX] && this.paths[pathX][pathY]) ? this.paths[pathX][pathY].y : 0;
-    //             linepath.push(new Vector3(x, newY, y));
-    //             let newKey = (this.pathToKeys[pathX] && this.pathToKeys[pathX][pathY]) ? this.paths[pathX][pathY].y : '';
-    //             linekey.push(newKey);
-    //         }
-    //         newPaths.push(linepath);
-    //         newPathToKeys.push(linekey);
-    //     }
-    //     for (const key in this.keysToPath) {
-    //         const paths = this.keysToPath[key];
-    //         for (let i = 0; i < paths.length; i++) {
-    //             const path = paths[i];
-    //             path[0] += change.x;
-    //             path[1] += change.y;
-    //         }
-    //     }
-    //     this.center = newCenter.clone();
-    //     this.paths = newPaths;
-    //     this.pathToKeys = newPathToKeys;
-    // }
-
     pointDepth = 8;
     pointSize = 5;
     setStarPoint(key:string, pos: Vector2, size: number) {
