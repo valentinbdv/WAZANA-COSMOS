@@ -8,7 +8,7 @@ import { Scene } from '@babylonjs/core/scene';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
-import { Color3, Color4, Vector3 } from '@babylonjs/core/Maths/math';
+import { Color3, Matrix, Vector3 } from '@babylonjs/core/Maths/math';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import '@babylonjs/core/Materials/standardMaterial';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
@@ -106,12 +106,11 @@ export class System {
         this.glowLayer = new GlowLayer("glow", this.scene);
         this.glowLayer.intensity = 100;
         this.glowLayer.blurKernelSize = 32;
-        // console.log(this.glowLayer);
-        let int = 0;
-        this.scene.registerBeforeRender(() => {
-            this.glowLayer.intensity = 100 + Math.cos(int / 20) * 10;
-            int++;
-        });
+        // let int = 0;
+        // this.scene.registerBeforeRender(() => {
+        //     this.glowLayer.intensity = 100 + Math.cos(int / 20) * 10;
+        //     int++;
+        // });
     }
 
     size = 300;
@@ -142,6 +141,12 @@ export class System {
         this.skyboxMaterial.reflectionTexture = hdrTexture.clone();
         this.skyboxMaterial.reflectionTexture.level = 0.2;
         this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+        
+        // let alpha = 0;
+        // this.scene.registerBeforeRender(() => {
+        //     alpha += 0.01;
+        //     this.scene.environmentTexture.setReflectionTextureMatrix(Matrix.RotationY(alpha));
+        // });
     }
 
     light: DirectionalLight

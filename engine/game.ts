@@ -23,8 +23,8 @@ export class GameEngine {
         this.planetField = new PlanetField(this.system);
         let player = new RealPlayer(this.system, this.gravityField);
         this.planetField.addPlayer(player);
-        // new IAPlayer(this.system, this.gravityField);
-        // new IAPlayer(this.system, this.gravityField);
+        new IAPlayer(this.system, this.gravityField);
+        new IAPlayer(this.system, this.gravityField);
 
         // let star1 = new Star(this.system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: -5 } });
         // let star2 = new Star(this.system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 5 } });

@@ -3,6 +3,7 @@ import { GravityField } from '../System/gravityField';
 import { Star } from '../Entity/star'
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from '../Entity/planet';
+import { StarDust, StarDustInterface } from '../Entity/starDust';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
@@ -18,7 +19,7 @@ export class Player extends Star {
         super(system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 0 } });
         this.gravityField = gravityField;
         this.secondLight.excludedMeshes.push(this.gravityField.ribbon);
-        this.key = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.fixeAnimation = new Animation(this.system.animationManager);
 
         this.fixeCurve = new CubicEase();
@@ -47,6 +48,11 @@ export class Player extends Star {
             this.animatePlanetToStar(planet, radius, velocity);
         }
         this.fixePlanet(planet);
+    }
+
+    addDust() {
+        let newSize = this.size + 0.02;
+        this.updateSize(newSize);
     }
     
     fixeAnimationLength = 50;
@@ -78,9 +84,7 @@ export class Player extends Star {
             planet.mesh.position.x += reverseDirection.x * 10;
             planet.mesh.position.z += reverseDirection.y * 10;
             if (perc < 0.5) this.velocity = 1 + Math.sqrt(perc);
-            else this.velocity = 1 + Math.sqrt(1 - perc);
-            console.log(this.velocity);
-            
+            else this.velocity = 1 + Math.sqrt(Math.max(1 - perc, 0));
         }, () => {
             planet.mesh.dispose();
             this.velocity = 1;

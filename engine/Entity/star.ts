@@ -52,7 +52,7 @@ export class Star {
 
         this.shineAnimation = new Animation(this.system.animationManager);
 
-        this.key = "star1";
+        this.key = 'star' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.addPivot();
 
         // let color = Color3.FromInts(options.color[0], options.color[1], options.color[2]);
@@ -227,11 +227,14 @@ export class Star {
     updateSize(size: number) {
         let currentsize = this.size;
         let change = size - currentsize;
-        this.shineAnimation.simple(100, (count, perc) => {
+        this.shineAnimation.simple(40, (count, perc) => {
+            let y = 1 - 4 * Math.pow(perc - 0.5, 2);
+            this.setReflectionLevel(y);
             let newsize = currentsize + this.curve.ease(perc) * change;
             this.setSize(newsize);
         }, () => {
             this.setSize(size);
+            this.setReflectionLevel(0);
         });
     }
 

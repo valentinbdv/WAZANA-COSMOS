@@ -33,7 +33,7 @@ export class Planet {
 
     constructor(system: System, options: PlanetInterface) {
         this.system = system;
-        this.key = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        this.key = 'planet' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
         let color = Color3.FromInts(5 + options.color[0] / 20, 5 + options.color[1] / 20, 5 + options.color[2] / 20);
         this.addMesh(color);

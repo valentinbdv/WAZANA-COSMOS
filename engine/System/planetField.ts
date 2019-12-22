@@ -1,9 +1,10 @@
 import { System } from './system';
 
-import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
+import { IEasingFunction } from '@babylonjs/core/Animations/easing';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import remove from 'lodash/remove';
 import { Planet, PlanetInterface } from '../Entity/planet';
+import { StarDust, StarDustInterface } from '../Entity/starDust';
 import { Player } from '../player/player';
 
 /**
@@ -51,9 +52,28 @@ export class PlanetField {
         remove(this.planets, (p) => { return planet.key == p.key })
     }
 
+    dusts: Array<StarDust> = [];
+    addDust() {
+        let dustInterface: StarDustInterface = { temperature: 6000, size: 0.01 };
+        let dust = new StarDust(this.system, dustInterface);
+        this.dusts.push(dust);
+        return dust;
+    }
+
+    removeDust(dust: StarDust) {
+        remove(this.dusts, (p) => { return dust.key == p.key });
+        dust.mesh.dispose();
+    }
+
     createRandomMap() {
         for (let i = 0; i < 10; i++) {
             let newPlanet = this.addPlanet();     
+            let pos = new Vector2((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100);
+            newPlanet.setPosition(pos);
+        }
+
+        for (let i = 0; i < 50; i++) {
+            let newPlanet = this.addDust();
             let pos = new Vector2((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100);
             newPlanet.setPosition(pos);
         }
@@ -68,6 +88,14 @@ export class PlanetField {
                 if (dist < player.size * 20) {
                     this.removePlanet(planet);
                     player.addPlanet(planet);
+                }
+            }
+            for (let i = 0; i < this.dusts.length; i++) {
+                const dust = this.dusts[i];
+                let dist = Vector2.Distance(dust.position, player.position);
+                if (dist < player.size * 3) {
+                    this.removeDust(dust);
+                    player.addDust();
                 }
             }
         }
