@@ -1,358 +1,270 @@
 import { point3D } from '../System/interface';
 import { System } from '../System/system';
-import StarJson from './star.json';
+import { Animation } from '../System/animation';
+import { Planet, PlanetInterface } from './planet';
 
-import { Vector3, Color4, Color3 } from '@babylonjs/core/Maths/math';
-import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
-import { Texture } from '@babylonjs/core/Materials/Textures/texture';
-import { ParticleSystemSet } from "@babylonjs/core/Particles/particleSystemSet";
+import { Vector2, Vector3, Color3 } from '@babylonjs/core/Maths/math';
+import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
+import { MeshBuilder } from '@babylonjs/core/Meshes/MeshBuilder';
+import { Mesh } from '@babylonjs/core/Meshes/Mesh';
+import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
+import { PointLight } from '@babylonjs/core/Lights/pointLight';
+import { IEasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/easing';
 
-export interface starInterface {
+// https://www.youtube.com/watch?v=i4RtO_qIQHk
+
+export interface StarInterface {
+    temperature: number,
+    size: number,
     texture?: string,
-    number ? : number,
-    colorStart ? : Array < number > ,
-    colorEnd ? : Array < number > ,
-    sizeStart ? : number,
-    sizeEnd ? : number,
-    life ? : number,
-    direction1 ? : point3D,
-    direction2 ? : point3D,
-    power ? : number,
+    number?: number,
+    life?: number,
+    power?: number,
     position: point3D,
-    // reaction?:'continuously'|'move',
-    // emitter?:'point'|'box'|'sphere'|'hemispheric'|'cylinder'|'cone',
-    // delay?:number,
-    // rotation?:number,
-    // velocityStart?:number,
-    // velocityEnd?:number,
+    velocity?: number,
 }
 
 export class Star {
 
-    particlekey: string;
-    particle: ParticleSystem;
+    key: string;
+
     system: System;
+    shineAnimation: Animation;
+    curve: IEasingFunction;
 
     texture: string;
     number: number;
-    colorStart: Array<number>;
+    color: Array<number>;
     colorEnd: Array<number>;
-    sizeStart: number;
+    size: number;
     sizeEnd: number;
     life: number;
     direction1: point3D = {x: 0, y: 0, z: 0};
     direction2: point3D = {x: 0, y: 0, z: 0};
     power: number;
 
-    set: ParticleSystemSet;
-
-    constructor(system: System, options: starInterface) {
+    // rotateProgress = 0;
+    cycleProgress = 0;
+    
+    constructor(system: System, options: StarInterface) {
         this.system = system;
 
-        this.particlekey = "naker";
-        // this.initDirectionVectors();
+        this.shineAnimation = new Animation(this.system.animationManager);
 
-        // let json = cloneDeep(StarJson);
+        this.key = "star1";
+        this.addPivot();
 
-        // console.log(surface);
-        this.set = ParticleSystemSet.Parse(StarJson, this.system.scene, false);
-        this.set.emitterNode.position = new Vector3(options.position.x, options.position.y, options.position.z)
-        this.set.start();
-        let color = Color3.FromInts(options.colorStart[0], options.colorStart[1], options.colorStart[2]);
-        this.setSurfaceColor(new Color3(0, 0, 0));
-        this.setFireColor(color);
-        this.setFlareColor(color);
-        this.setGlareColor(color);
-        
-        // this.setParticle();
-        // this.setOptions(options);
+        // let color = Color3.FromInts(options.color[0], options.color[1], options.color[2]);
+        this.addHeart();
+        this.addSurface();
+        this.addLight();
+        this.addSecondLight();
 
-        // this.particle.start();
+        let p = options.position;
+        this.pivot.position = new Vector3(p.x, p.y, p.z);
+        this.setSize(options.size);
+
+        // this.setSurfaceColor(new Color3(0, 0, 0));
+        // this.setFireColor(color);
+        // this.setFlareColor(color);
+        // this.setGlareColor(color);
+        this.setTemperature(options.temperature);
+
+        this.system.scene.registerBeforeRender(() => {
+            for (let i = 0; i < this.planets.length; i++) {
+                const planet = this.planets[i];
+                planet.mesh.position.x = (this.size + planet.radius) * Math.cos((planet.velocity * planet.cycle) / 100 + planet.offset);
+                planet.mesh.position.z = (this.size + planet.radius) * Math.sin((planet.velocity * planet.cycle) / 100 + planet.offset);
+                planet.mesh.rotation.y = planet.velocity * ( this.cycleProgress / 100 );
+                planet.cycle += this.cycleProgress;
+                // planet.mesh.position.y = (this.size + planet.radius) * Math.sin(planet.velocity * this.rotateProgress / 100);
+            }
+            this.surface.rotation.y += this.cycleProgress / 200;
+            // this.rotateProgress += 1 / Math.sqrt(this.size);
+            // this.rotateProgress = this.rotateProgress % Math.PI;
+        });
+
+        this.curve = new BezierCurveEase(0.32, -0.73, 0.69, 1.59);
+        // this.curve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
+    }
+
+    setTemperature(temperature: number) {
+        let color = this.getColorFromTemperature(temperature);
+        this.heartMaterial.emissiveColor = color;
+        this.surfaceMaterial.reflectivityColor = color;
+        this.secondLight.diffuse = color;
+        this.light.diffuse = color;
+    }
+
+    // Follow this map color http://cdn.eso.org/images/screen/eso0728c.jpg
+    getColorFromTemperature(temperature: number): Color3 {
+        temperature = Math.max(3000, temperature);
+        temperature = Math.min(30000, temperature);
+        if (temperature < 8000) {
+            let perc = (8000 - temperature) / 5000;
+            let g = Math.min(1, 2 - perc * 2);
+            let b = Math.max(0, 1 - perc * 2);
+            return new Color3(1, g, b);
+        } else {
+            let perc = 1 - Math.pow(((temperature - 8000) / 22000), 2);
+            return new Color3(perc, perc, 0.8);
+        }
+    }
+
+    pivot: AbstractMesh;
+    addPivot() {
+        this.pivot = new AbstractMesh(this.key + "star", this.system.scene);
+    }
+
+    heart: Mesh;
+    heartMaterial: StandardMaterial;
+    addHeart() {
+        // this.heart = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
+        this.heart = MeshBuilder.CreateSphere(this.key + "star", { diameter: 2.5 }, this.system.scene);
+        this.heartMaterial = new StandardMaterial(this.key + "material", this.system.scene);
+        // this.heartMaterial.roughness = 1;
+        // this.heartMaterial.emissiveColor = Color3.Black();
+        // console.log(this.heartMaterial);
+        this.system.glowLayer.addIncludedOnlyMesh(this.heart);
+        this.heart.material = this.heartMaterial;
+        this.heart.isBlocker = false;
+        this.heart.parent = this.pivot;
+        // this.heart.isVisible = false;
+    }
+
+    surface: Mesh;
+    surfaceMaterial: PBRMaterial;
+    addSurface() {
+        // this.surface = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 4, flat: true, subdivisions: 2 }, this.system.scene);
+
+        var heptagonalPrism = {
+            "name": "Trigyrate Rhombicosidodecahedron (J75)",
+            "category": ["Johnson Solid"],
+            "vertex": [[-0.980376, -0.197048, -0.005857], [-0.946332, 0.150802, -0.285858], [-0.935804, 0.079716, 0.34339], [-0.901759, 0.427566, 0.063389], [-0.812124, -0.53251, 0.23851], [-0.8048, -0.555655, -0.20867], [-0.767552, -0.255746, 0.587757], [-0.759203, 0.553784, -0.341957], [-0.749715, 0.007177, -0.661721], [-0.688108, 0.168923, 0.705672], [-0.662244, -0.429437, -0.614016], [-0.633023, 0.731755, 0.252621], [-0.562586, 0.41016, -0.71782], [-0.500979, 0.571905, 0.649573], [-0.490467, 0.857973, -0.152725], [-0.483464, -0.835984, 0.259599], [-0.47614, -0.859129, -0.18758], [-0.411344, -0.388171, 0.824694], [-0.387011, 0.051553, -0.920632], [-0.333584, -0.732911, -0.592926], [-0.331901, 0.036498, 0.942608], [-0.299539, -0.385062, -0.872928], [-0.245677, 0.868112, 0.431306], [-0.235768, -0.746778, 0.621881], [-0.172335, 0.625585, -0.760884], [-0.144772, 0.43948, 0.88651], [-0.127762, 0.902348, -0.411637], [-0.119933, -0.991554, 0.049356], [-0.103121, 0.994331, 0.02596], [-0.003241, -0.266976, 0.963698], [0.003241, 0.266978, -0.963697], [0.11053, 0.735688, 0.668243], [0.110728, -0.787329, -0.606508], [0.127763, -0.902347, 0.411638], [0.144773, -0.439479, -0.886509], [0.172335, -0.625583, 0.760885], [0.242772, -0.947178, -0.209555], [0.271977, 0.571167, -0.774465], [0.29954, 0.385063, 0.872928], [0.31655, 0.847931, -0.425218], [0.331901, -0.036497, -0.942608], [0.341191, 0.939913, 0.012379], [0.387011, -0.051552, 0.920633], [0.473235, 0.780063, 0.409331], [0.490467, -0.857972, 0.152726], [0.528066, -0.712229, -0.462467], [0.562111, -0.364379, -0.742468], [0.562587, -0.410159, 0.717821], [0.600637, 0.267692, -0.753376], [0.662244, 0.429438, 0.614017], [0.672757, 0.715506, -0.188282], [0.749716, -0.007176, 0.661722], [0.759203, -0.553783, 0.341958], [0.775762, -0.623022, -0.100185], [0.804801, 0.555656, 0.208671], [0.830847, -0.06019, -0.553237], [0.848333, 0.356899, -0.391094], [0.946332, -0.1508, 0.285859], [0.96289, -0.22004, -0.156284], [0.980377, 0.197049, 0.005858]],
+            "face": [[30, 24, 37], [14, 28, 26], [11, 13, 22], [25, 38, 31], [48, 56, 55], [59, 57, 58], [39, 41, 50], [43, 49, 54], [40, 46, 34], [45, 36, 32], [53, 52, 44], [51, 42, 47], [21, 19, 10], [27, 15, 16], [33, 35, 23], [29, 20, 17], [18, 8, 12], [1, 3, 7], [5, 4, 0], [6, 9, 2], [18, 12, 24, 30], [24, 26, 39, 37], [26, 28, 41, 39], [11, 22, 28, 14], [13, 25, 31, 22], [31, 38, 49, 43], [30, 37, 48, 40], [56, 59, 58, 55], [58, 57, 52, 53], [50, 54, 59, 56], [41, 43, 54, 50], [49, 38, 42, 51], [48, 55, 46, 40], [46, 45, 32, 34], [36, 44, 33, 27], [53, 44, 36, 45], [57, 51, 47, 52], [47, 42, 29, 35], [34, 32, 19, 21], [19, 16, 5, 10], [16, 15, 4, 5], [33, 23, 15, 27], [35, 29, 17, 23], [17, 20, 9, 6], [21, 10, 8, 18], [8, 1, 7, 12], [7, 3, 11, 14], [0, 2, 3, 1], [4, 6, 2, 0], [9, 20, 25, 13], [12, 7, 14, 26, 24], [22, 31, 43, 41, 28], [37, 39, 50, 56, 48], [54, 49, 51, 57, 59], [55, 58, 53, 45, 46], [52, 47, 35, 33, 44], [32, 36, 27, 16, 19], [23, 17, 6, 4, 15], [10, 5, 0, 1, 8], [2, 9, 13, 11, 3], [18, 30, 40, 34, 21], [20, 29, 42, 38, 25]]
+        };
+
+        this.surface = MeshBuilder.CreatePolyhedron("h", { custom: heptagonalPrism, size: 2, sideOrientation: Mesh.DOUBLESIDE }, this.system.scene);
+        // this.surface.renderingGroupId = 1;
+
+        // Cool Poly 2, 3, 
+        // this.surface = MeshBuilder.CreatePolyhedron("p", { type: 7, size: 4 }, this.system.scene);
+
+        this.surface.convertToFlatShadedMesh();
+        this.surfaceMaterial = new PBRMaterial(this.key + "material", this.system.scene);
+        this.surfaceMaterial.backFaceCulling = false;
+        // this.surfaceMaterial.roughness = 0.5;
+        // this.surfaceMaterial.metallic = 1;
+        this.surfaceMaterial.alpha = 0.9;
+        this.surfaceMaterial.reflectionTexture = this.system.scene.environmentTexture.clone();
+        this.surfaceMaterial.refractionTexture = this.system.scene.environmentTexture.clone();
+        this.setReflectionLevel(0);
+        this.system.glowLayer.addIncludedOnlyMesh(this.surface);
+
+        // this.surfaceMaterial.linkRefractionWithTransparency = true;
+        this.surfaceMaterial.indexOfRefraction = 0;
+        // this.surfaceMaterial.alpha = 0;
+        this.surfaceMaterial.microSurface = 1;
+
+        this.surface.material = this.surfaceMaterial;
+        this.surface.parent = this.pivot;
+        this.surface.isBlocker = false;
+        // console.log(this.surfaceMaterial);
+    }
+
+    light: PointLight
+    addLight() {
+        this.light = new PointLight('light', new Vector3(0, 0, 0), this.system.scene);
+        this.light.intensity = 1000;
+        this.light.radius = 0.1;
+        this.light.shadowEnabled = false;
+        this.light.parent = this.pivot;
+        this.light.includedOnlyMeshes.push(this.surface)	
+        // console.log(this.light);
+    }
+
+    secondLight: PointLight
+    addSecondLight() {
+        this.secondLight = new PointLight('secondLight', new Vector3(0, 0, 0), this.system.scene);
+        this.secondLight.intensity = 50;
+        this.secondLight.radius = 10;
+        this.secondLight.shadowEnabled = false;
+        this.secondLight.parent = this.pivot;
+        this.secondLight.excludedMeshes.push(this.surface)
+        // console.log(this.secondLight);
     }
 
     setSurfaceColor(color: Color3) {
-        this.set.emitterNode.material.emissiveColor = color;
+        this.surfaceMaterial.emissiveColor = color;
     }
 
-    setFireColor(color: Color3) {
-        let surface = this.set.systems[0]._colorGradients;
-        for (let i = 0; i < surface.length; i++) {
-            surface[i].color1.r = color.r;
-            surface[i].color1.g = color.g;
-            surface[i].color1.b = color.b;
-        }
-    }
-
-    setFlareColor(color: Color3) {
-        let surface = this.set.systems[1]._colorGradients;
-        for (let i = 0; i < surface.length; i++) {
-            surface[i].color1.r = color.r;
-            surface[i].color1.g = color.g;
-            surface[i].color1.b = color.b;
-        }
-    }
-
-    setGlareColor(color: Color3) {
-        let surface = this.set.systems[2]._colorGradients;
-        for (let i = 0; i < surface.length; i++) {
-            surface[i].color1.r = color.r;
-            surface[i].color1.g = color.g;
-            surface[i].color1.b = color.b;
-        }
-    }
-
-    setParticle(capacity?: number) {
-
-
-        this.particle = particle;
-    }
-
-    initDirectionVectors() {
-        this.direction1Vector = Vector3.Zero();
-        this.direction2Vector = Vector3.Zero();
-    }
-
-    setOptions(options: starInterface) {
-        this._setOptions(options);
-        this.checkParticlePower(options.power);
-    }
-
-    _setOptions(options: starInterface) {
-        // Keep life at first as it can reset the system
-        if (options.life !== undefined) this.setLife(options.life);
-        if (options.power !== undefined) this.setPower(options.power);
-        if (options.texture !== undefined) this.setTexture(options.texture);
-        if (options.number !== undefined) this.setNumber(options.number);
-        if (options.colorStart !== undefined) this.setColorStart(options.colorStart);
-        if (options.colorEnd !== undefined) this.setColorEnd(options.colorEnd);
-        if (options.sizeStart !== undefined) this.setSizeStart(options.sizeStart);
-        if (options.sizeEnd !== undefined) this.setSizeEnd(options.sizeEnd);
-        if (options.direction1 !== undefined) this.setDirection1(options.direction1);
-        if (options.direction2 !== undefined) this.setDirection2(options.direction2);
-        // if (options.reaction !== undefined) this.setReaction(options.reaction);
-        // if (options.emitter !== undefined) this.setEmitter(options.emitter);
-        // if (options.delay !== undefined) this.setDelay(options.delay);
-        // if (options.rotation !== undefined) this.setRotation(options.rotation);
-        // if (options.velocityStart !== undefined) this.setVelocityStart(options.velocityStart);
-        // if (options.velocityEnd !== undefined) this.setVelocityEnd(options.velocityEnd);
-    }
-
-
-    getOptions(): starInterface {
-        let options: starInterface = {
-            life: this.life,
-            power: this.power,
-            texture: this.texture,
-            number: this.number,
-            colorStart: this.colorStart,
-            colorEnd: this.colorEnd,
-            sizeStart: this.sizeStart,
-            sizeEnd: this.sizeEnd,
-            direction1: this.direction1,
-            direction2: this.direction2,
-        };
-        return options;
-    }
-
-    setTexture(url: string) {
-        this.texture = url;
-        if (!url) {
-            if (this.particle.particleTexture) this.particle.particleTexture.dispose();
-            return;
-        }
-        let texture = new Texture(url, this.system.scene, true, false, Texture.NEAREST_SAMPLINGMODE, () => {
-            this.particle.particleTexture = texture;
-        }, (error) => {
-            console.log(error);
+    shine() {
+        this.shineAnimation.simple(50, (count, x) => {
+            let y = 1 - 4 * Math.pow(x - 0.5, 2);
+            this.setReflectionLevel(y);
+        }, () => {
+            this.setReflectionLevel(0);
         });
     }
 
-    // setReaction (reaction:starInterface['reaction']) {
-    //   this.reaction = reaction;
-    //   this.particle.stop();
-    //   if (reaction == 'continuously') {
-    //     this.particle.manualEmitCount = -1;
-    //     this.particle.emitRate = this.number;
-    //   } else if (reaction == 'move') {
-    //     this.particle.manualEmitCount = this.number;
-    //     this.particle.emitRate = -1;
-    //   }
-    //   this.particle.start();
-    // }
-    //
-    //
-    // emitter:PointParticleEmitter|HemisphericParticleEmitter;
-    // setEmitter (emitter:starInterface['emitter']) {
-    //   this.emitter = emitter;
-    //   if (emitter == 'point') {
-    //     this.emitter = this.particle.createPointEmitter(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
-    //   } else if (emitter == 'box') {
-    //     this.emitter = this.particle.createBoxEmitter(new Vector3(0, 0, 0), new Vector3(0, 0, 0), new Vector3(-1, 0, 0), new Vector3(1, 0, 0));
-    //   } else if (emitter == 'sphere') {
-    //     this.emitter = this.particle.createDirectedSphereEmitter(50);
-    //   } else if (emitter == 'hemispheric') {
-    //     this.emitter = this.particle.createHemisphericEmitter(10);
-    //   } else if (emitter == 'cylinder') {
-    //     this.emitter = this.particle.createCylinderEmitter(10,5,0,0);
-    //   } else if (emitter == 'cone') {
-    //     this.emitter = this.particle.createConeEmitter(2, Math.PI / 3);
-    //   }
-    //   this.particle.particleEmitterType = this.emitter;
-    // }
-
-    setNumber(number: number) {
-        number = Math.min(number, this.maximumParticle);
-        this.number = number;
-        this.particle.emitRate = this.number;
-        // this.setReaction(this.reaction);
+    setReflectionLevel(level: number) {
+        this.surfaceMaterial.reflectionTexture.level = level;
+        this.surfaceMaterial.refractionTexture.level = level;
     }
 
-    setColorStart(color: Array < number > ) {
-        this.colorStart = color;
-        this.setColors();
+    setSize(size: number) {
+        this.size = size;
+        let newsize = Math.sqrt(size);
+        let sizeVector = new Vector3(newsize, newsize, newsize);
+        this.heart.scaling = sizeVector;
+        this.surface.scaling = sizeVector;
+        this.light.intensity = 1000 * size;
+        this.secondLight.intensity = 100 * size;
+        this.cycleProgress = 1 / Math.sqrt(this.size);
     }
 
-    setColorEnd(color: Array < number > ) {
-        this.colorEnd = color;
-        this.setColors();
+    updateSize(size: number) {
+        let currentsize = this.size;
+        let change = size - currentsize;
+        this.shineAnimation.simple(100, (count, perc) => {
+            let newsize = currentsize + this.curve.ease(perc) * change;
+            this.setSize(newsize);
+        }, () => {
+            this.setSize(size);
+        });
     }
 
-    setColors() {
-        let c1 = this.colorStart;
-        let c2 = this.colorEnd;
-        if (!c1 || !c2) return;
-        let colorStart = Color3.FromInts(c1[0], c1[1], c1[2]);
-        let colorEnd = Color3.FromInts(c2[0], c2[1], c2[2]);
-
-        this.particle.removeRampGradient(0.0);
-        this.particle.removeRampGradient(1.0);
-
-        this.particle.addRampGradient(0.0, colorStart);
-        this.particle.addRampGradient(1.0, colorEnd);
-
-        this.particle.removeColorGradient(0.0);
-        this.particle.removeColorGradient(0.9);
-        this.particle.removeColorGradient(1.0);
-
-        this.particle.addColorGradient(0.0, new Color4(1, 1, 1, c1[3]));
-        this.particle.addColorGradient(0.9, new Color4(1, 1, 1, c2[3]));
-        this.particle.addColorGradient(1.0, new Color4(1, 1, 1, 0));
-    }
-
-    setSizeStart(sizeStart: number) {
-        this.sizeStart = sizeStart;
-        this.setSizes();
-    }
-
-    setSizeEnd(sizeEnd: number) {
-        this.sizeEnd = sizeEnd;
-        this.setSizes();
-    }
-
-    setSizes() {
-        let s1 = this.sizeStart;
-        let s2 = this.sizeEnd;
-        if (!s1 || !s2) return;
-        this.particle.removeSizeGradient(0.0);
-        this.particle.removeSizeGradient(1.0);
-
-        this.particle.addSizeGradient(0, s1);
-        this.particle.addSizeGradient(1.0, s2);
-    }
-
-    // setVelocityStart (velocityStart:number) {
-    //   this.velocityStart = velocityStart;
-    //   this.setVelocitys();
-    // }
-    //
-    // setVelocityEnd (velocityEnd:number) {
-    //   this.velocityEnd = velocityEnd;
-    //   this.setVelocitys();
-    // }
-    //
-    // setVelocitys () {
-    //   let v1 = this.velocityStart;
-    //   let v2 = this.velocityEnd;
-    //   if (!v1 || !v2) return;
-    //
-    //   this.particle.removeVelocityGradient(0.0);
-    //   this.particle.removeVelocityGradient(1.0);
-    //
-    //   this.particle.addVelocityGradient(0, v1);
-    //   this.particle.addVelocityGradient(1.0, v2);
-    // }
-    //
-    // setRotation (rotation:number) {
-    //   this.rotation = rotation;
-    //   this.particle.removeAngularSpeedGradient(0.0);
-    //   this.particle.removeAngularSpeedGradient(1.0);
-    //
-    //   this.particle.addAngularSpeedGradient(0, 0);
-    //   this.particle.addAngularSpeedGradient(1.0, rotation);
+    // setFireColor(color: Color3) {
+    //     let surface = this.set.systems[0]._colorGradients;
+    //     for (let i = 0; i < surface.length; i++) {
+    //         surface[i].color1.r = color.r;
+    //         surface[i].color1.g = color.g;
+    //         surface[i].color1.b = color.b;
+    //     }
     // }
 
-    setPower(power: number) {
-        this.power = power;
-        this.particle.minEmitPower = power;
-        this.particle.maxEmitPower = power * 2;
-    }
+    // setFlareColor(color: Color3) {
+    //     let surface = this.set.systems[1]._colorGradients;
+    //     for (let i = 0; i < surface.length; i++) {
+    //         surface[i].color1.r = color.r;
+    //         surface[i].color1.g = color.g;
+    //         surface[i].color1.b = color.b;
+    //     }
+    // }
 
-    setLife(life: number) {
-        this.life = life;
-        if (life >= 10) life = 100000000000000000000000000000;
-        this.particle.minLifeTime = life;
-        this.particle.maxLifeTime = life * 3;
-    }
+    // setGlareColor(color: Color3) {
+    //     let surface = this.set.systems[2]._colorGradients;
+    //     for (let i = 0; i < surface.length; i++) {
+    //         surface[i].color1.r = color.r;
+    //         surface[i].color1.g = color.g;
+    //         surface[i].color1.b = color.b;
+    //     }
+    // }
 
-    resetSystem(capacity?: number) {
-        this.particle.dispose();
-        this.setParticle(capacity);
-        this._setOptions(this);
-        this.particle.start();
+    planets: Array<Planet> = [];
+    fixePlanet(planet: Planet) {
+        planet.setParent(this.pivot);
+        this.planets.push(planet);
     }
-
-    direction1Vector: Vector3;
-    setDirection1(direction1: point3D) {
-        for (let key in direction1) {
-            this.direction1[key] = direction1[key];
-            this.direction1Vector[key] = direction1[key];
-        }
-        this.particle.direction1 = this.direction1Vector;
-        this.checkPower();
-    }
-
-    direction2Vector: Vector3;
-    setDirection2(direction2: point3D) {
-        for (let key in direction2) {
-            this.direction2[key] = direction2[key];
-            this.direction2Vector[key] = direction2[key];
-        }
-        this.particle.direction2 = this.direction2Vector;
-        this.checkPower();
-    }
-
-    checkParticlePower(value: number) {
-        if (value == 0) {
-            this.setLife(10000000);
-        } else if (value != 0 && this.power == 0) {
-            this.setLife(5);
-        }
-        this.resetSystem(this.number);
-    }
-
-    checkPower() {
-        let d1 = this.particle.direction1;
-        let d2 = this.particle.direction2;
-        if (d1.x != 0 || d1.y != 0 || d1.z != 0 || d2.x != 0 || d2.y != 0 || d2.z != 0) {
-            this.setPower(this.power)
-        } else {
-            this.particle.minEmitPower = 0;
-            this.particle.maxEmitPower = 0;
-        }
-    }
-
-    destroy() {
-        this.particle.dispose();
-    }
-
 }

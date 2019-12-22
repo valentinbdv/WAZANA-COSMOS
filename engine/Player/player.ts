@@ -1,6 +1,6 @@
 import { System } from '../System/system';
 import { GravityField } from '../System/gravityField';
-import { Star } from '../Entity/polystar'
+import { Star } from '../Entity/star'
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from '../Entity/planet';
 

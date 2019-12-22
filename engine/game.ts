@@ -5,7 +5,6 @@ import { GravityField } from './System/gravityField';
 import { PlanetField } from './System/planetField';
 import { IAPlayer } from './Player/iaPlayer';
 import { RealPlayer } from './Player/realPlayer';
-import { Star } from './Entity/polystar'
 
 export interface GameInterface {
     canvas?: HTMLCanvasElement,
