@@ -56,10 +56,10 @@ export class GravityField {
         this.gridMaterial.mainColor = new Color3(0.8, 1, 0.8);
         this.gridMaterial.gridRatio = this.gridSize;
         this.gridMaterial.majorUnitFrequency = this.gridSize;
-        this.gridMaterial.minorUnitVisibility = 1;
+        this.gridMaterial.minorUnitVisibility = 0.1;
 
         // Force opacity != 1 to have no main color on grid
-        this.gridMaterial.opacity = 0.99;
+        this.gridMaterial.opacity = 0.1;
 
         this.gridRibbon.material = this.gridMaterial;
     }
@@ -79,7 +79,7 @@ export class GravityField {
         this.material.reflectionTexture.level = 0.2;
 
         this.material.roughness = 0.5;
-        this.material.metallic = 0.5;
+        this.material.metallic = 1;
         this.material.alpha = 1;
 
         this.ribbon.material = this.material;

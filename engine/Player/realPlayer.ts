@@ -4,6 +4,7 @@ import { GravityField } from '../System/gravityField';
 import { Player } from './player';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
+import hotkeys from 'hotkeys-js';
 
 export class RealPlayer extends Player {
 
@@ -13,6 +14,10 @@ export class RealPlayer extends Player {
         super(system, gravityField);
         this.addMouseEvent();
         this.system.camera.parent = this.pivot;
+
+        hotkeys('space', (event, param) => {
+            this.launchPlanet();
+        });
     }
 
     followMouse = true;

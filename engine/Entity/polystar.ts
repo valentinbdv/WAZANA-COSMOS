@@ -264,7 +264,6 @@ export class Star {
 
     planets: Array<Planet> = [];
     fixePlanet(planet: Planet) {
-        console.log('fixe');
         planet.setParent(this.pivot);
         this.planets.push(planet);
     }

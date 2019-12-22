@@ -26,8 +26,11 @@ export class Player extends Star {
     }
 
     position: Vector2 = Vector2.Zero();
+    direction: Vector2 = Vector2.Zero();
+    velocity = 1;
     move(mousepos: Vector2) {
-        this.position = this.position.add(new Vector2(mousepos.y, mousepos.x));
+        this.direction = new Vector2(mousepos.y * this.velocity, mousepos.x * this.velocity);
+        this.position = this.position.add(this.direction);
         this.pivot.position.x = this.position.x;
         this.pivot.position.z = this.position.y;
         this.gravityField.setStarPoint(this.key, this.position, this.size);
@@ -63,6 +66,24 @@ export class Player extends Star {
             planet.setGeostationnaryMovement(radius + (1 - progress) * radiusCange, progress * velocity);
         }, () => {
             planet.setGeostationnaryMovement(radius, velocity);
+        });
+    }
+
+    launchAnimationLength = 30;
+    launchPlanet() {
+        let planet = this.planets.pop();
+        if (!planet) return;
+        let reverseDirection = this.direction.negate();
+        this.fixeAnimation.simple(this.launchAnimationLength, (count, perc) => {
+            planet.mesh.position.x += reverseDirection.x * 10;
+            planet.mesh.position.z += reverseDirection.y * 10;
+            if (perc < 0.5) this.velocity = 1 + Math.sqrt(perc);
+            else this.velocity = 1 + Math.sqrt(1 - perc);
+            console.log(this.velocity);
+            
+        }, () => {
+            planet.mesh.dispose();
+            this.velocity = 1;
         });
     }
 }
