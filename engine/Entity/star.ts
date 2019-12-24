@@ -3,7 +3,7 @@ import { System } from '../System/system';
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from './planet';
 
-import { Vector2, Vector3, Color3 } from '@babylonjs/core/Maths/math';
+import { Vector2, Vector3, Color3, Color4 } from '@babylonjs/core/Maths/math';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { MeshBuilder } from '@babylonjs/core/Meshes/MeshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/Mesh';
@@ -35,13 +35,9 @@ export class Star {
 
     texture: string;
     number: number;
-    color: Array<number>;
-    colorEnd: Array<number>;
+    color: Color4;
     size: number;
-    sizeEnd: number;
     life: number;
-    direction1: point3D = {x: 0, y: 0, z: 0};
-    direction2: point3D = {x: 0, y: 0, z: 0};
     power: number;
 
     // rotateProgress = 0;
@@ -85,12 +81,13 @@ export class Star {
             // this.rotateProgress = this.rotateProgress % Math.PI;
         });
 
-        this.curve = new BezierCurveEase(0.32, -0.73, 0.69, 1.59);
+        this.curve = new BezierCurveEase(.76, .01, .51, 1.33);
         // this.curve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
     }
 
     setTemperature(temperature: number) {
         let color = this.getColorFromTemperature(temperature);
+        this.color = color.toColor4();
         this.heartMaterial.emissiveColor = color;
         this.surfaceMaterial.reflectivityColor = color;
         this.secondLight.diffuse = color;

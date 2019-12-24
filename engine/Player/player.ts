@@ -3,10 +3,12 @@ import { GravityField } from '../System/gravityField';
 import { Star } from '../Entity/star'
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from '../Entity/planet';
-import { StarDust, StarDustInterface } from '../Entity/starDust';
 
-import { Vector2 } from '@babylonjs/core/Maths/math';
+import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
+import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
+import { Texture } from '@babylonjs/core/Materials/Textures/texture';
+import dustTexture from '../../asset/circle_05.png';
 
 export class Player extends Star {
 
@@ -24,6 +26,8 @@ export class Player extends Star {
 
         this.fixeCurve = new CubicEase();
         this.fixeCurve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
+        this.createParticle();
+        this.setUpdateFunction();
     }
 
     position: Vector2 = Vector2.Zero();
@@ -31,7 +35,12 @@ export class Player extends Star {
     velocity = 1;
     move(mousepos: Vector2) {
         this.direction = new Vector2(mousepos.y * this.velocity, mousepos.x * this.velocity);
-        this.position = this.position.add(this.direction);
+        let pos = this.position.add(this.direction);
+        this.setPosition(pos);
+    }
+
+    setPosition(pos: Vector2) {
+        this.position = pos;
         this.pivot.position.x = this.position.x;
         this.pivot.position.z = this.position.y;
         this.gravityField.setStarPoint(this.key, this.position, this.size);
@@ -89,5 +98,83 @@ export class Player extends Star {
             planet.mesh.dispose();
             this.velocity = 1;
         });
+    }
+
+    particle: ParticleSystem;
+    createParticle() {
+        this.particle = new ParticleSystem("particle", 50, this.system.scene);
+        this.particle.emitRate = 50;
+
+        // this.particle.particleTexture = meshesTextures.stream;
+        this.particle.emitter = this.pivot;
+        this.particle.gravity = new Vector3(0, -0.5, 0);
+        this.particle.minEmitBox = new Vector3(0, 0, 0); // Starting all from
+        this.particle.maxEmitBox = new Vector3(0, 0, 0);
+        this.particle.minLifeTime = 1;
+        this.particle.maxLifeTime = 1;
+
+        this.particle.minSize = 1.0;
+        this.particle.maxSize = 1.0;
+
+        this.particle.limitVelocityDamping = 0.9;
+
+        // Start rotation
+        this.particle.minInitialRotation = -Math.PI / 2;
+        this.particle.maxInitialRotation = Math.PI / 2;
+
+        this.particle.particleTexture = new Texture(dustTexture, this.system.scene);
+        this.particle.blendMode = ParticleSystem.BLENDMODE_MULTIPLYADD;
+
+        this.particle.renderingGroupId = 2;
+    }
+
+    setUpdateFunction() {
+        // Use direction to initialize random value
+        this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
+            Vector3.TransformNormalFromFloatsToRef(Math.random(), 0, Math.random(), worldMatrix, directionToUpdate);
+        }
+        // Must keep that because we need function word on particle
+        let that = this;
+        this.particle.updateFunction = function(particles) {
+            let changeposition: Vector2 = that.position.subtract(that.target.position);
+            let changecolor: Color4 = that.color.subtract(that.target.color);
+
+            for (var index = 0; index < particles.length; index++) {
+                var particle = particles[index];
+                particle.age += this._scaledUpdateSpeed;
+
+                if (particle.age >= particle.lifeTime) { // Recycle
+                    particles.splice(index, 1);
+                    this._stockParticles.push(particle);
+                    index--;
+                    continue;
+                }
+                else {
+                    let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age, particle.age, particle.age, 1.0));
+                    particle.color = progresscolor.add(that.target.color);
+
+                    let progressposition: Vector2 = changeposition.multiply(new Vector2(particle.age, particle.age));
+                    let pos: Vector2 = that.target.position.add(progressposition);
+
+                    particle.position.x = pos.x + 2 * (particle.direction.x - 0.5) * (1 - particle.age);
+                    particle.position.z = pos.y + 2 * (particle.direction.z - 0.5) * (1 - particle.age);
+                }
+            } 
+        }
+    }
+
+    target: Player;
+    absorbing = false;
+    absorbTarget(target: Player) {
+        if (this.absorbing) return;
+        this.absorbing = true;
+        this.target = target;
+        this.particle.start();
+    }
+
+    absorbStop() {
+        if (!this.absorbing) return;
+        this.absorbing = false;
+        this.particle.stop();
     }
 }

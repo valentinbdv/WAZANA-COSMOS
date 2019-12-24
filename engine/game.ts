@@ -5,6 +5,7 @@ import { GravityField } from './System/gravityField';
 import { PlanetField } from './System/planetField';
 import { IAPlayer } from './Player/iaPlayer';
 import { RealPlayer } from './Player/realPlayer';
+import { Vector2 } from '@babylonjs/core/Maths/math';
 
 export interface GameInterface {
     canvas?: HTMLCanvasElement,
@@ -23,17 +24,11 @@ export class GameEngine {
         this.planetField = new PlanetField(this.system);
         let player = new RealPlayer(this.system, this.gravityField);
         this.planetField.addPlayer(player);
-        new IAPlayer(this.system, this.gravityField);
-        new IAPlayer(this.system, this.gravityField);
-
-        // let star1 = new Star(this.system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: -5 } });
-        // let star2 = new Star(this.system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 5 } });
-        // star1.secondLight.excludedMeshes.push(this.gravityField.ribbon);
-        // star2.secondLight.excludedMeshes.push(this.gravityField.ribbon);
-
-        // this.animation = new Animation(this.system.animationManager);
-        // this.animation.infinite(() => {
-        // });
+        let ia1 = new IAPlayer(this.system, this.gravityField);
+        this.planetField.addPlayer(ia1);
+        ia1.setPosition(new Vector2(10, 10));
+        ia1.setTemperature(25000);
+        // new IAPlayer(this.system, this.gravityField);
 
         this.system.addSlider(3000, 30000, (value) => {
             player.setTemperature(value);
