@@ -17,6 +17,7 @@ import '@babylonjs/core/Misc/dds';
 import '@babylonjs/core/Materials/Textures/Loaders/ddsTextureLoader';
 import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
+import dustTexture from '../../asset/circle_05.png';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -71,6 +72,8 @@ export class System {
      */
     canvas: HTMLCanvasElement;
 
+    dustTexture: Texture;
+
     /**
      * Creates a new System
      * @param canvas Element where the scene will be drawn
@@ -96,6 +99,9 @@ export class System {
         this.addSky();
         // this.addLight();
         this.addControl();
+
+        this.dustTexture = new Texture(dustTexture, this.scene);
+
     }
 
     addControl() {

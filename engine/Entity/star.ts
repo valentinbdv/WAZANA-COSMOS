@@ -221,17 +221,19 @@ export class Star {
         this.cycleProgress = 1 / Math.sqrt(this.size);
     }
 
-    updateSize(size: number) {
+    updateSize(size: number, time?:number, callback?: Function) {
         let currentsize = this.size;
         let change = size - currentsize;
-        this.shineAnimation.simple(40, (count, perc) => {
-            let y = 1 - 4 * Math.pow(perc - 0.5, 2);
+        let animTime = (time)? time : 20;
+        this.shineAnimation.simple(animTime, (count, perc) => {
+            let y = Math.min(perc, 1 - perc);
             this.setReflectionLevel(y);
             let newsize = currentsize + this.curve.ease(perc) * change;
             this.setSize(newsize);
         }, () => {
             this.setSize(size);
             this.setReflectionLevel(0);
+            if (callback) callback();
         });
     }
 
@@ -266,5 +268,14 @@ export class Star {
     fixePlanet(planet: Planet) {
         planet.setParent(this.pivot);
         this.planets.push(planet);
+    }
+
+    dispose() {
+        this.pivot.dispose();
+        this.heart.dispose();
+        this.heartMaterial.dispose();
+        this.surface.dispose();
+        this.surfaceMaterial.dispose();
+        this.light.dispose();
     }
 }

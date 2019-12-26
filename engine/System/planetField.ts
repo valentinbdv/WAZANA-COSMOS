@@ -82,22 +82,26 @@ export class PlanetField {
     checkPlanets() {
         for (let i = 0; i < this.players.length; i++) {
             const player = this.players[i];
-            
+
             for (let i = 0; i < this.planets.length; i++) {
                 const planet = this.planets[i];
-                let dist = Vector2.Distance(planet.position, player.position);
-                if (dist < player.size * 20) {
+                let dist = Math.sqrt(Vector2.Distance(planet.position, player.position));
+                if (dist < player.size * 5) {
                     this.removePlanet(planet);
                     player.addPlanet(planet);
+                } else if (dist > 100) {
+                    this.removePlanet(planet);
                 }
             }
 
             for (let i = 0; i < this.dusts.length; i++) {
                 const dust = this.dusts[i];
-                let dist = Vector2.Distance(dust.position, player.position);
+                let dist = Math.sqrt(Vector2.Distance(dust.position, player.position));
                 if (dist < player.size * 3) {
                     this.removeDust(dust);
                     player.addDust();
+                } else if (dist > 100) {
+                    this.removeDust(dust);
                 }
             }
 
@@ -105,8 +109,8 @@ export class PlanetField {
             let target: Player;
             for (let i = 0; i < this.players.length; i++) {
                 const otherplayer = this.players[i];
-                let dist = Vector2.Distance(player.position, otherplayer.position);
-                if (otherplayer.key != player.key && player.size > otherplayer.size && dist < (player.size + otherplayer.size) * 10) {
+                let dist = Math.sqrt(Vector2.Distance(player.position, otherplayer.position));
+                if (otherplayer.key != player.key && player.size > otherplayer.size && dist < (player.size + otherplayer.size) * 3) {
                     if (minDist > player.size + otherplayer.size) {
                         minDist = player.size + otherplayer.size;
                         target = otherplayer;
@@ -116,7 +120,13 @@ export class PlanetField {
             }
             if (target) player.absorbTarget(target);
             else player.absorbStop();
+
+            if (player.size < 0.1) {
+                player.explode();
+                this.removePlayer(player);
+            }
         }
+    }
     }
 
     players: Array<Player> = [];

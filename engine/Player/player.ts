@@ -7,8 +7,6 @@ import { Planet, PlanetInterface } from '../Entity/planet';
 import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
-import { Texture } from '@babylonjs/core/Materials/Textures/texture';
-import dustTexture from '../../asset/circle_05.png';
 
 export class Player extends Star {
 
@@ -27,7 +25,7 @@ export class Player extends Star {
         this.fixeCurve = new CubicEase();
         this.fixeCurve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
         this.createParticle();
-        this.setUpdateFunction();
+        this.setAbsobUpdateFunction();
     }
 
     position: Vector2 = Vector2.Zero();
@@ -57,11 +55,6 @@ export class Player extends Star {
             this.animatePlanetToStar(planet, radius, velocity);
         }
         this.fixePlanet(planet);
-    }
-
-    addDust() {
-        let newSize = this.size + 0.02;
-        this.updateSize(newSize);
     }
     
     fixeAnimationLength = 50;
@@ -122,14 +115,16 @@ export class Player extends Star {
         this.particle.minInitialRotation = -Math.PI / 2;
         this.particle.maxInitialRotation = Math.PI / 2;
 
-        this.particle.particleTexture = new Texture(dustTexture, this.system.scene);
+        this.particle.particleTexture = this.system.dustTexture;
         this.particle.blendMode = ParticleSystem.BLENDMODE_MULTIPLYADD;
 
         this.particle.renderingGroupId = 2;
     }
 
-    setUpdateFunction() {
+    setAbsobUpdateFunction() {
         // Use direction to initialize random value
+        this.particle.emitRate = 50;
+        // this.particle.manualEmitCount = null;
         this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
             Vector3.TransformNormalFromFloatsToRef(Math.random(), 0, Math.random(), worldMatrix, directionToUpdate);
         }
@@ -148,8 +143,7 @@ export class Player extends Star {
                     this._stockParticles.push(particle);
                     index--;
                     continue;
-                }
-                else {
+                } else {
                     let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age, particle.age, particle.age, 1.0));
                     particle.color = progresscolor.add(that.target.color);
 
@@ -163,18 +157,96 @@ export class Player extends Star {
         }
     }
 
+    setExplodeUpdateFunction() {
+        // Use direction to initialize random value
+        this.particle.emitRate = null;
+        this.particle.manualEmitCount = 100;
+        this.particle.startPositionFunction = (worldMatrix: Matrix, startPosition: Vector3) => {
+            Vector3.TransformNormalFromFloatsToRef(0, 0, 0, worldMatrix, startPosition);
+        }
+
+        this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
+            Vector3.TransformNormalFromFloatsToRef(Math.random() * Math.PI * 2, 0, 0, worldMatrix, directionToUpdate);
+        }
+        // Must keep that because we need function word on particle
+        let that = this;
+        this.particle.updateFunction = function (particles) {
+            for (var index = 0; index < particles.length; index++) {
+                var particle = particles[index];
+                particle.age += this._scaledUpdateSpeed;
+
+                if (particle.age >= particle.lifeTime) { // Recycle
+                    particles.splice(index, 1);
+                    this._stockParticles.push(particle);
+                    index--;
+                    continue;
+                } else {
+                    particle.color = new Color4(that.color.r, that.color.g, that.color.b, 1 - particle.age);
+
+                    particle.position.x = that.position.x + Math.cos(particle.direction.x) * particle.age * 20;
+                    particle.position.z = that.position.y + Math.sin(particle.direction.x) * particle.age * 20;
+                    particle.position.y = 0.1;
+                }
+            }
+        }
+    }
+
     target: Player;
     absorbing = false;
+    absorbingInt;
     absorbTarget(target: Player) {
         if (this.absorbing) return;
         this.absorbing = true;
         this.target = target;
         this.particle.start();
+        this.absorbingInt = setInterval(() => {
+            this.target.decrease();
+            this.increase();
+        }, 500);
     }
 
     absorbStop() {
         if (!this.absorbing) return;
         this.absorbing = false;
         this.particle.stop();
+        clearInterval(this.absorbingInt);
+    }
+
+    addDust() {
+        this.changeSize(0.01);
+    }
+
+    decrease() {
+        this.changeSize(-0.02);
+    }
+
+    increase() {
+        this.changeSize(0.005);
+    }
+
+    changeSize(change: number) {
+        if (this.exploded) return;
+        let newSize = this.size + change;
+        this.updateSize(newSize);
+    }
+
+    exploded = false;
+
+    explode() {
+        this._explode();
+    }
+    _explode() {
+        this.exploded = true;
+        this.updateSize(20, 50, () => {
+            this.updateSize(0, 50, () => {
+                setTimeout(() => {
+                    // Wait for the particle effect to end
+                    this.dispose();
+                    this.particle.dispose();
+                }, 2000);
+            });
+            this.setExplodeUpdateFunction();
+            this.particle.start()
+        });
     }
 }

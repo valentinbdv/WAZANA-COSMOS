@@ -24,8 +24,10 @@ export class RealPlayer extends Player {
     addMouseEvent() {
         this.mouseCatcher = new MouseCatcher(this.system.animationManager);
         this.mouseCatcher.addListener((mousepos: Vector2, step: Vector2) => {
-            step = step.multiplyInPlace(new Vector2(5, 5));
-            if (this.followMouse) this.move(step);
+            if (this.followMouse) {
+                step = step.multiplyInPlace(new Vector2(5, 5));
+                this.move(step);
+            }
         });
 
         // setTimeout(() => {
@@ -37,5 +39,10 @@ export class RealPlayer extends Player {
         }, 500);
 
         this.mouseCatcher.start();
+    }
+
+    explode() {
+        this.followMouse = false;
+        this._explode();
     }
 }
