@@ -24,6 +24,7 @@ export class GameEngine {
         this.planetField = new PlanetField(this.system);
         let player = new RealPlayer(this.system, this.gravityField);
         this.planetField.addPlayer(player);
+        this.planetField.setPlayerToFollow(player);
         let ia1 = new IAPlayer(this.system, this.gravityField);
         this.planetField.addPlayer(ia1);
         ia1.setPosition(new Vector2(10, 10));

@@ -21,7 +21,7 @@ export class PlanetField {
     constructor(system: System) {
         this.system = system;
 
-        this.createRandomMap();
+        this.checkRessourceMap(new Vector2(0, 0));
         
         let frame = 0;
         this.system.scene.registerBeforeRender(() => {
@@ -30,7 +30,8 @@ export class PlanetField {
                 planet.mesh.rotation.y += 0.01;
             }
             if (frame == 20) {
-                this.checkPlanets();
+                this.checkPlayers();
+                this.checkRessourceMap(this.playerToFollow.position);
                 frame = 0;
             }
             frame++;
@@ -65,43 +66,62 @@ export class PlanetField {
         dust.mesh.dispose();
     }
 
-    createRandomMap() {
-        for (let i = 0; i < 10; i++) {
+    dustNeeded = 100;
+    planetNeeded = 10;
+    checkRessourceMap(center: Vector2) {
+        for (let i = 0; i < this.planets.length; i++) {
+            const planet = this.planets[i];
+            let dist = Math.sqrt(Vector2.Distance(planet.position, center));
+            if (dist > 10) this.removePlanet(planet);
+        }
+
+        for (let i = 0; i < this.dusts.length; i++) {
+            const dust = this.dusts[i];
+            let dist = Math.sqrt(Vector2.Distance(dust.position, center));
+            if (dist > 10) this.removeDust(dust);
+        }
+
+        let newPlanetNeeded = this.planetNeeded - this.planets.length;
+        for (let i = 0; i < newPlanetNeeded; i++) {
             let newPlanet = this.addPlanet();     
-            let pos = new Vector2((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100);
+            let pos = this.getNewRandomPosition(center);
             newPlanet.setPosition(pos);
         }
 
-        for (let i = 0; i < 50; i++) {
+        let newDustNeeded = this.dustNeeded - this.dusts.length;
+        for (let i = 0; i < newDustNeeded; i++) {
             let newPlanet = this.addDust();
-            let pos = new Vector2((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100);
+            let pos = this.getNewRandomPosition(center);
             newPlanet.setPosition(pos);
         }
     }
 
-    checkPlanets() {
+    getNewRandomPosition(center: Vector2): Vector2 {
+        let sign1 = (Math.random() > 0.5)? 1 : -1;
+        let sign2 = (Math.random() > 0.5)? 1 : -1;
+        let x = center.x + sign1 * (5 + (Math.random()/2) * 100);
+        let y = center.y + sign2 * (5 + (Math.random()/2) * 100);
+        return new Vector2(x, y);
+    }
+
+    checkPlayers() {
         for (let i = 0; i < this.players.length; i++) {
             const player = this.players[i];
-
             for (let i = 0; i < this.planets.length; i++) {
                 const planet = this.planets[i];
                 let dist = Math.sqrt(Vector2.Distance(planet.position, player.position));
                 if (dist < player.size * 5) {
                     this.removePlanet(planet);
                     player.addPlanet(planet);
-                } else if (dist > 100) {
-                    this.removePlanet(planet);
                 }
             }
 
             for (let i = 0; i < this.dusts.length; i++) {
                 const dust = this.dusts[i];
                 let dist = Math.sqrt(Vector2.Distance(dust.position, player.position));
-                if (dist < player.size * 3) {
+                if (dist < player.size * 2.5) {
                     this.removeDust(dust);
                     player.addDust();
-                } else if (dist > 100) {
-                    this.removeDust(dust);
                 }
             }
 
@@ -127,6 +147,10 @@ export class PlanetField {
             }
         }
     }
+
+    playerToFollow: Player;
+    setPlayerToFollow(player: Player) {
+        this.playerToFollow = player;
     }
 
     players: Array<Player> = [];
