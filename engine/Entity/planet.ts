@@ -4,27 +4,18 @@ import { PearlMesh } from './pearlMesh';
 import { Vector3, Color3, Vector2 } from '@babylonjs/core/Maths/math';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
+import { PositionEntity, PositionEntityInterface } from './positionEntity';
 
-export interface PlanetInterface {
-    texture?: string,
+export interface PlanetInterface extends PositionEntityInterface {
     color ? : Array < number >,
-    size ? : number,
-    damage?: number,
     radius ? : number,
     velocity ? : number,
-    // life?: number,
 }
 
-export class Planet {
-
-    key: string;
-
-    system: System;
+export class Planet extends PositionEntity {
 
     mesh: PearlMesh;
     color?: Array<number>;
-    size?: number;
-    damage?: number;
     radius?: number;
     velocity?: number;
 
@@ -32,8 +23,7 @@ export class Planet {
     cycle = 0; // Around its star % Math.PI
 
     constructor(system: System, options: PlanetInterface) {
-        this.system = system;
-        this.key = 'planet' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        super('planet', system, options);
 
         let color = Color3.FromInts(5 + options.color[0] / 20, 5 + options.color[1] / 20, 5 + options.color[2] / 20);
         this.addMesh(color);
@@ -68,6 +58,7 @@ export class Planet {
     }
 
     setSize(size: number) {
+        this._setSize(size);
         let newsize = Math.sqrt(size / 2);
         let sizeVector = new Vector3(newsize, newsize, newsize);
         this.mesh.scaling = sizeVector;
@@ -75,7 +66,7 @@ export class Planet {
 
     position: Vector2;
     setPosition(pos: Vector2) {
-        this.position = pos;
+        this._setPosition(pos);
         this.mesh.position.x = pos.x;
         this.mesh.position.z = pos.y;
         this.mesh.position.y = 1;

@@ -39,8 +39,8 @@ export class Player extends Star {
 
     setPosition(pos: Vector2) {
         this.position = pos;
-        this.pivot.position.x = this.position.x;
-        this.pivot.position.z = this.position.y;
+        this.movingMesh.position.x = this.position.x;
+        this.movingMesh.position.z = this.position.y;
         this.gravityField.setStarPoint(this.key, this.position, this.size);
     }
 
@@ -99,7 +99,7 @@ export class Player extends Star {
         this.particle.emitRate = 50;
 
         // this.particle.particleTexture = meshesTextures.stream;
-        this.particle.emitter = this.pivot;
+        this.particle.emitter = this.movingMesh;
         this.particle.gravity = new Vector3(0, -0.5, 0);
         this.particle.minEmitBox = new Vector3(0, 0, 0); // Starting all from
         this.particle.maxEmitBox = new Vector3(0, 0, 0);

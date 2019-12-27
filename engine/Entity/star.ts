@@ -1,42 +1,34 @@
-import { point3D } from '../System/interface';
 import { System } from '../System/system';
 import { Animation } from '../System/animation';
-import { Planet, PlanetInterface } from './planet';
+import { Planet } from './planet';
+import { MovingEntity, MovingEntityInterface } from './movingEntity';
 
-import { Vector2, Vector3, Color3, Color4 } from '@babylonjs/core/Maths/math';
+import { Vector3, Color3, Color4 } from '@babylonjs/core/Maths/math';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { MeshBuilder } from '@babylonjs/core/Meshes/MeshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/Mesh';
-import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { IEasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/easing';
 
 // https://www.youtube.com/watch?v=i4RtO_qIQHk
 
-export interface StarInterface {
+export interface StarInterface extends MovingEntityInterface {
     temperature: number,
-    size: number,
     texture?: string,
     number?: number,
     life?: number,
     power?: number,
-    position: point3D,
-    velocity?: number,
 }
 
-export class Star {
+export class Star extends MovingEntity {
 
-    key: string;
-
-    system: System;
     shineAnimation: Animation;
     curve: IEasingFunction;
 
     texture: string;
     number: number;
     color: Color4;
-    size: number;
     life: number;
     power: number;
 
@@ -44,21 +36,17 @@ export class Star {
     cycleProgress = 0;
     
     constructor(system: System, options: StarInterface) {
-        this.system = system;
+        super('star', system, options);
 
         this.shineAnimation = new Animation(this.system.animationManager);
 
-        this.key = 'star' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        this.addPivot();
-
-        // let color = Color3.FromInts(options.color[0], options.color[1], options.color[2]);
         this.addHeart();
         this.addSurface();
         this.addLight();
         this.addSecondLight();
 
         let p = options.position;
-        this.pivot.position = new Vector3(p.x, p.y, p.z);
+        this.movingMesh.position = new Vector3(p.x, p.y, p.z);
         this.setSize(options.size);
 
         // this.setSurfaceColor(new Color3(0, 0, 0));
@@ -109,11 +97,6 @@ export class Star {
         }
     }
 
-    pivot: AbstractMesh;
-    addPivot() {
-        this.pivot = new AbstractMesh(this.key + "star", this.system.scene);
-    }
-
     heart: Mesh;
     heartMaterial: StandardMaterial;
     addHeart() {
@@ -126,7 +109,7 @@ export class Star {
         this.system.glowLayer.addIncludedOnlyMesh(this.heart);
         this.heart.material = this.heartMaterial;
         this.heart.isBlocker = false;
-        this.heart.parent = this.pivot;
+        this.heart.parent = this.movingMesh;
         // this.heart.isVisible = false;
     }
 
@@ -165,7 +148,7 @@ export class Star {
         this.surfaceMaterial.microSurface = 1;
 
         this.surface.material = this.surfaceMaterial;
-        this.surface.parent = this.pivot;
+        this.surface.parent = this.movingMesh;
         this.surface.isBlocker = false;
         // console.log(this.surfaceMaterial);
     }
@@ -176,7 +159,7 @@ export class Star {
         this.light.intensity = 1000;
         this.light.radius = 0.1;
         this.light.shadowEnabled = false;
-        this.light.parent = this.pivot;
+        this.light.parent = this.movingMesh;
         this.light.includedOnlyMeshes.push(this.surface)	
         // console.log(this.light);
     }
@@ -187,7 +170,7 @@ export class Star {
         this.secondLight.intensity = 50;
         this.secondLight.radius = 10;
         this.secondLight.shadowEnabled = false;
-        this.secondLight.parent = this.pivot;
+        this.secondLight.parent = this.movingMesh;
         this.secondLight.excludedMeshes.push(this.surface)
         // console.log(this.secondLight);
     }
@@ -211,7 +194,7 @@ export class Star {
     }
 
     setSize(size: number) {
-        this.size = size;
+        this._setSize(size);
         let newsize = Math.sqrt(size);
         let sizeVector = new Vector3(newsize, newsize, newsize);
         this.heart.scaling = sizeVector;
@@ -266,12 +249,12 @@ export class Star {
 
     planets: Array<Planet> = [];
     fixePlanet(planet: Planet) {
-        planet.setParent(this.pivot);
+        planet.setParent(this.movingMesh);
         this.planets.push(planet);
     }
 
     dispose() {
-        this.pivot.dispose();
+        this._dispose();
         this.heart.dispose();
         this.heartMaterial.dispose();
         this.surface.dispose();

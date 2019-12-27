@@ -3,46 +3,37 @@ import { MouseCatcher } from './mouseCatcher';
 import { GravityField } from '../System/gravityField';
 import { Player } from './player';
 
-import { Vector2 } from '@babylonjs/core/Maths/math';
 import hotkeys from 'hotkeys-js';
 
 export class RealPlayer extends Player {
 
-    mouseCatcher: MouseCatcher;
+    moveCatcher: MouseCatcher;
 
     constructor(system: System, gravityField: GravityField) {
         super(system, gravityField);
         this.addMouseEvent();
-        this.system.camera.parent = this.pivot;
+        this.system.camera.parent = this.movingMesh;
 
         hotkeys('space', (event, param) => {
             this.launchPlanet();
         });
     }
 
-    followMouse = true;
     addMouseEvent() {
-        this.mouseCatcher = new MouseCatcher(this.system.animationManager);
-        this.mouseCatcher.addListener((mousepos: Vector2, step: Vector2) => {
-            if (this.followMouse) {
-                step = step.multiplyInPlace(new Vector2(5, 5));
-                this.move(step);
-            }
-        });
+        let mouseCatcher = new MouseCatcher(this.system.animationManager);
+        this.addCactcher(mouseCatcher);
 
         // setTimeout(() => {
-        //     this.followMouse = false;
+        //     this.moving = false;
         // }, 2000);
 
         setInterval(() => {
             this.gravityField.setCenterMap(this.position);
         }, 500);
-
-        this.mouseCatcher.start();
     }
 
     explode() {
-        this.followMouse = false;
+        this.moving = false;
         this._explode();
     }
 }

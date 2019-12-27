@@ -7,8 +7,6 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 
 export class IAPlayer extends Player {
 
-    moveCatcher: MoveCatcher;
-
     constructor(system: System, gravityField: GravityField) {
         super(system, gravityField);
         this.startMovingAround();
@@ -16,14 +14,9 @@ export class IAPlayer extends Player {
 
     moveInt;
     startMovingAround() {
-        this.moveCatcher = new MoveCatcher(this.system.animationManager);
-        this.moveCatcher.addListener((pos: Vector2, step: Vector2) => {
-            step = step.multiplyInPlace(new Vector2(5, 5));
-            this.move(step);
-        });
-
-        this.moveCatcher.start();
-
+        let moveCatcher = new MoveCatcher(this.system.animationManager);
+        this.addCactcher(moveCatcher);
+        
         this.moveInt = setInterval(() => {
             let move = new Vector2((Math.random() - 0.5)/5, (Math.random() - 0.5)/5);
             this.moveCatcher.catch(move);

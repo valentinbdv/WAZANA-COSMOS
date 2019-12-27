@@ -1,32 +1,23 @@
-import { point3D } from '../System/interface';
 import { System } from '../System/system';
 
 import { Vector2, Vector3, Color3 } from '@babylonjs/core/Maths/math';
 import { MeshBuilder } from '@babylonjs/core/Meshes/MeshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/Mesh';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
+import { PositionEntity, PositionEntityInterface } from './positionEntity';
 
-// https://www.youtube.com/watch?v=i4RtO_qIQHk
-
-export interface StarDustInterface {
+export interface StarDustInterface extends PositionEntityInterface {
     temperature: number,
-    size: number,
-    position?: point3D,
 }
 
-export class StarDust {
+export class StarDust extends PositionEntity {
 
-    key: string;
-    system: System;
-    
     constructor(system: System, options: StarDustInterface) {
-        this.system = system;
+        super('dust', system, options);
 
-        this.key = 'stardust'+Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.addDust();
         this.setSize(options.size);
         this.setTemperature(options.temperature);
-
     }
 
     setTemperature(temperature: number) {
@@ -63,17 +54,15 @@ export class StarDust {
         // this.mesh.isBlocker = false;
     }
 
-    size: number;
     setSize(size: number) {
-        this.size = size;
+        this._setSize(size);
         let newsize = Math.sqrt(size);
         let sizeVector = new Vector3(newsize, newsize, newsize);
         this.mesh.scaling = sizeVector;
     }
 
-    position: Vector2;
     setPosition(pos: Vector2) {
-        this.position = pos;
+        this._setPosition(pos);
         this.mesh.position.x = pos.x;
         this.mesh.position.z = pos.y;
         this.mesh.position.y = 1;
