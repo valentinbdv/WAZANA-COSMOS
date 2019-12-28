@@ -7,6 +7,7 @@ import { Planet, PlanetInterface } from '../Entity/planet';
 import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
+import { BlackHole } from '../Entity/blackHole';
 
 export class Player extends Star {
 
@@ -14,6 +15,7 @@ export class Player extends Star {
     key: string;
     fixeAnimation: Animation;
     fixeCurve: IEasingFunction;
+    particleCurve: IEasingFunction;
 
     constructor(system: System, gravityField: GravityField) {
         super(system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 0 } });
@@ -24,8 +26,9 @@ export class Player extends Star {
 
         this.fixeCurve = new CubicEase();
         this.fixeCurve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
+
+        this.particleCurve = new CubicEase();
         this.createParticle();
-        this.setAbsobUpdateFunction();
     }
 
     position: Vector2 = Vector2.Zero();
@@ -106,8 +109,8 @@ export class Player extends Star {
         this.particle.minLifeTime = 1;
         this.particle.maxLifeTime = 1;
 
-        this.particle.minSize = 1.0;
-        this.particle.maxSize = 1.0;
+        this.particle.minSize = 0.5;
+        this.particle.maxSize = 0.5;
 
         this.particle.limitVelocityDamping = 0.9;
 
@@ -147,13 +150,49 @@ export class Player extends Star {
                     let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age, particle.age, particle.age, 1.0));
                     particle.color = progresscolor.add(that.target.color);
 
-                    let progressposition: Vector2 = changeposition.multiply(new Vector2(particle.age, particle.age));
+                    let posprogress = that.particleCurve.ease(particle.age);
+                    let progressposition: Vector2 = changeposition.multiply(new Vector2(posprogress, posprogress));
                     let pos: Vector2 = that.target.position.add(progressposition);
+
+                    particle.position.x = pos.x + 2 * (particle.direction.x - 0.5) * (1 - posprogress);
+                    particle.position.z = pos.y + 2 * (particle.direction.z - 0.5) * (1 - posprogress);
+                }
+            } 
+        }
+    }
+
+    setGetAbsobUpdateFunction() {
+        // Use direction to initialize random value
+        this.particle.emitRate = 50;
+        // this.particle.manualEmitCount = null;
+        this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
+            Vector3.TransformNormalFromFloatsToRef(Math.random(), 0, Math.random(), worldMatrix, directionToUpdate);
+        }
+        // Must keep that because we need function word on particle
+        let that = this;
+        this.particle.updateFunction = function (particles) {
+            let changeposition: Vector2 = that.aborber.position.subtract(that.position);
+
+            for (var index = 0; index < particles.length; index++) {
+                var particle = particles[index];
+                particle.age += this._scaledUpdateSpeed;
+
+                if (particle.age >= particle.lifeTime) { // Recycle
+                    particles.splice(index, 1);
+                    this._stockParticles.push(particle);
+                    index--;
+                    continue;
+                } else {
+                    particle.color = new Color4(that.color.r, that.color.g, that.color.b, 1 - particle.age);
+
+                    let progressposition: Vector2 = changeposition.multiply(new Vector2(particle.age, particle.age));
+                    let pos: Vector2 = that.position.add(progressposition);
 
                     particle.position.x = pos.x + 2 * (particle.direction.x - 0.5) * (1 - particle.age);
                     particle.position.z = pos.y + 2 * (particle.direction.z - 0.5) * (1 - particle.age);
+                    particle.position.y = 1 - that.particleCurve.ease(particle.age) * 50;
                 }
-            } 
+            }
         }
     }
 
@@ -192,12 +231,15 @@ export class Player extends Star {
     }
 
     target: Player;
+    aborber: BlackHole;
     absorbing = false;
     absorbingInt;
     absorbTarget(target: Player) {
         if (this.absorbing) return;
+        this.absorbStop();
         this.absorbing = true;
         this.target = target;
+        this.setAbsobUpdateFunction();
         this.particle.start();
         this.absorbingInt = setInterval(() => {
             this.target.decrease();
@@ -205,11 +247,23 @@ export class Player extends Star {
         }, 500);
     }
 
+    getAbsorbByTarget(aborber: BlackHole) {
+        if (this.absorbing) return;
+        this.absorbStop();
+        this.absorbing = true;
+        this.aborber = aborber;
+        this.setGetAbsobUpdateFunction();
+        this.particle.start();
+        this.absorbingInt = setInterval(() => {
+            this.changeSize(-0.05);
+        }, 500);
+    }
+
     absorbStop() {
         if (!this.absorbing) return;
-        this.absorbing = false;
         this.particle.stop();
         clearInterval(this.absorbingInt);
+        this.absorbing = false;
     }
 
     addDust() {
@@ -225,28 +279,52 @@ export class Player extends Star {
     }
 
     changeSize(change: number) {
-        if (this.exploded) return;
+        if (this.died) return;
         let newSize = this.size + change;
         this.updateSize(newSize);
     }
 
-    exploded = false;
-
-    explode() {
-        this._explode();
+    explode(callback: Function) {
+        this._explode(callback);
     }
-    _explode() {
-        this.exploded = true;
-        this.updateSize(20, 50, () => {
-            this.updateSize(0, 50, () => {
+    _explode(callback: Function) {
+        this.absorbStop();
+        this.die();
+        this.updateSize(40, 80, () => {
+            this.updateSize(0, 30, () => {
                 setTimeout(() => {
                     // Wait for the particle effect to end
                     this.dispose();
                     this.particle.dispose();
                 }, 2000);
+                this.setExplodeUpdateFunction();
+                this.particle.start();
+                if (callback) callback();
             });
-            this.setExplodeUpdateFunction();
-            this.particle.start()
         });
+    }
+
+    dive() {
+        this.die();
+        this.particle.stop();
+        let changeposition: Vector2 = this.aborber.position.subtract(this.position);
+        
+        this.fixeAnimation.simple(this.fixeAnimationLength, (count, perc) => {
+            let progressposition: Vector2 = changeposition.multiply(new Vector2(perc, perc));
+            let pos: Vector2 = this.position.add(progressposition);
+
+            this.movingMesh.position.x = pos.x;
+            this.movingMesh.position.z = pos.y;
+            this.movingMesh.position.y = 1 - this.particleCurve.ease(perc) * 50;
+        }, () => {
+            this.dispose();
+        });
+    }
+    
+    died = false;
+    die() {
+        this.moving = false;
+        this.gravityField.eraseStar(this.key);
+        this.died = true;
     }
 }

@@ -32,8 +32,13 @@ export class RealPlayer extends Player {
         }, 500);
     }
 
-    explode() {
+    dispose() {
+    }
+
+    died = false;
+    die() {
         this.moving = false;
-        this._explode();
+        this.died = true;
+        this.system.camera.parent = null;
     }
 }

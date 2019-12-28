@@ -6,6 +6,8 @@ import remove from 'lodash/remove';
 import { Planet, PlanetInterface } from '../Entity/planet';
 import { StarDust, StarDustInterface } from '../Entity/starDust';
 import { Player } from '../player/player';
+import { BlackHole } from '../Entity/blackHole';
+import { GravityField } from './gravityField';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -17,9 +19,11 @@ export class PlanetField {
 
     system: System;
     curve: IEasingFunction;
+    gravityField: GravityField;
 
-    constructor(system: System) {
+    constructor(system: System, gravityField: GravityField) {
         this.system = system;
+        this.gravityField = gravityField;
 
         this.checkRessourceMap(new Vector2(0, 0));
         
@@ -38,6 +42,20 @@ export class PlanetField {
         });
     }
 
+    playerToFollow: Player;
+    setPlayerToFollow(player: Player) {
+        this.playerToFollow = player;
+    }
+
+    players: Array<Player> = [];
+    addPlayer(player: Player) {
+        this.players.push(player);
+    }
+
+    removePlayer(player: Player) {
+        remove(this.players, (p) => { return player.key == p.key })
+    }
+
     planets: Array<Planet> = [];
     addPlanet() {
         let planetNumber = this.planets.length;
@@ -50,7 +68,7 @@ export class PlanetField {
     }
 
     removePlanet(planet: Planet) {
-        remove(this.planets, (p) => { return planet.key == p.key })
+        remove(this.planets, (p) => { return planet.key == p.key });
     }
 
     dusts: Array<StarDust> = [];
@@ -64,6 +82,15 @@ export class PlanetField {
     removeDust(dust: StarDust) {
         remove(this.dusts, (p) => { return dust.key == p.key });
         dust.mesh.dispose();
+    }
+
+    blackHoles: Array<BlackHole> = [];
+    addBlackHole(blackHole: BlackHole) {
+        this.blackHoles.push(blackHole);
+    }
+
+    removeBlackHole(blackHole: BlackHole) {
+        remove(this.blackHoles, (p) => { return blackHole.key == p.key });
     }
 
     dustNeeded = 100;
@@ -107,58 +134,78 @@ export class PlanetField {
     checkPlayers() {
         for (let i = 0; i < this.players.length; i++) {
             const player = this.players[i];
-            for (let i = 0; i < this.planets.length; i++) {
-                const planet = this.planets[i];
-                let dist = Math.sqrt(Vector2.Distance(planet.position, player.position));
-                if (dist < player.size * 5) {
-                    this.removePlanet(planet);
-                    player.addPlanet(planet);
-                }
-            }
+            this.checkPlayerRessources(player);
+            this.checkAbsorbtion(player);
+            if (player.size < 0.1) this.playerDead(player);
+        }
+    }
 
-            for (let i = 0; i < this.dusts.length; i++) {
-                const dust = this.dusts[i];
-                let dist = Math.sqrt(Vector2.Distance(dust.position, player.position));
-                if (dist < player.size * 2.5) {
-                    this.removeDust(dust);
-                    player.addDust();
-                }
+    checkPlayerRessources(player: Player) {
+        for (let i = 0; i < this.planets.length; i++) {
+            const planet = this.planets[i];
+            let dist = Math.sqrt(Vector2.Distance(planet.position, player.position));
+            if (dist < player.size * 5) {
+                this.removePlanet(planet);
+                player.addPlanet(planet);
             }
+        }
 
-            let minDist = 1000000;
-            let target: Player;
-            for (let i = 0; i < this.players.length; i++) {
-                const otherplayer = this.players[i];
-                let dist = Math.sqrt(Vector2.Distance(player.position, otherplayer.position));
-                if (otherplayer.key != player.key && player.size > otherplayer.size && dist < (player.size + otherplayer.size) * 3) {
-                    if (minDist > player.size + otherplayer.size) {
-                        minDist = player.size + otherplayer.size;
-                        target = otherplayer;
-                    }
-                }
-                
-            }
-            if (target) player.absorbTarget(target);
-            else player.absorbStop();
-
-            if (player.size < 0.1) {
-                player.explode();
-                this.removePlayer(player);
+        for (let i = 0; i < this.dusts.length; i++) {
+            const dust = this.dusts[i];
+            let dist = Math.sqrt(Vector2.Distance(dust.position, player.position));
+            if (dist < player.size * 2.5) {
+                this.removeDust(dust);
+                player.addDust();
             }
         }
     }
 
-    playerToFollow: Player;
-    setPlayerToFollow(player: Player) {
-        this.playerToFollow = player;
+    checkAbsorbtion(player: Player) {
+        let blackHoleTest: BlackHole;
+        for (let i = 0; i < this.blackHoles.length; i++) {
+            const blackHole = this.blackHoles[i];
+            let dist = Math.sqrt(Vector2.Distance(blackHole.position, player.position));
+            if (dist < (player.size + blackHole.size) * 5) {
+                blackHoleTest = blackHole;
+            }
+        }
+
+        if (blackHoleTest) {
+            player.getAbsorbByTarget(blackHoleTest);
+        } else {
+            let minDist = 1000000;
+            let targetTest: Player;
+            for (let i = 0; i < this.players.length; i++) {
+                const otherplayer = this.players[i];
+                let dist = Math.sqrt(Vector2.Distance(player.position, otherplayer.position));
+                if (otherplayer.key != player.key && player.size > otherplayer.size && dist < player.size * 5) {
+                    if (minDist > player.size + otherplayer.size) {
+                        minDist = player.size + otherplayer.size;
+                        targetTest = otherplayer;
+                    }
+                }
+
+            }
+
+            if (targetTest) player.absorbTarget(targetTest);
+            else player.absorbStop();
+        }
     }
 
-    players: Array<Player> = [];
-    addPlayer(player: Player) {
-        this.players.push(player);
+    playerDead(player: Player) {
+        this.removePlayer(player);
+        if (player.aborber) {
+            player.dive();
+        } else {
+            player.explode(() => {
+                // if (Math.random() > 0.5 && this.blackHoles.length < 10) this.createBlackHole(player.position);
+                this.createBlackHole(player.position);
+            });
+        }
     }
 
-    removePlayer(player: Player) {
-        remove(this.players, (p) => {return player.key == p.key})
+    createBlackHole(pos: Vector2) {
+        let black = new BlackHole(this.system, this.gravityField, { position: {x: pos.x, z: pos.y, y:0}, size: 1 });
+        this.addBlackHole(black);
     }
 }

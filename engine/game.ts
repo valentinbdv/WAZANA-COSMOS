@@ -5,6 +5,7 @@ import { GravityField } from './System/gravityField';
 import { PlanetField } from './System/planetField';
 import { IAPlayer } from './Player/iaPlayer';
 import { RealPlayer } from './Player/realPlayer';
+import { BlackHole } from './Entity/blackHole';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
 export interface GameInterface {
@@ -21,7 +22,7 @@ export class GameEngine {
     constructor(starOptions: GameInterface) {
         this.system = new SystemUI(starOptions.canvas);
         this.gravityField = new GravityField(this.system);
-        this.planetField = new PlanetField(this.system);
+        this.planetField = new PlanetField(this.system, this.gravityField);
         let player = new RealPlayer(this.system, this.gravityField);
         this.planetField.addPlayer(player);
         this.planetField.setPlayerToFollow(player);
@@ -29,7 +30,9 @@ export class GameEngine {
         this.planetField.addPlayer(ia1);
         ia1.setPosition(new Vector2(10, 10));
         ia1.setTemperature(25000);
-        // new IAPlayer(this.system, this.gravityField);
+
+        // let black = new BlackHole(this.system, this.gravityField, { position: { x: 0, z: 0, y: 0 }, size: 1 });
+        // this.planetField.addBlackHole(black)
 
         this.system.addSlider(3000, 30000, (value) => {
             player.setTemperature(value);

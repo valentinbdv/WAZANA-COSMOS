@@ -86,7 +86,7 @@ export class GravityField {
     }
 
     mapDetail = 40;
-    mapSize = 150;
+    mapSize = 250;
     halfSize: number;
     halfDetail: number;
     step:number;
@@ -126,21 +126,21 @@ export class GravityField {
 
     pointDepth = 8;
     pointSize = 5;
-    setStarPoint(key:string, pos: Vector2, size: number) {
+    setStarPoint(key:string, pos: Vector2, size: number, depth?: number) {
         let StarToCenter = Vector2.Distance(pos, this.center);
         this.eraseStar(key);
-        if (StarToCenter + 10 * size * this.pointSize > this.halfSize) return;
+        if (StarToCenter + 5 * size * this.pointSize > this.halfSize) return;
         let mapPos = pos.subtract(this.center);
         let xRound = (Math.round(mapPos.x / this.step)) + this.halfDetail;
         let yRound = (Math.round(-mapPos.y / this.step)) + this.halfDetail;
         
         let alteredPoints: Array < Vector3 > = [];
-        let depth = size * this.pointDepth;
+        if (!depth) depth = size * this.pointDepth;
         let width = Math.round(size * this.pointSize * this.mapDetail / 20);
         let newKeysToPath = [];
         
-        for (let x = xRound - width; x < xRound + width; x++) {
-            for (let y = yRound - width; y < yRound + width; y++) {
+        for (let x = Math.max(xRound - width, 0); x < Math.min(xRound + width, this.mapDetail); x++) {
+            for (let y = Math.max(yRound - width, 0); y < Math.min(yRound + width, this.mapDetail); y++) {
                 let dist = Vector2.Distance(mapPos, new Vector2(x * this.step - this.halfSize, -(y * this.step - this.halfSize)));
                 let perc = this.curve.ease(dist / (size * 30));
                 let newY = Math.max(depth - depth * perc, 0);

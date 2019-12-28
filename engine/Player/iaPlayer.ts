@@ -23,8 +23,8 @@ export class IAPlayer extends Player {
         }, 2000);
     }
 
-    explode() {
+    explode(callback: Function) {
         clearInterval(this.moveInt);
-        this._explode();
+        this._explode(callback);
     }
 }
