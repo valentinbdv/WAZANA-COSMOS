@@ -155,7 +155,7 @@ export class PlanetField {
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Vector2.Distance(dust.position, player.position);
-            if (dist < player.size * 2) {
+            if (dist < player.size * 3) {
                 this.removeDust(dust);
                 player.addDust(dust.size);
             }
@@ -164,23 +164,29 @@ export class PlanetField {
 
     checkAbsorbtion(player: Player) {
         let blackHoleTest: BlackHole;
+        let minDist = 1000000;
         for (let i = 0; i < this.blackHoles.length; i++) {
             const blackHole = this.blackHoles[i];
             let dist = Vector2.Distance(blackHole.position, player.position);
-            if (dist < (player.size + blackHole.size) * 20) {
-                blackHoleTest = blackHole;
+            if (dist < blackHole.size * 20) {
+                if (minDist > dist) {
+                    minDist = dist;
+                    blackHoleTest = blackHole;
+                }
             }
         }
 
         if (blackHoleTest) {
             player.getAbsorbByTarget(blackHoleTest);
+            let velocity = (minDist / (blackHoleTest.size * 20)) / 2;
+            player.setVelocity(velocity);
         } else {
             let minDist = 1000000;
             let targetTest: Player;
             for (let i = 0; i < this.players.length; i++) {
                 const otherplayer = this.players[i];
                 let dist = Vector2.Distance(player.position, otherplayer.position);
-                if (otherplayer.key != player.key && player.size > otherplayer.size && dist < player.size * 20) {
+                if (otherplayer.key != player.key && player.size > otherplayer.size && dist < (player.size * 20)) {
                     if (minDist > player.size + otherplayer.size) {
                         minDist = player.size + otherplayer.size;
                         targetTest = otherplayer;
@@ -189,8 +195,13 @@ export class PlanetField {
 
             }
 
-            if (targetTest) player.absorbTarget(targetTest);
-            else player.absorbStop();
+            if (targetTest) {
+                let velocity = (minDist / (player.size * 20)) / 2;
+                targetTest.setVelocity(velocity);
+                player.absorbTarget(targetTest);
+            } else {
+                player.absorbStop();
+            }
         }
     }
 

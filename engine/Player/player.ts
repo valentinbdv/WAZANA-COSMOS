@@ -31,9 +31,13 @@ export class Player extends Star {
         this.createParticle();
     }
 
+    velocity = 1;
+    setVelocity(velocity: number) {
+        this.velocity = velocity;
+    }
+    
     position: Vector2 = Vector2.Zero();
     direction: Vector2 = Vector2.Zero();
-    velocity = 1;
     move(mousepos: Vector2) {
         this.direction = new Vector2(mousepos.y * this.velocity, mousepos.x * this.velocity);
         let pos = this.position.add(this.direction);
@@ -247,28 +251,26 @@ export class Player extends Star {
 
     getAbsorbByTarget(aborber: BlackHole) {
         if (this.absorbing) return;
-        console.log('start');
         this.absorbStop();
         this.absorbing = true;
         this.aborber = aborber;
         this.setGetAbsobUpdateFunction();
         this.particle.start();
         this.absorbingInt = setInterval(() => {
-            this.changeSize(-0.05);
+            this.changeSize(-0.1);
         }, 500);
     }
 
     absorbStop() {
         if (!this.absorbing) return;
-        console.log('stop');
-        
+        this.setVelocity(1);
         this.particle.stop();
         clearInterval(this.absorbingInt);
         this.absorbing = false;
     }
 
     addDust(size:number) {
-        this.changeSize(size);
+        this.changeSize(size/5);
     }
 
     decrease() {

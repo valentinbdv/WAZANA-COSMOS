@@ -18,7 +18,7 @@ export class IAPlayer extends Player {
         this.addCactcher(moveCatcher);
         
         this.moveInt = setInterval(() => {
-            let move = new Vector2((Math.random() - 0.5)/5, (Math.random() - 0.5)/5);
+            let move = new Vector2((Math.random() - 0.5)/2, (Math.random() - 0.5)/2);
             this.moveCatcher.catch(move);
         }, 2000);
     }
