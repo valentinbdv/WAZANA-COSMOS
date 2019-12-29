@@ -1,10 +1,11 @@
 import { System } from '../System/system';
+import { PositionEntity, PositionEntityInterface } from './positionEntity';
+import { Animation } from '../System/animation';
 
 import { Vector2, Vector3, Color3 } from '@babylonjs/core/Maths/math';
 import { MeshBuilder } from '@babylonjs/core/Meshes/MeshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/Mesh';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-import { PositionEntity, PositionEntityInterface } from './positionEntity';
 
 export interface StarDustInterface extends PositionEntityInterface {
     temperature: number,
@@ -12,17 +13,16 @@ export interface StarDustInterface extends PositionEntityInterface {
 
 export class StarDust extends PositionEntity {
 
+    showAnimation: Animation;
+
     constructor(system: System, options: StarDustInterface) {
         super('dust', system, options);
 
         this.addDust();
-        this.setSize(options.size);
-        this.setTemperature(options.temperature);
-    }
-
-    setTemperature(temperature: number) {
-        let color = this.getColorFromTemperature(temperature);
-        this.meshMaterial.emissiveColor = color;
+        // this.setTemperature(options.temperature);
+        this.showAnimation = new Animation(this.system.animationManager);
+        let color = this.getColorFromTemperature(options.temperature);
+        this.show(color);
     }
 
     // Follow this map color http://cdn.eso.org/images/screen/eso0728c.jpg
@@ -46,12 +46,25 @@ export class StarDust extends PositionEntity {
         // this.mesh = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         this.mesh = MeshBuilder.CreateSphere(this.key + "star", { diameter: 1 }, this.system.scene);
         this.meshMaterial = new StandardMaterial(this.key + "material", this.system.scene);
+        this.meshMaterial.maxSimultaneousLights = 0;
+        this.meshMaterial.diffuseColor = Color3.Black();
+        this.meshMaterial.specularColor = Color3.Black();
         // this.meshMaterial.roughness = 1;
         // this.meshMaterial.emissiveColor = Color3.Black();
         // console.log(this.meshMaterial);
-        // this.system.glowLayer.addIncludedOnlyMesh(this.mesh);
         this.mesh.material = this.meshMaterial;
         // this.mesh.isBlocker = false;
+    }
+
+    show(color: Color3) {
+        let size = 0.01 + Math.random() * 0.1;
+        this.showAnimation.simple(50, (count, perc) => {
+            this.setSize(perc * size);
+            this.meshMaterial.emissiveColor = color.multiply(new Color3(perc, perc, perc));
+        }, () => {
+            this.setSize(size);
+            this.meshMaterial.emissiveColor = color;
+        });
     }
 
     setSize(size: number) {

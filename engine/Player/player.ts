@@ -18,7 +18,7 @@ export class Player extends Star {
     particleCurve: IEasingFunction;
 
     constructor(system: System, gravityField: GravityField) {
-        super(system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 0 } });
+        super(system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 0 }, maxPlanet: 5 });
         this.gravityField = gravityField;
         this.secondLight.excludedMeshes.push(this.gravityField.ribbon);
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -108,7 +108,6 @@ export class Player extends Star {
         this.particle.maxEmitBox = new Vector3(0, 0, 0);
         this.particle.minLifeTime = 1;
         this.particle.maxLifeTime = 1;
-
         this.particle.minSize = 0.5;
         this.particle.maxSize = 0.5;
 
@@ -117,7 +116,6 @@ export class Player extends Star {
         // Start rotation
         this.particle.minInitialRotation = -Math.PI / 2;
         this.particle.maxInitialRotation = Math.PI / 2;
-
         this.particle.particleTexture = this.system.dustTexture;
         this.particle.blendMode = ParticleSystem.BLENDMODE_MULTIPLYADD;
 
@@ -249,6 +247,7 @@ export class Player extends Star {
 
     getAbsorbByTarget(aborber: BlackHole) {
         if (this.absorbing) return;
+        console.log('start');
         this.absorbStop();
         this.absorbing = true;
         this.aborber = aborber;
@@ -261,13 +260,15 @@ export class Player extends Star {
 
     absorbStop() {
         if (!this.absorbing) return;
+        console.log('stop');
+        
         this.particle.stop();
         clearInterval(this.absorbingInt);
         this.absorbing = false;
     }
 
-    addDust() {
-        this.changeSize(0.01);
+    addDust(size:number) {
+        this.changeSize(size);
     }
 
     decrease() {
@@ -295,7 +296,8 @@ export class Player extends Star {
                 setTimeout(() => {
                     // Wait for the particle effect to end
                     this.dispose();
-                    this.particle.dispose();
+                    // Need to keep movingMesh in case this is a blackHole
+                    // this.particle.dispose();
                 }, 2000);
                 this.setExplodeUpdateFunction();
                 this.particle.start();

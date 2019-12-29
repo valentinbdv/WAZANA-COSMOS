@@ -1,5 +1,6 @@
 import { System } from '../System/system';
 import { MouseCatcher } from './mouseCatcher';
+import { MoveCatcher } from './moveCatcher';
 import { GravityField } from '../System/gravityField';
 import { Player } from './player';
 
@@ -8,10 +9,12 @@ import hotkeys from 'hotkeys-js';
 export class RealPlayer extends Player {
 
     moveCatcher: MouseCatcher;
+    cameraCatcher: MoveCatcher;
 
     constructor(system: System, gravityField: GravityField) {
         super(system, gravityField);
         this.addMouseEvent();
+        this.addZoomCatcher();
         this.system.camera.parent = this.movingMesh;
 
         hotkeys('space', (event, param) => {
@@ -30,6 +33,17 @@ export class RealPlayer extends Player {
         setInterval(() => {
             this.gravityField.setCenterMap(this.position);
         }, 500);
+    }
+
+    addZoomCatcher() {
+        // this.cameraCatcher = new MoveCatcher(this.system.animationManager);
+        // this.cameraCatcher.start();
+        // this.cameraCatcher.catch();
+        this.system.scene.registerBeforeRender(() => {
+            let newSize = Math.sqrt(this.size) * 50;
+            let change = newSize - this.system.camera.radius;
+            this.system.camera.radius += change/100;
+        });
     }
 
     dispose() {

@@ -48,9 +48,14 @@ export class System {
     camera: ArcRotateCamera;
 
     /**
-     * BabylonJS GlowLayer
+     * BabylonJS starGlowLayer
      */
-    glowLayer: GlowLayer;
+    starGlowLayer: GlowLayer;
+
+    /**
+     * BabylonJS starGlowLayer
+     */
+    dustGlowLayer: GlowLayer;
 
     /**
      * BabylonJS Skybox
@@ -95,7 +100,8 @@ export class System {
 
         this.animationManager = new AnimationManager();
         this.buildScene();
-        this.addGlow();
+        // Glow layer takes too much performance
+        // this.addGlow();
         this.addSky();
         // this.addLight();
         this.addControl();
@@ -109,12 +115,14 @@ export class System {
     }
 
     addGlow() {
-        this.glowLayer = new GlowLayer("glow", this.scene);
-        this.glowLayer.intensity = 100;
-        this.glowLayer.blurKernelSize = 32;
+        this.starGlowLayer = new GlowLayer("glow", this.scene, {
+            mainTextureFixedSize: 2,
+            blurKernelSize: 32
+        });
+        this.starGlowLayer.intensity = 100;
         // let int = 0;
         // this.scene.registerBeforeRender(() => {
-        //     this.glowLayer.intensity = 100 + Math.cos(int / 20) * 10;
+        //     this.starGlowLayer.intensity = 100 + Math.cos(int / 20) * 10;
         //     int++;
         // });
     }

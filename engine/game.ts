@@ -8,6 +8,9 @@ import { RealPlayer } from './Player/realPlayer';
 import { BlackHole } from './Entity/blackHole';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
+
+// Fade in et clignote dust / planet
+// Gravité impacte autre étoile et de plus en plus de particle
 export interface GameInterface {
     canvas?: HTMLCanvasElement,
 }

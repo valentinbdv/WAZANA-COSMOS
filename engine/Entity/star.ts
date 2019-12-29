@@ -15,6 +15,7 @@ import { IEasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/eas
 
 export interface StarInterface extends MovingEntityInterface {
     temperature: number,
+    maxPlanet: number,
     texture?: string,
     number?: number,
     life?: number,
@@ -27,6 +28,7 @@ export class Star extends MovingEntity {
     curve: IEasingFunction;
 
     texture: string;
+    maxPlanet: number;
     number: number;
     color: Color4;
     life: number;
@@ -39,7 +41,7 @@ export class Star extends MovingEntity {
         super('star', system, options);
 
         this.shineAnimation = new Animation(this.system.animationManager);
-
+        this.maxPlanet = options.maxPlanet;
         this.addHeart();
         this.addSurface();
         this.addLight();
@@ -77,6 +79,7 @@ export class Star extends MovingEntity {
         let color = this.getColorFromTemperature(temperature);
         this.color = color.toColor4();
         this.heartMaterial.emissiveColor = color;
+        this.heartMaterial.diffuseColor = Color3.White();
         this.surfaceMaterial.reflectivityColor = color;
         this.secondLight.diffuse = color;
         this.light.diffuse = color;
@@ -101,12 +104,11 @@ export class Star extends MovingEntity {
     heartMaterial: StandardMaterial;
     addHeart() {
         // this.heart = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
-        this.heart = MeshBuilder.CreateSphere(this.key + "star", { diameter: 2.5 }, this.system.scene);
+        this.heart = MeshBuilder.CreateSphere(this.key + "star", { diameter: 2.8 }, this.system.scene);
         this.heartMaterial = new StandardMaterial(this.key + "material", this.system.scene);
-        // this.heartMaterial.roughness = 1;
-        // this.heartMaterial.emissiveColor = Color3.Black();
+        this.heartMaterial.backFaceCulling = false;
         // console.log(this.heartMaterial);
-        this.system.glowLayer.addIncludedOnlyMesh(this.heart);
+        // this.system.starGlowLayer.addIncludedOnlyMesh(this.heart);
         this.heart.material = this.heartMaterial;
         this.heart.isBlocker = false;
         this.heart.parent = this.movingMesh;
@@ -136,16 +138,15 @@ export class Star extends MovingEntity {
         this.surfaceMaterial.backFaceCulling = false;
         // this.surfaceMaterial.roughness = 0.5;
         // this.surfaceMaterial.metallic = 1;
-        this.surfaceMaterial.alpha = 0.9;
+        this.surfaceMaterial.alpha = 0.5;
         this.surfaceMaterial.reflectionTexture = this.system.scene.environmentTexture.clone();
         this.surfaceMaterial.refractionTexture = this.system.scene.environmentTexture.clone();
         this.setReflectionLevel(0);
-        this.system.glowLayer.addIncludedOnlyMesh(this.surface);
 
         // this.surfaceMaterial.linkRefractionWithTransparency = true;
         this.surfaceMaterial.indexOfRefraction = 0;
         // this.surfaceMaterial.alpha = 0;
-        this.surfaceMaterial.microSurface = 1;
+        this.surfaceMaterial.microSurface = 0.8;
 
         this.surface.material = this.surfaceMaterial;
         this.surface.parent = this.movingMesh;
@@ -160,7 +161,7 @@ export class Star extends MovingEntity {
         this.light.radius = 0.1;
         this.light.shadowEnabled = false;
         this.light.parent = this.movingMesh;
-        this.light.includedOnlyMeshes.push(this.surface)	
+        this.light.includedOnlyMeshes.push(this.surface);	
         // console.log(this.light);
     }
 
@@ -171,7 +172,8 @@ export class Star extends MovingEntity {
         this.secondLight.radius = 10;
         this.secondLight.shadowEnabled = false;
         this.secondLight.parent = this.movingMesh;
-        this.secondLight.excludedMeshes.push(this.surface)
+        this.secondLight.excludedMeshes.push(this.surface);
+        this.secondLight.excludedMeshes.push(this.heart);
         // console.log(this.secondLight);
     }
 
@@ -254,7 +256,8 @@ export class Star extends MovingEntity {
     }
 
     dispose() {
-        this._dispose();
+        // Need to keep movingMesh in case this is a blackHole
+        // this._dispose();
         this.heart.dispose();
         this.heartMaterial.dispose();
         this.surface.dispose();

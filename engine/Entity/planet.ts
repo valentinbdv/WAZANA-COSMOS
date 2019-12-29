@@ -5,6 +5,7 @@ import { Vector3, Color3, Vector2 } from '@babylonjs/core/Maths/math';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { PositionEntity, PositionEntityInterface } from './positionEntity';
+import { Animation } from '../System/animation';
 
 export interface PlanetInterface extends PositionEntityInterface {
     color ? : Array < number >,
@@ -22,14 +23,18 @@ export class Planet extends PositionEntity {
     offset = 0; // Used to determine beginning position around star
     cycle = 0; // Around its star % Math.PI
 
+    showAnimation: Animation;
+
     constructor(system: System, options: PlanetInterface) {
         super('planet', system, options);
 
         let color = Color3.FromInts(5 + options.color[0] / 20, 5 + options.color[1] / 20, 5 + options.color[2] / 20);
         this.addMesh(color);
-
+        
         if (options.radius && options.velocity) this.setGeostationnaryMovement(options.radius, options.velocity);
         if (options.size) this.setSize(options.size);
+        this.showAnimation = new Animation(this.system.animationManager);
+        this.show(color);
     }
 
     setGeostationnaryMovement(radius: number, velocity: number) {
@@ -44,9 +49,20 @@ export class Planet extends PositionEntity {
         
         this.meshMaterial = new PBRMaterial(this.key + "material", this.system.scene);
         // this.meshMaterial.roughness = 1;
-        this.meshMaterial.emissiveColor = color;
-        // console.log(this.meshMaterial);
+        // this.meshMaterial.emissiveColor = color;
         this.mesh.material = this.meshMaterial;
+        // console.log(this.meshMaterial);
+    }
+
+    show(color: Color3) {
+        let size = 0.8 + Math.random() * 0.4;
+        this.showAnimation.simple(50, (count, perc) => {
+            this.mesh.scaling = new Vector3(perc * size, perc * size, perc * size);
+            this.meshMaterial.emissiveColor = color.multiply(new Color3(perc, perc, perc));
+        }, () => {
+            this.mesh.scaling = new Vector3(size, size, size);
+            this.meshMaterial.emissiveColor = color;
+        });
     }
 
     setParent(parent: AbstractMesh) {

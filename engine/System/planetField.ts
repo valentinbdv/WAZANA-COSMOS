@@ -33,7 +33,7 @@ export class PlanetField {
                 const planet = this.planets[i];
                 planet.mesh.rotation.y += 0.01;
             }
-            if (frame == 20) {
+            if (frame == 10) {
                 this.checkPlayers();
                 this.checkRessourceMap(this.playerToFollow.position);
                 frame = 0;
@@ -141,21 +141,23 @@ export class PlanetField {
     }
 
     checkPlayerRessources(player: Player) {
-        for (let i = 0; i < this.planets.length; i++) {
-            const planet = this.planets[i];
-            let dist = Math.sqrt(Vector2.Distance(planet.position, player.position));
-            if (dist < player.size * 5) {
-                this.removePlanet(planet);
-                player.addPlanet(planet);
+        if (player.planets.length < player.maxPlanet) {
+            for (let i = 0; i < this.planets.length; i++) {
+                const planet = this.planets[i];
+                let dist = Vector2.Distance(planet.position, player.position);
+                if (dist < player.size * 20) {
+                    this.removePlanet(planet);
+                    player.addPlanet(planet);
+                }
             }
         }
 
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
-            let dist = Math.sqrt(Vector2.Distance(dust.position, player.position));
-            if (dist < player.size * 2.5) {
+            let dist = Vector2.Distance(dust.position, player.position);
+            if (dist < player.size * 2) {
                 this.removeDust(dust);
-                player.addDust();
+                player.addDust(dust.size);
             }
         }
     }
@@ -164,8 +166,8 @@ export class PlanetField {
         let blackHoleTest: BlackHole;
         for (let i = 0; i < this.blackHoles.length; i++) {
             const blackHole = this.blackHoles[i];
-            let dist = Math.sqrt(Vector2.Distance(blackHole.position, player.position));
-            if (dist < (player.size + blackHole.size) * 5) {
+            let dist = Vector2.Distance(blackHole.position, player.position);
+            if (dist < (player.size + blackHole.size) * 20) {
                 blackHoleTest = blackHole;
             }
         }
@@ -177,8 +179,8 @@ export class PlanetField {
             let targetTest: Player;
             for (let i = 0; i < this.players.length; i++) {
                 const otherplayer = this.players[i];
-                let dist = Math.sqrt(Vector2.Distance(player.position, otherplayer.position));
-                if (otherplayer.key != player.key && player.size > otherplayer.size && dist < player.size * 5) {
+                let dist = Vector2.Distance(player.position, otherplayer.position);
+                if (otherplayer.key != player.key && player.size > otherplayer.size && dist < player.size * 20) {
                     if (minDist > player.size + otherplayer.size) {
                         minDist = player.size + otherplayer.size;
                         targetTest = otherplayer;
