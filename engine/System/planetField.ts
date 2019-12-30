@@ -168,7 +168,7 @@ export class PlanetField {
         for (let i = 0; i < this.blackHoles.length; i++) {
             const blackHole = this.blackHoles[i];
             let dist = Vector2.Distance(blackHole.position, player.position);
-            if (dist < blackHole.size * 20) {
+            if (dist < blackHole.size * 30) {
                 if (minDist > dist) {
                     minDist = dist;
                     blackHoleTest = blackHole;
@@ -178,27 +178,31 @@ export class PlanetField {
 
         if (blackHoleTest) {
             player.getAbsorbByTarget(blackHoleTest);
-            let velocity = (minDist / (blackHoleTest.size * 20)) / 2;
+            let velocity = Math.pow((minDist / (blackHoleTest.size * 20)), 2);
             player.setVelocity(velocity);
         } else {
             let minDist = 1000000;
-            let targetTest: Player;
+            let testTarget: Player;
+            let closestTarget: Player;
             for (let i = 0; i < this.players.length; i++) {
                 const otherplayer = this.players[i];
                 let dist = Vector2.Distance(player.position, otherplayer.position);
-                if (otherplayer.key != player.key && player.size > otherplayer.size && dist < (player.size * 20)) {
-                    if (minDist > player.size + otherplayer.size) {
-                        minDist = player.size + otherplayer.size;
-                        targetTest = otherplayer;
+                if (minDist > dist && otherplayer.key != player.key && player.size > otherplayer.size) {
+                    minDist = dist;
+                    closestTarget = otherplayer;
+                    if (dist < (player.size * 20)) {
+                        testTarget = otherplayer;
                     }
                 }
 
             }
 
-            if (targetTest) {
-                let velocity = (minDist / (player.size * 20)) / 2;
-                targetTest.setVelocity(velocity);
-                player.absorbTarget(targetTest);
+            if (player.ia && closestTarget && minDist > player.size * 20) player.goToPlayer(closestTarget);
+
+            if (testTarget) {
+                let velocity = Math.pow((minDist / (player.size * 20)), 2);
+                testTarget.setVelocity(velocity);
+                player.absorbTarget(testTarget);
             } else {
                 player.absorbStop();
             }
@@ -218,7 +222,7 @@ export class PlanetField {
     }
 
     createBlackHole(pos: Vector2) {
-        let black = new BlackHole(this.system, this.gravityField, { position: {x: pos.x, z: pos.y, y:0}, size: 1 });
+        let black = new BlackHole(this.system, this.gravityField, { position: { x: pos.x, z: 0, y: pos.y }, size: 1 });
         this.addBlackHole(black);
     }
 }

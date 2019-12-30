@@ -7,9 +7,12 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 
 export class IAPlayer extends Player {
 
+    ia = true;
+
     constructor(system: System, gravityField: GravityField) {
         super(system, gravityField);
         this.startMovingAround();
+        this.setSize(0.6);
     }
 
     moveInt;
@@ -18,7 +21,7 @@ export class IAPlayer extends Player {
         this.addCactcher(moveCatcher);
         
         this.moveInt = setInterval(() => {
-            let move = new Vector2((Math.random() - 0.5)/2, (Math.random() - 0.5)/2);
+            let move = new Vector2((Math.random() - 0.5), (Math.random() - 0.5));
             this.moveCatcher.catch(move);
         }, 2000);
     }
@@ -26,5 +29,12 @@ export class IAPlayer extends Player {
     explode(callback: Function) {
         clearInterval(this.moveInt);
         this._explode(callback);
+    }
+
+    goToPlayer(player: Player) {
+        let move = player.position.subtract(this.position);
+        move.x += (Math.random() - 0.5) * 2;
+        move.y += (Math.random() - 0.5) * 2;
+        this.moveCatcher.catch(move);
     }
 }

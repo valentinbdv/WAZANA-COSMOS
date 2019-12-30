@@ -72,8 +72,8 @@ export class MouseCatcher extends MoveCatcher {
             let pos = Vector2.Zero();
             let w = window.innerWidth;
             let h = window.innerHeight;
-            pos.x = 2 * (evt.x - w / 2) / w;
-            pos.y = 2 * (evt.y - h / 2) / h;
+            pos.x = 4 * (evt.y - h / 2) / h;
+            pos.y = 4 * (evt.x - w / 2) / w;
             this.catch(pos);
         }
     }

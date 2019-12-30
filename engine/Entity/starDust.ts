@@ -45,6 +45,7 @@ export class StarDust extends PositionEntity {
     addDust() {
         // this.mesh = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         this.mesh = MeshBuilder.CreateSphere(this.key + "star", { diameter: 1 }, this.system.scene);
+        this.setSize(0);
         this.meshMaterial = new StandardMaterial(this.key + "material", this.system.scene);
         this.meshMaterial.maxSimultaneousLights = 0;
         this.meshMaterial.diffuseColor = Color3.Black();

@@ -18,7 +18,11 @@ export class RealPlayer extends Player {
         this.system.camera.parent = this.movingMesh;
 
         hotkeys('space', (event, param) => {
-            this.launchPlanet();
+            this.accelerate();
+        });
+
+        window.addEventListener('click', () => {
+            this.accelerate();
         });
     }
 

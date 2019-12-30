@@ -16,6 +16,7 @@ export class Player extends Star {
     fixeAnimation: Animation;
     fixeCurve: IEasingFunction;
     particleCurve: IEasingFunction;
+    ia = false;
 
     constructor(system: System, gravityField: GravityField) {
         super(system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 0 }, maxPlanet: 5 });
@@ -39,7 +40,9 @@ export class Player extends Star {
     position: Vector2 = Vector2.Zero();
     direction: Vector2 = Vector2.Zero();
     move(mousepos: Vector2) {
-        this.direction = new Vector2(mousepos.y * this.velocity, mousepos.x * this.velocity);
+        let x = Math.sign(mousepos.x) * Math.min(Math.abs(mousepos.x) * this.velocity, this.velocity / (this.size * 20));
+        let y = Math.sign(mousepos.y) * Math.min(Math.abs(mousepos.y) * this.velocity, this.velocity / (this.size * 20));
+        this.direction = new Vector2(x, y);
         let pos = this.position.add(this.direction);
         this.setPosition(pos);
     }
@@ -84,21 +87,38 @@ export class Player extends Star {
         });
     }
 
-    launchAnimationLength = 30;
-    launchPlanet() {
+    launchAnimationLength = 50;
+    accelerate() {
         let planet = this.planets.pop();
         if (!planet) return;
-        let reverseDirection = this.direction.negate();
         this.fixeAnimation.simple(this.launchAnimationLength, (count, perc) => {
-            planet.mesh.position.x += reverseDirection.x * 10;
-            planet.mesh.position.z += reverseDirection.y * 10;
-            if (perc < 0.5) this.velocity = 1 + Math.sqrt(perc);
-            else this.velocity = 1 + Math.sqrt(Math.max(1 - perc, 0));
+            planet.mesh.position.x = planet.mesh.position.x / 1.1;
+            planet.mesh.position.z = planet.mesh.position.z / 1.1;
+            if (perc < 0.5) this.velocity = 1 + 2 * Math.sqrt(perc);
+            else this.velocity = 1 + 2 * Math.sqrt(Math.max(1 - perc, 0));
+            let scale = (count < this.launchAnimationLength - 10) ? 1 + count % 10 / 20 : 1 + (10 - count % 10) / 20;
+            this.heart.scaling = new Vector3(scale, scale, scale);
         }, () => {
             planet.mesh.dispose();
+            this.heart.scaling = new Vector3(1, 1, 1);
             this.velocity = 1;
         });
     }
+
+    // accelerate() {
+    //     let planet = this.planets.pop();
+    //     if (!planet) return;
+    //     let reverseDirection = this.direction.negate();
+    //     this.fixeAnimation.simple(this.launchAnimationLength, (count, perc) => {
+    //         planet.mesh.position.x += reverseDirection.x * 10;
+    //         planet.mesh.position.z += reverseDirection.y * 10;
+    //         if (perc < 0.5) this.velocity = 1 + Math.sqrt(perc);
+    //         else this.velocity = 1 + Math.sqrt(Math.max(1 - perc, 0));
+    //     }, () => {
+    //         planet.mesh.dispose();
+    //         this.velocity = 1;
+    //     });
+    // }
 
     particle: ParticleSystem;
     createParticle() {
@@ -263,7 +283,7 @@ export class Player extends Star {
 
     absorbStop() {
         if (!this.absorbing) return;
-        this.setVelocity(1);
+        this.target.setVelocity(1);
         this.particle.stop();
         clearInterval(this.absorbingInt);
         this.absorbing = false;
@@ -330,5 +350,10 @@ export class Player extends Star {
         this.moving = false;
         this.gravityField.eraseStar(this.key);
         this.died = true;
+    }
+
+    // For IA
+    goToPlayer(player: Player) {
+        this.moveCatcher.catch(player.position.subtract(this.position));
     }
 }
