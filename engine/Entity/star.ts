@@ -199,8 +199,9 @@ export class Star extends MovingEntity {
         this._setSize(size);
         let newsize = Math.sqrt(size);
         let sizeVector = new Vector3(newsize, newsize, newsize);
-        this.heart.scaling = sizeVector;
+        // this.movingMesh.scaling = sizeVector;
         this.surface.scaling = sizeVector;
+        this.heart.scaling = sizeVector;
         this.light.intensity = 1000 * size;
         this.secondLight.intensity = 100 * size;
         this.cycleProgress = 1 / Math.sqrt(this.size);

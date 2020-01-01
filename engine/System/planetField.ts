@@ -71,6 +71,11 @@ export class PlanetField {
         remove(this.planets, (p) => { return planet.key == p.key });
     }
 
+    disposePlanet(planet: Planet) {
+        remove(this.planets, (p) => { return planet.key == p.key });
+        planet.mesh.dispose();
+    }
+
     dusts: Array<StarDust> = [];
     addDust() {
         let dustInterface: StarDustInterface = { temperature: 6000, size: 0.01 };
@@ -99,7 +104,7 @@ export class PlanetField {
         for (let i = 0; i < this.planets.length; i++) {
             const planet = this.planets[i];
             let dist = Math.sqrt(Vector2.Distance(planet.position, center));
-            if (dist > 10) this.removePlanet(planet);
+            if (dist > 10) this.disposePlanet(planet);
         }
 
         for (let i = 0; i < this.dusts.length; i++) {
@@ -136,7 +141,7 @@ export class PlanetField {
             const player = this.players[i];
             this.checkPlayerRessources(player);
             this.checkAbsorbtion(player);
-            if (player.size < 0.1) this.playerDead(player);
+            if (player.size < 0.2) this.playerDead(player);
         }
     }
 
