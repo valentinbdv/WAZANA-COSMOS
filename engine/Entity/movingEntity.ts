@@ -20,6 +20,10 @@ export class MovingEntity extends PositionEntity {
         
         this.addMovingMesh();
     }
+
+    setMoving(moving: boolean) {
+        this.moving = moving;
+    }
     
     addCactcher(moveCatcher: MoveCatcher) {
         this.moveCatcher = moveCatcher;

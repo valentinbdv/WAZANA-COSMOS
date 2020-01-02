@@ -33,7 +33,7 @@ export class PlanetField {
                 const planet = this.planets[i];
                 planet.mesh.rotation.y += 0.01;
             }
-            if (frame == 10) {
+            if (frame > 10 && this.check) {
                 this.checkPlayers();
                 this.checkRessourceMap(this.playerToFollow.position);
                 frame = 0;
@@ -96,6 +96,11 @@ export class PlanetField {
 
     removeBlackHole(blackHole: BlackHole) {
         remove(this.blackHoles, (p) => { return blackHole.key == p.key });
+    }
+
+    check = false;
+    checkPlayerAndRessources(check: boolean) {
+        this.check = check;
     }
 
     dustNeeded = 100;
@@ -220,8 +225,8 @@ export class PlanetField {
             player.dive();
         } else {
             player.explode(() => {
-                // if (Math.random() > 0.5 && this.blackHoles.length < 10) this.createBlackHole(player.position);
-                this.createBlackHole(player.position);
+                // if (Math.random() > 0.5 && this.blackHoles.length < 10) this.createBlackHole(player.position.clone());
+                this.createBlackHole(player.position.clone());
             });
         }
     }

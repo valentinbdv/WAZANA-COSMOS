@@ -75,7 +75,11 @@ export class Star extends MovingEntity {
         // this.curve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
     }
 
+    temperature: number;
     setTemperature(temperature: number) {
+        temperature = Math.max(3000, temperature);
+        temperature = Math.min(30000, temperature);
+        this.temperature = temperature;
         let color = this.getColorFromTemperature(temperature);
         this.color = color.toColor4();
         this.heartMaterial.emissiveColor = color;
@@ -87,8 +91,6 @@ export class Star extends MovingEntity {
 
     // Follow this map color http://cdn.eso.org/images/screen/eso0728c.jpg
     getColorFromTemperature(temperature: number): Color3 {
-        temperature = Math.max(3000, temperature);
-        temperature = Math.min(30000, temperature);
         if (temperature < 8000) {
             let perc = (8000 - temperature) / 5000;
             let g = Math.min(1, 2 - perc * 2);
@@ -196,8 +198,9 @@ export class Star extends MovingEntity {
     }
 
     setSize(size: number) {
-        this._setSize(size);
-        let newsize = Math.sqrt(size);
+        let newsize = Math.max(0.1, size);
+        this._setSize(newsize);
+        newsize = Math.sqrt(newsize);
         let sizeVector = new Vector3(newsize, newsize, newsize);
         // this.movingMesh.scaling = sizeVector;
         this.surface.scaling = sizeVector;
@@ -264,5 +267,14 @@ export class Star extends MovingEntity {
         this.surface.dispose();
         this.surfaceMaterial.dispose();
         this.light.dispose();
+        this.removeAllPlanets();
+    }
+    
+    removeAllPlanets(){
+        for (let i = 0; i < this.planets.length; i++) {
+            const planet = this.planets[i];
+            planet.mesh.dispose();
+        }
+        this.planets = [];
     }
 }
