@@ -1,5 +1,5 @@
 
-import { AnimationManager } from './animation';
+import { Animation, AnimationManager } from './animation';
 
 import '@babylonjs/core/Animations/animatable';
 
@@ -17,7 +17,9 @@ import '@babylonjs/core/Misc/dds';
 import '@babylonjs/core/Materials/Textures/Loaders/ddsTextureLoader';
 import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
+
 import dustTexture from '../../asset/circle_05.png';
+import remove from 'lodash/remove';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -139,28 +141,55 @@ export class System {
     }
 
     addSky() {
+        this.loadCheck = new Animation(this.animationManager);
         this.skybox = MeshBuilder.CreateSphere("sbsphere", { diameter: 32 }, this.scene);
         this.skybox.scaling = new Vector3(this.size + 20, this.size + 20, this.size + 20);
         this.skyboxMaterial = new PBRMaterial("this.skyBox", this.scene);
         this.skyboxMaterial.backFaceCulling = false;
-        this.skybox.material = this.skyboxMaterial;
-
-        let asseturl = 'https://asset.wazana.io/';
-        let mapcolor = 'mapcolor3';
-
-        var hdrTexture = CubeTexture.CreateFromPrefilteredData(asseturl + 'dds/' + mapcolor + '.dds', this.scene);
-        hdrTexture.gammaSpace = false;
-        this.scene.environmentTexture = hdrTexture;
         this.skyboxMaterial.roughness = 0.2;
-        this.skyboxMaterial.reflectionTexture = hdrTexture.clone();
-        this.skyboxMaterial.reflectionTexture.level = 0.2;
-        this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+        this.skybox.material = this.skyboxMaterial;
         
         // let alpha = 0;
         // this.scene.registerBeforeRender(() => {
         //     alpha += 0.01;
         //     this.scene.environmentTexture.setReflectionTextureMatrix(Matrix.RotationY(alpha));
         // });
+    }
+
+    loadCheck: Animation;
+    sceneTexture: CubeTexture;
+    setSky(design: number) {
+        let asseturl = 'https://asset.wazana.io/';
+        let mapcolor = 'mapcolor' + design.toString();
+
+        this.sceneTexture = CubeTexture.CreateFromPrefilteredData(asseturl + 'dds/' + mapcolor + '.dds', this.scene);
+        this.loadCheck.infinite(() => {
+            if (this.sceneTexture.isReady()) {
+                this.loadCheck.stop();
+                this.sceneTexture.gammaSpace = false;
+                this.scene.environmentTexture = this.sceneTexture;
+                this.skyboxMaterial.reflectionTexture = this.sceneTexture.clone();
+                this.skyboxMaterial.reflectionTexture.level = 0.2;
+                this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+                this.sendToSkyChangeListeners();
+            }
+        });
+    }
+
+    listeners: Array<Function> = [];
+    addSkyChangeListener(callback: Function) {
+        this.listeners.push(callback);
+    }
+
+    removeSkyChangeListener(callback: Function) {
+        remove(this.listeners, (c) => { c == callback });
+    }
+
+    sendToSkyChangeListeners() {
+        for (let i = 0; i < this.listeners.length; i++) {
+            this.listeners[i](this.sceneTexture);
+            
+        }
     }
 
     light: DirectionalLight
@@ -234,9 +263,19 @@ export class System {
      * https://doc.babylonjs.com/how_to/optimizing_your_scene#reducing-shaders-overhead
      */
     optimize() {
-        this.scene.blockMaterialDirtyMechanism = true;
+        // this.scene.blockMaterialDirtyMechanism = true;
         this.scene.autoClear = false; // Color buffer
         this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
+
+        // let activeTest = 0;
+        // this.scene.registerBeforeRender(() => {
+        //     activeTest++;
+        //     this.scene.freezeActiveMeshes();
+        //     if (activeTest > 30) {
+        //         activeTest = 0;
+        //         this.scene.unfreezeActiveMeshes();
+        //     }
+        // });
     }
 
     /**

@@ -10,6 +10,7 @@ import { Mesh } from '@babylonjs/core/Meshes/Mesh';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { IEasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/easing';
+import { CubeTexture } from '@babylonjs/core/Materials/Textures/cubeTexture';
 
 // https://www.youtube.com/watch?v=i4RtO_qIQHk
 
@@ -141,19 +142,27 @@ export class Star extends MovingEntity {
         // this.surfaceMaterial.roughness = 0.5;
         // this.surfaceMaterial.metallic = 1;
         this.surfaceMaterial.alpha = 0.5;
-        this.surfaceMaterial.reflectionTexture = this.system.scene.environmentTexture.clone();
-        this.surfaceMaterial.refractionTexture = this.system.scene.environmentTexture.clone();
-        this.setReflectionLevel(0);
-
+        
         // this.surfaceMaterial.linkRefractionWithTransparency = true;
         this.surfaceMaterial.indexOfRefraction = 0;
         // this.surfaceMaterial.alpha = 0;
         this.surfaceMaterial.microSurface = 0.8;
-
+        
         this.surface.material = this.surfaceMaterial;
         this.surface.parent = this.movingMesh;
         this.surface.isBlocker = false;
+
+        if (this.system.sceneTexture) this.setTexture(this.system.sceneTexture);
         // console.log(this.surfaceMaterial);
+        this.system.addSkyChangeListener((texture) => {
+            this.setTexture(texture);
+            this.setReflectionLevel(0);
+        });
+    }
+
+    setTexture(texture: CubeTexture) {
+        this.surfaceMaterial.refractionTexture = texture.clone();
+        this.surfaceMaterial.reflectionTexture = texture.clone();
     }
 
     light: PointLight

@@ -75,14 +75,17 @@ export class GravityField {
         // this.ribbon.isVisible = false;
         this.ribbon.rotation.x = Math.PI;
         this.material = new PBRMaterial("material", this.system.scene);
-        this.material.reflectionTexture = this.system.scene.environmentTexture.clone();
-        this.material.reflectionTexture.level = 0.2;
 
         this.material.roughness = 0.5;
         this.material.metallic = 1;
         this.material.alpha = 1;
 
         this.ribbon.material = this.material;
+
+        this.system.addSkyChangeListener((texture) => {
+            this.material.reflectionTexture = texture.clone();
+            this.material.reflectionTexture.level = 0.2;
+        });
     }
 
     mapDetail = 40;
