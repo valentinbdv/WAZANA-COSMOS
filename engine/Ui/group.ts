@@ -238,7 +238,7 @@ export class ui_control extends ui_group {
         this.setPosition(scpos);
         this.setSize(size);
 
-        // this.setStyle({ zIndex: -10, thickness: 0 });
+        this.setStyle({ thickness: 0 });
         if (style) this.setStyle(style);
     }
 }

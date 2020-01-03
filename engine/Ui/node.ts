@@ -316,7 +316,7 @@ export class ui_text extends ui_node {
 
     constructor(system: SystemUI, texture: Control, text: string, pos: position, style: style, event ? : boolean) {
         super(system);
-        style.fontFamily = 'Arial';
+        style.fontFamily = "'Aldrich', sans-serif";
         this.setNode(text, style);
         this.createContainer(texture);
         this.setStyle(style);

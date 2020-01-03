@@ -6,6 +6,7 @@ import { PlanetField } from './System/planetField';
 import { IAPlayer } from './Player/iaPlayer';
 import { RealPlayer } from './Player/realPlayer';
 import { BlackHole } from './Entity/blackHole';
+import { ui_group, ui_panel, ui_control } from './Ui/group';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
 
@@ -25,6 +26,7 @@ export class GameEngine {
 
     constructor(starOptions: GameInterface) {
         this.system = new SystemUI(starOptions.canvas);
+        this.system.optimize();
         this.gravityField = new GravityField(this.system);
         this.planetField = new PlanetField(this.system, this.gravityField);
         this.planetField.checkPlayerAndRessources(false);
@@ -32,7 +34,7 @@ export class GameEngine {
         this.realPlayer.setMoving(false);
         this.planetField.addPlayer(this.realPlayer);
         this.planetField.setPlayerToFollow(this.realPlayer);
-
+        
         this.system.setSky(1);
         // Keep that for test purpose
         // let black = new BlackHole(this.system, this.gravityField, { position: { x: 0, z: 0, y: 0 }, size: 1 });
@@ -58,8 +60,8 @@ export class GameEngine {
 
     introUi: ui_group;
     addIntro() {
-        this.introUi = new ui_control(this.system, {x: 0, y: 0}, { width: 300, height: 300 });
-        let text = this.introUi.addText('Select your Sun', { x: 0, y: -100 }, { fontSize: 40, color: '#FF2266' });
+        this.introUi = new ui_control(this.system, {x: 0, y: 0}, { width: 300, height: 300 }, { zIndex: 100 });
+        let text = this.introUi.addText('Select your Sun', { x: 0, y: -100 }, { fontSize: 25, color: '#FF2266' });
         let arrow1 = this.introUi.addArrow({ x: 100, y: 0 }, { orientation: 'right' });
         let arrow2 = this.introUi.addArrow({ x: -100, y: 0 }, { orientation: 'left' });
         arrow1.setColor('#FF2266');
@@ -79,11 +81,27 @@ export class GameEngine {
         });
     }
 
+    colorUi: ui_group;
+    addDesignChoice() {
+        this.colorUi = new ui_control(this.system, {x: 0, y: -200}, {width: 300, height: 300});
+        // this.colorUi.setScreenPosition({ left: 0, bottom: 0 });
+        let text = this.colorUi.addText('Choose Nebula', { x: 0, y: -100 }, { fontSize: 25, color: '#FF2266' });
+        let arrow1 = this.colorUi.addArrow({ x: 100, y: 0 }, { orientation: 'right' });
+        let arrow2 = this.colorUi.addArrow({ x: -100, y: 0 }, { orientation: 'left' });
+        arrow1.setColor('#FF2266');
+        arrow2.setColor('#FF2266');
+
+        let skyNumber = 1;
+        arrow1.on('click', () => {
+            if (skyNumber < 6) skyNumber++;
+            this.system.setSky(skyNumber);
         });
 
-        this.system.addSlider(0.2, 1, (value) => {
-            player.setSize(value);
+        arrow2.on('click', () => {
+            if (skyNumber > 1) skyNumber--;
+            this.system.setSky(skyNumber);
         });
+    }
 
     showIntro() {
         this.introUi.showAll();
