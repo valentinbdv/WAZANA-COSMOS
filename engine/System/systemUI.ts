@@ -26,6 +26,7 @@ export class SystemUI extends System {
         super(canvas);
 
         this.advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this.scene);
+        this.scene.hoverCursor = "pointer";
 
         // this.panel = new StackPanel();
         // this.panel.width = "220px";

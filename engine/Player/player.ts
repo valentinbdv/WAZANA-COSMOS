@@ -9,6 +9,45 @@ import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Anim
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
 import { BlackHole } from '../Entity/blackHole';
 
+interface StarCategory {
+    name: string;
+    temperature: number;
+    planets: number;
+    gravity: number;
+    velocity: number;
+}
+
+export let StarCategories: Array<StarCategory> = [
+    {
+        name: 'Red Dwarf',
+        temperature: 3000,
+        planets: 3,
+        gravity: 1.2,
+        velocity: 1
+    },
+    {
+        name: 'Yellow Dwarf',
+        temperature: 5000,
+        planets: 4,
+        gravity: 1.1,
+        velocity: 1.1
+    },
+    {
+        name: 'White Dwarf',
+        temperature: 12000,
+        planets: 5,
+        gravity: 1,
+        velocity: 0.9
+    },
+    {
+        name: 'Blue Dwarf',
+        temperature: 30000,
+        planets: 6,
+        gravity: 0.6,
+        velocity: 1.3
+    },
+];
+
 export class Player extends Star {
 
     gravityField: GravityField;
@@ -18,6 +57,7 @@ export class Player extends Star {
     fixeCurve: IEasingFunction;
     particleCurve: IEasingFunction;
     ia = false;
+    categories = [];
 
     constructor(system: System, gravityField: GravityField) {
         super(system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 0 }, maxPlanet: 5 });
@@ -32,6 +72,13 @@ export class Player extends Star {
 
         this.particleCurve = new CubicEase();
         this.createParticle();
+    }
+
+    setCategory(category: StarCategory) {
+        this.setVelocity(category.velocity);
+        this.setTemperature(category.temperature);
+        this.setMaxPlanet(category.planets);
+        // this.setVelocity(category.velocity);
     }
 
     velocity = 1;
@@ -286,7 +333,7 @@ export class Player extends Star {
     }
 
     getAbsorbByTarget(aborber: BlackHole) {
-        if (this.absorbing) return;
+        if (this.absorbing || !this.target) return;
         this.absorbStop();
         this.absorbing = true;
         this.aborber = aborber;
@@ -298,7 +345,7 @@ export class Player extends Star {
     }
 
     absorbStop() {
-        if (!this.absorbing) return;
+        if (!this.absorbing || !this.target) return;
         this.target.setVelocity(1);
         this.particle.stop();
         clearInterval(this.absorbingInt);

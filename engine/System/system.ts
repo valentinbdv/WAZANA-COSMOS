@@ -106,10 +106,13 @@ export class System {
         // this.addGlow();
         this.addSky();
         // this.addLight();
-        this.addControl();
+        // this.addControl();
 
         this.dustTexture = new Texture(dustTexture, this.scene);
 
+        window.addEventListener('resize', () => {
+            this.engine.resize();
+        });
     }
 
     addControl() {

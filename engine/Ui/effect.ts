@@ -13,6 +13,34 @@ export class ui_anim extends ui_node {
     hideAnim() {
         this.hide();
     }
+
+    hoverOpacity = 0.7;
+    setHoverAnimation() {
+        this.on('enter', () => {
+            this.enterAnim();
+        });
+        this.on('leave', () => {
+            this.leaveAnim();
+        });
+        this.setOpacity(this.hoverOpacity);
+    }
+
+    animTime = 5;
+    enterAnim() {
+        this.anim.simple(this.animTime, (count, perc) => {
+            this.setOpacity(this.hoverOpacity + perc * (1 - this.hoverOpacity));
+        }, () => {
+            this.setOpacity(1);
+        });
+    }
+
+    leaveAnim() {
+        this.anim.simple(this.animTime, (count, perc) => {
+            this.setOpacity(1 - perc * (1 - this.hoverOpacity));
+        }, () => {
+            this.setOpacity(this.hoverOpacity);
+        });
+    }
 }
 
 export interface effectstyle {
@@ -118,8 +146,6 @@ export class ui_button extends ui_anim {
     position: position;
     anim: Animation;
     float: string;
-    borderleft: ui_border;
-    borderright: ui_border;
     container: any;
 
     constructor(system: SystemUI, texture: Control, content: content, pos: position, size: size, style: buttonstyle) {
@@ -131,76 +157,28 @@ export class ui_button extends ui_anim {
         this.setSize(size);
         this.setContent(content, style);
         this.setStyle(style);
-        this.setEvent();
+        this.setHoverAnimation();
     }
 
     setContent(content: content, style: buttonstyle) {
         if (content.ui == 'text') this.ui = new ui_text(this.system, this.container, content.text, { x: 0, y: 0 }, { color: style.color, fontSize: style.fontSize });
         else if (content.ui == 'icon') this.ui = new ui_icon(this.system, this.container, content.text, { x: 0, y: 0 }, { color: style.color, fontSize: style.fontSize });
         else if (content.ui == 'image') this.ui = new ui_image(this.system, this.container, content.text, { x: 0, y: 0 }, { color: style.color, fontSize: style.fontSize });
-        this.ui.setBlur(style.color).centerText();
-        this.borderleft = new ui_border(this.system, this.container, { x: -this.width / 2, y: 0 }, { width: this.height, color: style.color, angle: Math.PI/2, border: 2, side: 5 });
-        this.borderright = new ui_border(this.system, this.container, { x: (this.width - 2) / 2, y: 0 }, { width: this.height, color: style.color, angle: Math.PI/2, border: 2, side: 5 });
     }
 
     setStyle(style: buttonstyle) {
         this.ui._setStyle({ color: style.color, fontSize: style.fontSize });
         this._setStyle({ background: style.background });
-        if (style.blur) this.ui.setBlur(style.blur);
-        this.setBackgroundOpacity(0.5);
         return this;
     }
 
     setColors(text: string, background: string, blur: string) {
         this.ui.setColor(text);
-        this.ui.setBlur(blur);
         this._setStyle({ background: background });
-        this.borderleft.setColor(text);
-        this.borderright.setColor(text);
-        this.setBackgroundOpacity(0.5);
-    }
-
-    setEvent() {
-        this.on('enter', () => {
-            this.enter();
-        });
-        this.on('leave', () => {
-            this.leave();
-        });
     }
 
     setText(text: string) {
         this.ui.setText(text);
-    }
-
-    enter() {
-        this.enterAnim();
-    }
-
-    animTime = 5;
-    enterAnim() {
-        let fontSize = this.style.fontSize;
-        this.anim.simple(this.animTime, (count, perc) => {
-            this.setBackgroundOpacity(perc / 2 + 0.5);
-            this.ui.setStyle({ fontSize: fontSize * (1 + perc * 0.1) });
-        }, () => {
-            this.setBackgroundOpacity(1);
-        });
-    }
-
-    leave() {
-        this.leaveAnim()
-    }
-
-    leaveAnim() {
-        let fontSize = this.style.fontSize;
-        this.anim.simple(this.animTime, (count, perc) => {
-            perc = 1 - perc;
-            this.setBackgroundOpacity(perc / 2 + 0.5);
-            this.ui.setStyle({ fontSize: fontSize * (1 - perc * 0.1) });
-        }, () => {
-            this.setBackgroundOpacity(0.5);
-        });
     }
 }
 
@@ -396,6 +374,7 @@ export class ui_arrow extends ui_anim {
         this.showAnim();
         this.setWidth(this.fullWidth);
         this.setHeight(this.fullWidth);
+        this.setHoverAnimation();
         return this;
     }
 
@@ -415,11 +394,9 @@ export class ui_arrow extends ui_anim {
         this.anim.simple(10, (cout, perc) => {
             this.line1.setWidth(perc * this.fullWidth);
             this.line2.setWidth(perc * this.fullWidth);
-            this.setOpacity(perc * this.fullOpacity);
         }, () => {
-                this.line1.setWidth(this.fullWidth);
-                this.line2.setWidth(this.fullWidth);
-            this.setOpacity(this.fullOpacity);
+            this.line1.setWidth(this.fullWidth);
+            this.line2.setWidth(this.fullWidth);
         });
         return this;
     }
@@ -428,7 +405,6 @@ export class ui_arrow extends ui_anim {
         this.anim.simple(10, (cout, perc) => {
             this.line1.setWidth((1 - perc) * this.fullWidth);
             this.line2.setWidth((1 - perc) * this.fullWidth);
-            this.setBackgroundOpacity((1 - perc) * this.fullOpacity);
         }, () => {
             this.hide();
         });

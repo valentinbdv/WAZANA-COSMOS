@@ -216,7 +216,7 @@ export class ui {
         let nodeevent = this.renameEvent[event];
         this.container.isPointerBlocker = true;
         this.container.isHitTestVisible = true;
-        // this.container.hoverCursor = '';
+        this.container.hoverCursor = 'pointer';
         this.container[nodeevent].add(() => {
             funct();
         });

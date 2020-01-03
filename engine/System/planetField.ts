@@ -196,7 +196,7 @@ export class PlanetField {
             let closestTarget: Player;
             for (let i = 0; i < this.players.length; i++) {
                 const otherplayer = this.players[i];
-                let dist = Vector2.Distance(player.position, otherplayer.position);
+                let dist = Vector2.Distance(player.position, otherplayer.position) * 0.8;
                 if (minDist > dist && otherplayer.key != player.key && player.size > otherplayer.size) {
                     minDist = dist;
                     closestTarget = otherplayer;

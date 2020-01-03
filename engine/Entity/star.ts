@@ -29,7 +29,6 @@ export class Star extends MovingEntity {
     curve: IEasingFunction;
 
     texture: string;
-    maxPlanet: number;
     number: number;
     color: Color4;
     life: number;
@@ -42,7 +41,6 @@ export class Star extends MovingEntity {
         super('star', system, options);
 
         this.shineAnimation = new Animation(this.system.animationManager);
-        this.maxPlanet = options.maxPlanet;
         this.addHeart();
         this.addSurface();
         this.addLight();
@@ -74,6 +72,11 @@ export class Star extends MovingEntity {
 
         this.curve = new BezierCurveEase(.76, .01, .51, 1.33);
         // this.curve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
+    }
+
+    maxPlanet: number;
+    setMaxPlanet(maxPlanet: number) {
+        this.maxPlanet = maxPlanet;
     }
 
     temperature: number;
