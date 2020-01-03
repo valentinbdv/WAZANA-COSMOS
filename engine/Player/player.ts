@@ -330,7 +330,7 @@ export class Player extends Star {
         this.absorbStop();
         this.die();
         this.updateSize(40, 80, () => {
-            this.updateSize(0, 30, () => {
+            this.updateSize(0.1, 30, () => {
                 setTimeout(() => {
                     // Wait for the particle effect to end
                     this.dispose();
@@ -340,6 +340,7 @@ export class Player extends Star {
                 this.setExplodeUpdateFunction();
                 this.particle.start();
                 if (callback) callback();
+                if (this.onDied) this.onDied();
             });
         });
     }
@@ -362,6 +363,7 @@ export class Player extends Star {
     }
     
     died = false;
+    onDied: Function;
     die() {
         this.moving = false;
         this.gravityField.eraseStar(this.key);

@@ -27,30 +27,30 @@ export class SystemUI extends System {
 
         this.advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this.scene);
 
-        this.panel = new StackPanel();
-        this.panel.width = "220px";
-        this.panel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        this.panel.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER;
-        this.advancedTexture.addControl(this.panel);
+        // this.panel = new StackPanel();
+        // this.panel.width = "220px";
+        // this.panel.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        // this.panel.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER;
+        // this.advancedTexture.addControl(this.panel);
     }
 
-    addSlider(min: number, max: number, callback:Function) {
-        var header = new TextBlock();
-        header.text = "Y-rotation: 0 deg";
-        header.height = "30px";
-        header.color = "white";
-        this.panel.addControl(header);
+    // addSlider(min: number, max: number, callback:Function) {
+    //     var header = new TextBlock();
+    //     header.text = "Y-rotation: 0 deg";
+    //     header.height = "30px";
+    //     header.color = "white";
+    //     this.panel.addControl(header);
 
-        var slider = new Slider();
-        slider.minimum = min;
-        slider.maximum = max;
-        slider.value = 0;
-        slider.height = "20px";
-        slider.width = "200px";
-        slider.onValueChangedObservable.add(function (value) {
-            header.text = "temperature: " + Math.round(value) + "  Celsius";
-            callback(value);
-        });
-        this.panel.addControl(slider);    
-    }
+    //     var slider = new Slider();
+    //     slider.minimum = min;
+    //     slider.maximum = max;
+    //     slider.value = 0;
+    //     slider.height = "20px";
+    //     slider.width = "200px";
+    //     slider.onValueChangedObservable.add(function (value) {
+    //         header.text = "temperature: " + Math.round(value) + "  Celsius";
+    //         callback(value);
+    //     });
+    //     this.panel.addControl(slider);    
+    // }
 }

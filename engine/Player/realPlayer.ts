@@ -52,11 +52,12 @@ export class RealPlayer extends Player {
 
     dispose() {
     }
-
+    
     died = false;
     die() {
+        this.removeAllPlanets();
         this.moving = false;
         this.died = true;
-        this.system.camera.parent = null;
+        // this.system.camera.parent = null;
     }
 }
