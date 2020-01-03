@@ -1,21 +1,18 @@
 import { System } from '../System/system';
-import { PearlMesh } from './pearlMesh';
 
-import { Vector3, Color3, Vector2 } from '@babylonjs/core/Maths/math';
-import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
+import { Vector3, Vector2 } from '@babylonjs/core/Maths/math';
 import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { PositionEntity, PositionEntityInterface } from './positionEntity';
 import { Animation } from '../System/animation';
+import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
 
 export interface PlanetInterface extends PositionEntityInterface {
-    color ? : Array < number >,
     radius ? : number,
     velocity ? : number,
 }
 
 export class Planet extends PositionEntity {
 
-    mesh: PearlMesh;
     color?: Array<number>;
     radius?: number;
     velocity?: number;
@@ -28,13 +25,12 @@ export class Planet extends PositionEntity {
     constructor(system: System, options: PlanetInterface) {
         super('planet', system, options);
 
-        let color = Color3.FromInts(5 + options.color[0] / 20, 5 + options.color[1] / 20, 5 + options.color[2] / 20);
-        this.addMesh(color);
+        this.addMesh();
         
         if (options.radius && options.velocity) this.setGeostationnaryMovement(options.radius, options.velocity);
         if (options.size) this.setSize(options.size);
         this.showAnimation = new Animation(this.system.animationManager);
-        this.show(color);
+        this.show();
     }
 
     setGeostationnaryMovement(radius: number, velocity: number) {
@@ -42,26 +38,18 @@ export class Planet extends PositionEntity {
         this.velocity = velocity;
     }
 
-    meshMaterial: PBRMaterial;
-    addMesh(color: Color3) {
+    mesh: InstancedMesh;
+    addMesh() {
         // this.mesh = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
-        this.mesh = new PearlMesh(this.key + "planet", this.system.scene);
-        
-        this.meshMaterial = new PBRMaterial(this.key + "material", this.system.scene);
-        // this.meshMaterial.roughness = 1;
-        // this.meshMaterial.emissiveColor = color;
-        this.mesh.material = this.meshMaterial;
-        // console.log(this.meshMaterial);
+        this.mesh = this.system.planetMesh.createInstance(this.key + "duststar");
     }
 
-    show(color: Color3) {
+    show() {
         let size = 0.8 + Math.random() * 0.4;
         this.showAnimation.simple(50, (count, perc) => {
             this.mesh.scaling = new Vector3(perc * size, perc * size, perc * size);
-            this.meshMaterial.emissiveColor = color.multiply(new Color3(perc, perc, perc));
         }, () => {
             this.mesh.scaling = new Vector3(size, size, size);
-            this.meshMaterial.emissiveColor = color;
         });
     }
 

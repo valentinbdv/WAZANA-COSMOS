@@ -20,6 +20,8 @@ import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
 
 import dustTexture from '../../asset/circle_05.png';
 import remove from 'lodash/remove';
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
+import { PearlMesh } from '../Entity/pearlMesh';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -105,6 +107,8 @@ export class System {
         // Glow layer takes too much performance
         // this.addGlow();
         this.addSky();
+        this.addDustMesh();
+        this.addPlanetMesh();
         // this.addLight();
         // this.addControl();
 
@@ -201,6 +205,31 @@ export class System {
         this.light.diffuse = new Color3(1, 1, 1);
         this.light.intensity = 0.5;
         console.log(this.light);
+    }
+
+    dustMesh: Mesh;
+    dustMaterial: StandardMaterial;
+    addDustMesh() {
+        this.dustMaterial = new StandardMaterial("dustMaterial", this.scene);
+        this.dustMaterial.maxSimultaneousLights = 0;
+        this.dustMaterial.diffuseColor = Color3.Black();
+        this.dustMaterial.specularColor = Color3.Black();
+        this.dustMaterial.emissiveColor = new Color3(1, 1, 0);
+
+        // this.mesh = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
+        // this.mesh.isBlocker = false;
+        this.dustMesh = MeshBuilder.CreateSphere("dust", { diameter: 1 }, this.scene);
+        this.dustMesh.material = this.dustMaterial;
+    }
+
+    planetMesh: PearlMesh;
+    planetMaterial: PBRMaterial;
+    addPlanetMesh() {
+        this.planetMesh = new PearlMesh("planet", this.scene);
+        this.planetMaterial = new PBRMaterial("planetMaterial", this.scene);
+        // this.planetMaterial.roughness = 1;
+        // this.meshMaterial.emissiveColor = color;
+        this.planetMesh.material = this.planetMaterial;
     }
 
     /**
