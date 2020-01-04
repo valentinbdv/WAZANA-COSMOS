@@ -125,7 +125,6 @@ export class Star extends MovingEntity {
     surfaceMaterial: PBRMaterial;
     addSurface() {
         // this.surface = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 4, flat: true, subdivisions: 2 }, this.system.scene);
-
         var heptagonalPrism = {
             "name": "Trigyrate Rhombicosidodecahedron (J75)",
             "category": ["Johnson Solid"],

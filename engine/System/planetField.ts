@@ -61,7 +61,7 @@ export class PlanetField {
         let planetNumber = this.planets.length;
         let radius = 2 + planetNumber;
         let velocity = 5 / (1 + planetNumber / 2);
-        let planetInterface: PlanetInterface = { color: [0, 0, 0], radius: radius, size: 1, velocity: velocity };
+        let planetInterface: PlanetInterface = { radius: radius, size: 1, velocity: velocity };
         let planet = new Planet(this.system, planetInterface);
         this.planets.push(planet);
         return planet;
@@ -72,7 +72,7 @@ export class PlanetField {
     }
 
     disposePlanet(planet: Planet) {
-        remove(this.planets, (p) => { return planet.key == p.key });
+        this.removePlanet(planet);
         planet.mesh.dispose();
     }
 
@@ -86,6 +86,10 @@ export class PlanetField {
 
     removeDust(dust: StarDust) {
         remove(this.dusts, (p) => { return dust.key == p.key });
+    }
+
+    disposeDust(dust: StarDust) {
+        this.removeDust(dust);
         dust.mesh.dispose();
     }
 
@@ -103,7 +107,7 @@ export class PlanetField {
         this.check = check;
     }
 
-    dustNeeded = 100;
+    dustNeeded = 200;
     planetNeeded = 10;
     checkRessourceMap(center: Vector2) {
         for (let i = 0; i < this.planets.length; i++) {
@@ -115,7 +119,7 @@ export class PlanetField {
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Math.sqrt(Vector2.Distance(dust.position, center));
-            if (dist > 10) this.removeDust(dust);
+            if (dist > 10) this.disposeDust(dust);
         }
 
         let newPlanetNeeded = this.planetNeeded - this.planets.length;
@@ -165,9 +169,9 @@ export class PlanetField {
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Vector2.Distance(dust.position, player.position);
-            if (dist < player.size * 3) {
+            if (dist < player.size * 6) {
                 this.removeDust(dust);
-                player.addDust(dust.size);
+                player.addDust(dust);
             }
         }
     }

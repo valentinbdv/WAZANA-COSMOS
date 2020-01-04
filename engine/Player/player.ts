@@ -1,6 +1,6 @@
 import { System } from '../System/system';
 import { GravityField } from '../System/gravityField';
-import { Star } from '../Entity/star'
+import { Star } from '../Entity/star';
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from '../Entity/planet';
 
@@ -8,6 +8,7 @@ import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
 import { BlackHole } from '../Entity/blackHole';
+import { StarDust } from '../Entity/starDust';
 
 interface StarCategory {
     name: string;
@@ -109,7 +110,6 @@ export class Player extends Star {
     }
 
     setPosition(pos: Vector2) {
-        // console.log(pos);
         this.position = pos;
         this.movingMesh.position.x = this.position.x;
         this.movingMesh.position.z = this.position.y;
@@ -121,7 +121,7 @@ export class Player extends Star {
         let radius = 2 + planetNumber;
         let velocity = 5 / (1 + planetNumber / 2) + Math.random() / 2;
         if (!planet) {
-            let planetInterface: PlanetInterface = { color: [0, 0, 0], radius: radius, size: 1, velocity: velocity };
+            let planetInterface: PlanetInterface = { radius: radius, size: 1, velocity: velocity };
             planet = new Planet(this.system, planetInterface);
         } else {
             this.animatePlanetToStar(planet, radius, velocity);
@@ -167,21 +167,6 @@ export class Player extends Star {
             this.velocity = 1;
         });
     }
-
-    // accelerate() {
-    //     let planet = this.planets.pop();
-    //     if (!planet) return;
-    //     let reverseDirection = this.direction.negate();
-    //     this.fixeAnimation.simple(this.launchAnimationLength, (count, perc) => {
-    //         planet.mesh.position.x += reverseDirection.x * 10;
-    //         planet.mesh.position.z += reverseDirection.y * 10;
-    //         if (perc < 0.5) this.velocity = 1 + Math.sqrt(perc);
-    //         else this.velocity = 1 + Math.sqrt(Math.max(1 - perc, 0));
-    //     }, () => {
-    //         planet.mesh.dispose();
-    //         this.velocity = 1;
-    //     });
-    // }
 
     particle: ParticleSystem;
     createParticle() {
@@ -352,8 +337,10 @@ export class Player extends Star {
         this.absorbing = false;
     }
 
-    addDust(size:number) {
-        this.changeSize(size/5);
+    addDust(dust: StarDust) {
+        dust.goToEntity(this, () => {
+            this.changeSize(dust.size/5);
+        });
     }
 
     decrease() {

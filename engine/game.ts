@@ -151,9 +151,10 @@ export class GameEngine {
         if (this.nebulaNumber == 6) this.nebulaArrowRight.hide();
     }
 
+    startButton: ui_button;
     addStartButton() {
-        let button = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Start' }, { x: 0, y: 250 }, { width: 200, height: 40 }, { color: '#000', background: '#FF2266', fontSize: 20 });
-        button.on('click', () => {
+        this.startButton = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Start' }, { x: 0, y: 250 }, { width: 200, height: 40 }, { color: '#000', background: '#FF2266', fontSize: 20 });
+        this.startButton.on('click', () => {
             this.startGame();
         });
     }
@@ -161,6 +162,8 @@ export class GameEngine {
     showIntro() {
         this.starUI.showAll();
         this.nebulaUI.showAll();
+        this.starCategory.showAll();
+        this.startButton.show();
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));
     }
@@ -168,6 +171,8 @@ export class GameEngine {
     hideIntro() {
         this.starUI.hideAll();
         this.nebulaUI.hideAll();
+        this.starCategory.hideAll();
+        this.startButton.hide();
     }
 
     stopGame() {
@@ -182,8 +187,8 @@ export class GameEngine {
         this.planetField.checkPlayerAndRessources(true);
         let ia1 = new IAPlayer(this.system, this.gravityField);
         this.planetField.addPlayer(ia1);
-        ia1.setSize(2);
-        ia1.setPosition(new Vector2(10, 10));
+        ia1.setSize(1);
+        ia1.setPosition(new Vector2(50, 50));
         ia1.setTemperature(25000);
     }
 }

@@ -195,7 +195,6 @@ export class System {
     sendToSkyChangeListeners() {
         for (let i = 0; i < this.listeners.length; i++) {
             this.listeners[i](this.sceneTexture);
-            
         }
     }
 
