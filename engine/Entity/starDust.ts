@@ -12,13 +12,13 @@ export interface StarDustInterface extends PositionEntityInterface {
 
 export class StarDust extends PositionEntity {
 
-    showAnimation: Animation;
+    animation: Animation;
     curve: IEasingFunction;
 
     constructor(system: System, options: StarDustInterface) {
         super('dust', system, options);
 
-        this.showAnimation = new Animation(this.system.animationManager);
+        this.animation = new Animation(this.system.animationManager);
         this.addDust();
         this.show();
         this.curve = new CubicEase();
@@ -32,10 +32,20 @@ export class StarDust extends PositionEntity {
 
     show() {
         let size = 0.01 + Math.random() * 0.1;
-        this.showAnimation.simple(50, (count, perc) => {
+        this.animation.simple(50, (count, perc) => {
             this.setSize(perc * size);
         }, () => {
             this.setSize(size);
+            this.oscillate();
+        });
+    }
+
+    oscillate() {
+        let random = Math.random() * 10;
+        this.animation.infinite((count, perc) => {
+            let cossin = new Vector2(Math.cos(random + count / 100) / 100, Math.sin(random + count / 100) / 100);
+            let newPos = this.position.add(cossin);
+            this.setPosition(newPos);
         });
     }
 
@@ -56,8 +66,8 @@ export class StarDust extends PositionEntity {
     fixeAnimationLength = 20;
     goToEntity(entity: PositionEntity, callback?: Function) {
         let step = 1 - (1 / this.fixeAnimationLength);
-        this.showAnimation.simple(this.fixeAnimationLength, (count, perc) => {
-            let progress = this.curve.ease(perc);
+        this.animation.simple(this.fixeAnimationLength / 2, (count, perc) => {
+            let progress = this.curve.ease(perc/2);
             let sizeProgress = Math.sqrt(this.size) * (1 - progress);
             this.mesh.scaling = new Vector3(sizeProgress, sizeProgress, sizeProgress);
             
