@@ -224,7 +224,7 @@ export class ui_panel extends ui_group {
         this.setScreenPosition(scpos);
 
         this.setSize(size);
-        // this.setStyle({ zIndex: -10 });
+        this.setStyle({ zIndex: -10 });
     }
 }
 

@@ -148,7 +148,7 @@ export class PlanetField {
     checkPlayers() {
         for (let i = 0; i < this.players.length; i++) {
             const player = this.players[i];
-            this.checkPlayerRessources(player);
+            if (!player.accelerating) this.checkPlayerRessources(player);
             this.checkAbsorbtion(player);
             if (player.size < 0.2) this.playerDead(player);
         }
@@ -159,7 +159,7 @@ export class PlanetField {
             for (let i = 0; i < this.planets.length; i++) {
                 const planet = this.planets[i];
                 let dist = Vector2.Distance(planet.position, player.position);
-                if (dist < player.size * 20) {
+                if (dist < player.size * 10) {
                     this.removePlanet(planet);
                     player.addPlanet(planet);
                 }
@@ -193,7 +193,7 @@ export class PlanetField {
         if (blackHoleTest) {
             player.getAbsorbByTarget(blackHoleTest);
             let velocity = Math.pow((minDist / (blackHoleTest.size * 20)), 2);
-            player.setVelocity(velocity);
+            player.setRealVelocity(velocity);
         } else {
             let minDist = 1000000;
             let testTarget: Player;
@@ -204,18 +204,18 @@ export class PlanetField {
                 if (minDist > dist && otherplayer.key != player.key && player.size > otherplayer.size) {
                     minDist = dist;
                     closestTarget = otherplayer;
-                    if (dist < (player.size * 20)) {
+                    if (dist < (player.size * 10)) {
                         testTarget = otherplayer;
                     }
                 }
 
             }
 
-            if (player.ia && closestTarget && minDist > player.size * 20) player.goToPlayer(closestTarget);
+            if (player.ia && closestTarget && minDist > player.size * 10) player.goToPlayer(closestTarget);
 
             if (testTarget) {
-                let velocity = Math.pow((minDist / (player.size * 20)), 2);
-                testTarget.setVelocity(velocity);
+                let velocity = Math.pow((minDist / (player.size * 20)), 1);
+                testTarget.setRealVelocity(velocity);
                 player.absorbTarget(testTarget);
             } else {
                 player.absorbStop();

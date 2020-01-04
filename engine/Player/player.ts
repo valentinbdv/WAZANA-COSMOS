@@ -79,7 +79,7 @@ export class Player extends Star {
         this.setVelocity(category.velocity);
         this.setTemperature(category.temperature);
         this.setMaxPlanet(category.planets);
-        // this.setVelocity(category.velocity);
+        // this.(category.velocity);
     }
 
     velocity = 1;
@@ -87,6 +87,11 @@ export class Player extends Star {
         this.velocity = velocity;
     }
     
+    realVelocity = 1;
+    setRealVelocity(realVelocity: number) {
+        this.realVelocity = realVelocity;
+    }
+
     position: Vector2 = Vector2.Zero();
     direction: Vector2 = Vector2.Zero();
     // move(mousepos: Vector2) {
@@ -98,7 +103,7 @@ export class Player extends Star {
     // }
     move(step: Vector2) {
         step = step.multiplyInPlace(new Vector2(5, 5));
-        let max = this.velocity / Math.sqrt(this.size * 50);
+        let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 40);
         let ratio = Math.abs(step.x / step.y);
         let maxX = Math.sqrt((Math.pow(max, 2) * ratio) / (ratio + 1));
         let maxY = Math.sqrt(Math.pow(max, 2) / (ratio + 1));
@@ -149,22 +154,26 @@ export class Player extends Star {
     }
 
     launchAnimationLength = 50;
+    accelerating = false;
     accelerate() {
         let planet = this.planets.pop();
+        if (!planet || !this.moving) return;
+        this.accelerating = true;
         let size = Math.sqrt(this.size);
-        if (!planet) return;
         this.accelerateAnimation.simple(this.launchAnimationLength, (count, perc) => {
             planet.mesh.position.x = planet.mesh.position.x / 1.1;
             planet.mesh.position.z = planet.mesh.position.z / 1.1;
             planet.mesh.position.y = 1 - perc;
-            if (perc < 0.5) this.velocity = 1 + 2 * Math.sqrt(perc);
-            else this.velocity = 1 + 2 * Math.sqrt(Math.max(1 - perc, 0));
+            // if (perc < 0.5) this.realVelocity = 1 + 4 * perc;
+            // else this.realVelocity = 1 + 4 * Math.max(1 - perc, 0);
+            this.realVelocity = 1 + 2 * Math.sin(perc * Math.PI);
             let scale = (count < this.launchAnimationLength - 10) ? 1 + count % 10 / 20 : 1 + (10 - count % 10) / 20;
             this.heart.scaling = new Vector3(scale * size, scale * size, scale * size);
         }, () => {
+            this.accelerating = false;
             planet.mesh.dispose();
             this.heart.scaling = new Vector3(size, size, size);
-            this.velocity = 1;
+            this.realVelocity = 1;
         });
     }
 
@@ -331,7 +340,7 @@ export class Player extends Star {
 
     absorbStop() {
         if (!this.absorbing || !this.target) return;
-        this.target.setVelocity(1);
+        this.target.setRealVelocity(1);
         this.particle.stop();
         clearInterval(this.absorbingInt);
         this.absorbing = false;
@@ -353,8 +362,8 @@ export class Player extends Star {
 
     changeSize(change: number) {
         if (this.died) return;
-        let newSize = this.size + change;
-        this.updateSize(newSize);
+        let newSize = Math.pow(this.size, 2) + change;
+        this.setSize(newSize);
     }
 
     explode(callback: Function) {

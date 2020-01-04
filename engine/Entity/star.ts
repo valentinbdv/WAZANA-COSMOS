@@ -210,10 +210,9 @@ export class Star extends MovingEntity {
 
     setSize(size: number) {
         let newsize = Math.max(0.1, size);
-        this._setSize(newsize);
         newsize = Math.sqrt(newsize);
+        this._setSize(newsize);
         let sizeVector = new Vector3(newsize, newsize, newsize);
-        // this.movingMesh.scaling = sizeVector;
         this.surface.scaling = sizeVector;
         this.heart.scaling = sizeVector;
         this.light.intensity = 1000 * size;
@@ -222,6 +221,7 @@ export class Star extends MovingEntity {
     }
 
     updateSize(size: number, time?:number, callback?: Function) {
+        this.shineAnimation.stop();
         let currentsize = this.size;
         let change = size - currentsize;
         let animTime = (time)? time : 20;
