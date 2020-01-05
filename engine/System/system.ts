@@ -203,7 +203,6 @@ export class System {
         this.light = new DirectionalLight('light', new Vector3(1, -1, 0), this.scene);
         this.light.diffuse = new Color3(1, 1, 1);
         this.light.intensity = 0.5;
-        console.log(this.light);
     }
 
     dustMesh: Mesh;
@@ -219,6 +218,7 @@ export class System {
         // this.mesh.isBlocker = false;
         this.dustMesh = MeshBuilder.CreateSphere("dust", { diameter: 1 }, this.scene);
         this.dustMesh.material = this.dustMaterial;
+        this.dustMesh.isVisible = false;
     }
 
     planetMesh: PearlMesh;
@@ -229,6 +229,7 @@ export class System {
         // this.planetMaterial.roughness = 1;
         // this.meshMaterial.emissiveColor = color;
         this.planetMesh.material = this.planetMaterial;
+        this.planetMesh.isVisible = false;
     }
 
     /**

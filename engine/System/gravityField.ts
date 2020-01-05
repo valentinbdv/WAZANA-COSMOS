@@ -28,8 +28,14 @@ export class GravityField {
         let frame = true;
         this.system.scene.registerBeforeRender(() => {
             if (frame) {
-                this.ribbon = Mesh.CreateRibbon(null, this.paths, null, null, null, null, null, null, this.ribbon);
-                this.gridRibbon = Mesh.CreateRibbon(null, this.paths, null, null, null, null, null, null, this.gridRibbon);
+                try {
+                    if (this.paths.length == 0) return;
+                    this.ribbon = Mesh.CreateRibbon(null, this.paths, null, null, null, null, null, null, this.ribbon);
+                    this.gridRibbon = Mesh.CreateRibbon(null, this.paths, null, null, null, null, null, null, this.gridRibbon);
+                } catch {
+                    console.log('maperror');
+                    console.log(this.paths);
+                }
             }
             frame = !frame;
         });
@@ -48,6 +54,7 @@ export class GravityField {
         this.gridRibbon = Mesh.CreateRibbon("gridRibbon", this.paths, false, false, 0, this.system.scene, true, sideO);
         this.gridRibbon.rotation.x = Math.PI;
         this.gridRibbon.position.y = 0.01;
+        // this.gridRibbon.convertToFlatShadedMesh();
         // this.gridRibbon.renderingGroupId = 2;
         // this.gridRibbon.isVisible = false;
 
@@ -70,6 +77,7 @@ export class GravityField {
     addRibbon() {
         var sideO = Mesh.BACKSIDE;
         this.ribbon = Mesh.CreateRibbon("ribbon", this.paths, false, false, 0, this.system.scene, true, sideO);
+        // this.ribbon.convertToFlatShadedMesh();
         // this.gridRibbon.renderingGroupId = 3;
         // this.ribbon = Mesh.CreatePlane("ribbon", 10, this.system.scene);
         // this.ribbon.isVisible = false;
@@ -123,16 +131,19 @@ export class GravityField {
             newPathToKeys.push(linekey);
         }
         this.center = newCenter.clone();
+        // console.log(newPaths);
+        
         this.paths = newPaths;
         this.pathToKeys = newPathToKeys;
     }
 
     pointDepth = 8;
-    pointSize = 5;
+    pointSize = 3;
     setStarPoint(key:string, pos: Vector2, size: number, depth?: number) {
         let StarToCenter = Vector2.Distance(pos, this.center);
         this.eraseStar(key);
-        if (StarToCenter + 5 * size * this.pointSize > this.halfSize) return;
+        // If too far from center, ignore it
+        if (StarToCenter + 10 * size * this.pointSize > this.halfSize) return;
         let mapPos = pos.subtract(this.center);
         let xRound = (Math.round(mapPos.x / this.step)) + this.halfDetail;
         let yRound = (Math.round(-mapPos.y / this.step)) + this.halfDetail;

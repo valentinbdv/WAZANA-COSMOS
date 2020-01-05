@@ -5,7 +5,7 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 import remove from 'lodash/remove';
 import { Planet, PlanetInterface } from '../Entity/planet';
 import { StarDust, StarDustInterface } from '../Entity/starDust';
-import { Player } from '../player/player';
+import { Player, minSize } from '../player/player';
 import { BlackHole } from '../Entity/blackHole';
 import { GravityField } from './gravityField';
 
@@ -150,7 +150,7 @@ export class PlanetField {
             const player = this.players[i];
             if (!player.accelerating) this.checkPlayerRessources(player);
             this.checkAbsorbtion(player);
-            if (player.size < 0.2) this.playerDead(player);
+            if (player.size < minSize) this.playerDead(player);
         }
     }
 
@@ -225,12 +225,13 @@ export class PlanetField {
 
     playerDead(player: Player) {
         this.removePlayer(player);
+        let playerSize = player.size;
         if (player.aborber) {
             player.dive();
         } else {
             player.explode(() => {
-                // if (Math.random() > 0.5 && this.blackHoles.length < 10) this.createBlackHole(player.position.clone());
-                this.createBlackHole(player.position.clone());
+                if (playerSize > 10 && Math.random() > 0.5 && this.blackHoles.length < 10) this.createBlackHole(player.position.clone());
+                // this.createBlackHole(player.position.clone());
             });
         }
     }

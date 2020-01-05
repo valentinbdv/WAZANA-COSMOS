@@ -28,6 +28,7 @@ export class StarDust extends PositionEntity {
     addDust() {
         this.mesh = this.system.dustMesh.createInstance(this.key + "duststar");
         this.setSize(0);
+        this.mesh.isVisible = true;
     }
 
     show() {
