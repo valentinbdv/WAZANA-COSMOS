@@ -10,6 +10,8 @@ import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
 import { BlackHole } from '../Entity/blackHole';
 import { StarDust } from '../Entity/starDust';
 
+export let minSize = 0.2; 
+
 interface StarCategory {
     name: string;
     temperature: number;
@@ -101,9 +103,10 @@ export class Player extends Star {
     //     let pos = this.position.add(this.direction);
     //     this.setPosition(pos);
     // }
+    starVelocity: 0.03;
     move(step: Vector2) {
         step = step.multiplyInPlace(new Vector2(5, 5));
-        let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 40);
+        let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 30);
         let ratio = Math.abs(step.x / step.y);
         let maxX = Math.sqrt((Math.pow(max, 2) * ratio) / (ratio + 1));
         let maxY = Math.sqrt(Math.pow(max, 2) / (ratio + 1));
@@ -159,7 +162,7 @@ export class Player extends Star {
         let planet = this.planets.pop();
         if (!planet || !this.moving) return;
         this.accelerating = true;
-        let size = Math.sqrt(this.size);
+        let size = this.size;
         this.accelerateAnimation.simple(this.launchAnimationLength, (count, perc) => {
             planet.mesh.position.x = planet.mesh.position.x / 1.1;
             planet.mesh.position.z = planet.mesh.position.z / 1.1;
