@@ -1,0 +1,85 @@
+import { System } from '../System/system';
+import { PositionEntity, PositionEntityInterface } from './positionEntity';
+import { Animation } from '../System/animation';
+
+import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
+import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
+import { IEasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
+
+export interface StarDustInterface extends PositionEntityInterface {
+    temperature: number,
+}
+
+export class StarDust extends PositionEntity {
+
+    animation: Animation;
+    curve: IEasingFunction;
+
+    constructor(system: System, options: StarDustInterface) {
+        super('dust', system, options);
+
+        this.animation = new Animation(this.system.animationManager);
+        this.addDust();
+        this.show();
+        this.curve = new CubicEase();
+    }
+
+    mesh: InstancedMesh;
+    addDust() {
+        this.mesh = this.system.dustMesh.createInstance(this.key + "duststar");
+        this.setSize(0);
+        this.mesh.isVisible = true;
+    }
+
+    show() {
+        let size = 0.01 + Math.random() * 0.1;
+        this.animation.simple(50, (count, perc) => {
+            this.setSize(perc * size);
+        }, () => {
+            this.setSize(size);
+            this.oscillate();
+        });
+    }
+
+    oscillate() {
+        let random = Math.random() * 10;
+        this.animation.infinite((count, perc) => {
+            let cossin = new Vector2(Math.cos(random + count / 100) / 100, Math.sin(random + count / 100) / 100);
+            let newPos = this.position.add(cossin);
+            this.setPosition(newPos);
+        });
+    }
+
+    setSize(size: number) {
+        this._setSize(size);
+        let newsize = Math.sqrt(size);
+        let sizeVector = new Vector3(newsize, newsize, newsize);
+        this.mesh.scaling = sizeVector;
+    }
+
+    setPosition(pos: Vector2) {
+        this._setPosition(pos);
+        this.mesh.position.x = pos.x;
+        this.mesh.position.z = pos.y;
+        this.mesh.position.y = 1;
+    }
+
+    fixeAnimationLength = 20;
+    goToEntity(entity: PositionEntity, callback?: Function) {
+        let step = 1 - (1 / this.fixeAnimationLength);
+        this.animation.simple(this.fixeAnimationLength / 2, (count, perc) => {
+            let progress = this.curve.ease(perc/2);
+            let sizeProgress = Math.sqrt(this.size) * (1 - progress);
+            this.mesh.scaling = new Vector3(sizeProgress, sizeProgress, sizeProgress);
+            
+            let change = entity.position.subtract(this.position);
+            let changePos = change.multiply(new Vector2(step, step));
+            // let changePos = change.multiply(new Vector2(1 - progress, 1 - progress));
+            let newPos = entity.position.subtract(changePos);
+            this.setPosition(newPos);
+        }, () => {
+            this.mesh.dispose();
+            if (callback) callback();
+        });
+    }
+}

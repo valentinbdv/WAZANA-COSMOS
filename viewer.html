@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>Star Wars</title>
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="img/fav/favicon.ico" /> -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Google Tag -->
+    <meta name="Description" content="Integrate a simple and free interactive background to draw more attention to your website.">
+
+    <!-- Sharing Meta -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@nakerwave">
+    <meta name="twitter:title" content="Naker.Back: Interactivity is back">
+    <meta name="twitter:description" content="Integrate a simple and free interactive background to draw more attention to your website.">
+    <meta name="twitter:image" content="https://asset.naker.io/image/main/share.jpg">
+
+    <!-- facebook and other social sites -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Naker">
+    <meta property="og:title" content="Naker.Back: Interactivity is back">
+    <meta property="og:description" content="Integrate a simple and free interactive background to draw more attention to your website.">
+    <meta property="og:image" content="https://asset.naker.io/image/main/share.jpg">
+    <meta property="og:url" content="https://naker.io">
+    <meta property="fb:app_id" content="270869903740314"/>
+
+    <link rel="icon" type="image/png" href="https://asset.naker.io/image/main/favicon.png?rtt" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Raleway:300,400,600,700&amp;lang=en" />
+  </head>
+  <body class="noselect" style="margin: 0px;">
+    <canvas id="star1" class="projectContainer" style="position: absolute; width: 100%; height: 100%;"></canvas>
+    <!-- <div id="star1" class="projectContainer" style="position: absolute; width: 100%; height: 100%;"></div>
+    <div id="star2" class="projectContainer" style="position: absolute; width: 100%; height: 100%;"></div>
+    <div id="star3" class="projectContainer" style="position: absolute; width: 100%; height: 100%;"></div> -->
+    <!-- <script src='http://localhost/StarWars/dist/viewer.js'></script> -->
+    <!-- <script src='http://localhost/StarWars/dist/engine.js'></script> -->
+    <!-- <script src='https://test.wazana.io/starwars/dist/viewer.js'></script> -->
+    <script src='https://test.wazana.io/starwars/dist/engine2.js'></script>
+    <script> 
+      // let container = document.getElementById("star1");
+      // new star.StarViewer(container, {colorStart: [255, 0, 0], position: {x: 0, y:0, z:-5}});
+
+      // let container2 = document.getElementById("star1");
+      // new star.StarViewer(container2, {colorStart: [0, 255, 0], position: {x: 0, y:0, z:0}});
+
+      // let container3 = document.getElementById("star1");
+      // new star.StarViewer(container3, {colorStart: [0, 0, 255], position: {x: 0, y:0, z:5}});
+
+      let canvas = document.getElementById("star1");
+      new StarEngine.start({ container: canvas, colorStart: [0, 0, 255], position: { x: 0, y: 0, z: 5 } });
+    </script>
+    </body>
+</html>
