@@ -1,6 +1,6 @@
 import { System } from '../System/system';
 import { MoveCatcher } from './moveCatcher';
-import { GravityField } from '../System/gravityField';
+import { GravityGrid } from '../System/GravityGrid';
 import { Player } from './player';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
@@ -9,8 +9,8 @@ export class IAPlayer extends Player {
 
     ia = true;
 
-    constructor(system: System, gravityField: GravityField) {
-        super(system, gravityField);
+    constructor(system: System, gravityGrid: GravityGrid) {
+        super(system, gravityGrid);
         this.startMovingAround();
         this.setSize(0.6);
     }

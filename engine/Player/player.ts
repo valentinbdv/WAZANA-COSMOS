@@ -1,5 +1,5 @@
 import { System } from '../System/system';
-import { GravityField } from '../System/gravityField';
+import { GravityGrid } from '../System/GravityGrid';
 import { Star } from '../Entity/star';
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from '../Entity/planet';
@@ -53,7 +53,7 @@ export let StarCategories: Array<StarCategory> = [
 
 export class Player extends Star {
 
-    gravityField: GravityField;
+    gravityGrid: GravityGrid;
     key: string;
     fixeAnimation: Animation;
     accelerateAnimation: Animation;
@@ -62,10 +62,10 @@ export class Player extends Star {
     ia = false;
     categories = [];
 
-    constructor(system: System, gravityField: GravityField) {
+    constructor(system: System, gravityGrid: GravityGrid) {
         super(system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 0 }, maxPlanet: 5 });
-        this.gravityField = gravityField;
-        this.secondLight.excludedMeshes.push(this.gravityField.ribbon);
+        this.gravityGrid = gravityGrid;
+        this.secondLight.excludedMeshes.push(this.gravityGrid.ribbon);
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.fixeAnimation = new Animation(this.system.animationManager);
         this.accelerateAnimation = new Animation(this.system.animationManager);
@@ -80,8 +80,13 @@ export class Player extends Star {
     setCategory(category: StarCategory) {
         this.setVelocity(category.velocity);
         this.setTemperature(category.temperature);
-        this.setMaxPlanet(category.planets);
-        // this.(category.velocity);
+        this.setMaxPlanet(category.planets)
+        this.setGravity(category.gravity);
+        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField);
+        this.removeAllPlanets();
+        for (let i = 0; i < category.planets + 1; i++) {
+            this.addPlanet();
+        }
     }
 
     velocity = 1;
@@ -121,7 +126,7 @@ export class Player extends Star {
         this.position = pos;
         this.movingMesh.position.x = this.position.x;
         this.movingMesh.position.z = this.position.y;
-        this.gravityField.setStarPoint(this.key, this.position, this.size);
+        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityGrid);
     }
 
     addPlanet(planet?: Planet) {
@@ -369,10 +374,10 @@ export class Player extends Star {
         this.setSize(newSize);
     }
 
-    explode(callback: Function) {
+    explode(callback?: Function) {
         this._explode(callback);
     }
-    _explode(callback: Function) {
+    _explode(callback?: Function) {
         this.absorbStop();
         this.die();
         this.updateSize(40, 80, () => {
@@ -412,7 +417,7 @@ export class Player extends Star {
     onDied: Function;
     die() {
         this.moving = false;
-        this.gravityField.eraseStar(this.key);
+        this.gravityGrid.eraseStar(this.key);
         this.died = true;
     }
 

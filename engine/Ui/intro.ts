@@ -61,15 +61,18 @@ export class IntroUI {
         if (this.starNumber == StarCategories.length - 1) this.starArrowRight.hide();
         this.planetText.setText('Planets: ' + StarCategories[this.starNumber].planets);
         this.velocityText.setText('Velocity: ' + StarCategories[this.starNumber].velocity);
+        this.gravityText.setText('Gravity Field: ' + StarCategories[this.starNumber].gravity);
     }
 
     starCategory: ui_group;
     planetText: ui_text;
     velocityText: ui_text;
+    gravityText: ui_text;
     addStarCategory() {
-        this.starCategory = new ui_control(this.system, { x: 0, y: 120 }, { width: 300, height: 100 }, { zIndex: 100 });
-        this.planetText = this.starCategory.addText('', { x: 0, y: -15 }, { fontSize: 20, color: colormain });
-        this.velocityText = this.starCategory.addText('', { x: 0, y: 15 }, { fontSize: 20, color: colormain });
+        this.starCategory = new ui_control(this.system, { x: 0, y: 130 }, { width: 300, height: 100 }, { zIndex: 100 });
+        this.planetText = this.starCategory.addText('', { x: 0, y: -30 }, { fontSize: 20, color: colormain });
+        this.velocityText = this.starCategory.addText('', { x: 0, y: 0 }, { fontSize: 20, color: colormain });
+        this.gravityText = this.starCategory.addText('', { x: 0, y: 30 }, { fontSize: 20, color: colormain });
     }
 
     nebulaUI: ui_group;

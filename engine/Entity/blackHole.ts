@@ -1,6 +1,6 @@
 import { System } from '../System/system';
 import { Animation } from '../System/animation';
-import { GravityField } from '../System/gravityField';
+import { GravityGrid } from '../System/GravityGrid';
 import { MoveCatcher } from '../Player/moveCatcher';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
@@ -13,16 +13,15 @@ export interface BlackHoleInterface extends MovingEntityInterface {
 
 export class BlackHole extends MovingEntity {
 
-    gravityField: GravityField;
+    gravityGrid: GravityGrid;
     introAnimation: Animation;
 
     life: number;
     power: number;
     velocity = 0.5;
-
-    constructor(system: System, gravityField: GravityField, options: BlackHoleInterface) {
+    constructor(system: System, gravityGrid: GravityGrid, options: BlackHoleInterface) {
         super('blackhole', system, options);
-        this.gravityField = gravityField;
+        this.gravityGrid = gravityGrid;
 
         if (options.position) {
             let pos = new Vector2(options.position.x, options.position.y);
@@ -53,13 +52,13 @@ export class BlackHole extends MovingEntity {
 
     setPosition(pos: Vector2) {
         this._setPosition(pos);
-        this.gravityField.setStarPoint(this.key, this.position, this.size, 50);
+        this.gravityGrid.setStarPoint(this.key, this.position, this.size, 50);
     }
     
     build() {
         this.introAnimation = new Animation(this.system.animationManager);
         this.introAnimation.simple(200, (count, perc) => {
-            this.gravityField.setStarPoint(this.key, this.position, this.size, perc * 50);
+            this.gravityGrid.setStarPoint(this.key, this.position, this.size, perc * 50);
         }, () => {
             this.startMovingAround();
             this.moveAround();

@@ -51,11 +51,24 @@ export class MovingEntity extends PositionEntity {
         this.movingMesh = new AbstractMesh(this.key, this.system.scene);
     }
 
+    gravity = 1;
+    gravityField = 1;
+    setGravity(gravity: number) {
+        this.gravity = gravity;
+        this.gravityField = this.size * this.gravity;
+    }
+
     setSize(size: number) {
         this._setSize(size);
         let newsize = Math.sqrt(size / 2);
         let sizeVector = new Vector3(newsize, newsize, newsize);
         this.movingMesh.scaling = sizeVector;
+    }
+
+    size: number;
+    _setSize(size: number) {
+        this.size = size;
+        this.gravityField = this.size * this.gravity;
     }
 
     setPosition(pos: Vector2) {
