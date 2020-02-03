@@ -12,7 +12,22 @@ import { StarDust } from '../Entity/starDust';
 
 export let minSize = 0.2; 
 
-interface StarCategory {
+export interface PlayerInterface {
+    key: string;
+    size: number;
+    position: any;
+    destination: any;
+    maxPlanet: number; 
+    gravityField: number;
+    velocity: number;
+    planets: Array<Planet>;
+    absorbing: string;
+    absorbed: string;
+    realVelocity: number;
+    accelerating: boolean;
+}
+
+export interface PlayerCategory {
     name: string;
     temperature: number;
     planets: number;
@@ -20,7 +35,7 @@ interface StarCategory {
     velocity: number;
 }
 
-export let StarCategories: Array<StarCategory> = [
+export let StarCategories: Array<PlayerCategory> = [
     {
         name: 'Red Dwarf',
         temperature: 3000,
@@ -53,8 +68,20 @@ export let StarCategories: Array<StarCategory> = [
 
 export class Player extends Star {
 
-    gravityGrid: GravityGrid;
     key: string;
+    size: number;
+    position: any;
+    destination: any;
+    maxPlanet: number;
+    gravityField: number;
+    velocity: number;
+    planets: Array<Planet>;
+    absorbing: string;
+    absorbed: string;
+    realVelocity: number = 1;
+    accelerating: boolean;
+
+    gravityGrid: GravityGrid;
     fixeAnimation: Animation;
     accelerateAnimation: Animation;
     fixeCurve: IEasingFunction;
@@ -77,7 +104,7 @@ export class Player extends Star {
         this.createParticle();
     }
 
-    setCategory(category: StarCategory) {
+    setCategory(category: PlayerCategory) {
         this.setVelocity(category.velocity);
         this.setTemperature(category.temperature);
         this.setMaxPlanet(category.planets)
@@ -89,17 +116,14 @@ export class Player extends Star {
         }
     }
 
-    velocity = 1;
     setVelocity(velocity: number) {
         this.velocity = velocity;
     }
     
-    realVelocity = 1;
     setRealVelocity(realVelocity: number) {
         this.realVelocity = realVelocity;
     }
 
-    position: Vector2 = Vector2.Zero();
     direction: Vector2 = Vector2.Zero();
     // move(mousepos: Vector2) {
     //     let x = Math.sign(mousepos.x) * Math.min(Math.abs(mousepos.x) * this.velocity, this.velocity / (this.size * 20));
@@ -110,7 +134,7 @@ export class Player extends Star {
     // }
     starVelocity: 0.03;
     move(step: Vector2) {
-        step = step.multiplyInPlace(new Vector2(5, 5));
+        step = Vector2.Maximize(step.multiplyInPlace(new Vector2(5, 5)), new Vector2(0.0001, 0.0001));
         let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 30);
         let ratio = Math.abs(step.x / step.y);
         let maxX = Math.sqrt((Math.pow(max, 2) * ratio) / (ratio + 1));
@@ -123,10 +147,11 @@ export class Player extends Star {
     }
 
     setPosition(pos: Vector2) {
-        this.position = pos;
+        this._setPosition(pos);
         this.movingMesh.position.x = this.position.x;
         this.movingMesh.position.z = this.position.y;
-        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityGrid);
+        
+        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField);
     }
 
     addPlanet(planet?: Planet) {
@@ -162,7 +187,6 @@ export class Player extends Star {
     }
 
     launchAnimationLength = 50;
-    accelerating = false;
     accelerate() {
         let planet = this.planets.pop();
         if (!planet || !this.moving) return;
@@ -319,12 +343,11 @@ export class Player extends Star {
 
     target: Player;
     aborber: BlackHole;
-    absorbing = false;
     absorbingInt;
     absorbTarget(target: Player) {
         if (this.absorbing) return;
         this.absorbStop();
-        this.absorbing = true;
+        this.absorbing = target.key;
         this.target = target;
         this.setAbsobUpdateFunction();
         this.particle.start();
@@ -337,7 +360,6 @@ export class Player extends Star {
     getAbsorbByTarget(aborber: BlackHole) {
         if (this.absorbing || !this.target) return;
         this.absorbStop();
-        this.absorbing = true;
         this.aborber = aborber;
         this.setGetAbsobUpdateFunction();
         this.particle.start();
@@ -351,7 +373,7 @@ export class Player extends Star {
         this.target.setRealVelocity(1);
         this.particle.stop();
         clearInterval(this.absorbingInt);
-        this.absorbing = false;
+        this.absorbing = null;
     }
 
     addDust(dust: StarDust) {

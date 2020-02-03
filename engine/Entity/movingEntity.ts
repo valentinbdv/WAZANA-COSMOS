@@ -17,7 +17,8 @@ export class MovingEntity extends PositionEntity {
 
     constructor(type:string, system: System, options: MovingEntityInterface) {
         super(type, system, options);
-        
+
+        this.addCactcher();
         this.addMovingMesh();
     }
 
@@ -25,12 +26,12 @@ export class MovingEntity extends PositionEntity {
         this.moving = moving;
     }
     
-    addCactcher(moveCatcher: MoveCatcher) {
-        this.moveCatcher = moveCatcher;
+    addCactcher() {
+        this.moveCatcher = new MoveCatcher(this.system.animationManager);
         
         this.moveCatcher.addListener((pos: Vector2, step: Vector2) => {
+            step = step.multiplyInPlace(new Vector2(5, 5));
             if (this.moving) {
-                step = step.multiplyInPlace(new Vector2(5, 5));
                 this.move(step);
             }
         });
@@ -64,7 +65,7 @@ export class MovingEntity extends PositionEntity {
         let sizeVector = new Vector3(newsize, newsize, newsize);
         this.movingMesh.scaling = sizeVector;
     }
-
+    
     size: number;
     _setSize(size: number) {
         this.size = size;

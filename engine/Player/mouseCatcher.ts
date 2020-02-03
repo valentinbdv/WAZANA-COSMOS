@@ -1,18 +1,13 @@
-
-import { Animation, AnimationManager } from '../System/animation';
-import { MoveCatcher } from './moveCatcher';
-
 import { Vector2, Quaternion } from '@babylonjs/core/Maths/math';
 import { Tools } from '@babylonjs/core/Misc/Tools';
+import remove from 'lodash/remove';
 
-export class MouseCatcher extends MoveCatcher {
+export class MouseCatcher {
 
     mousecatch = new Vector2(0, 0);
     catching = true;
-    animation: Animation;
 
-    constructor(animationManager: AnimationManager) {
-        super(animationManager);
+    constructor() {
         window.addEventListener("mousemove", (evt) => { this.mouseOrientation(evt) });
         window.addEventListener("deviceorientation", (evt) => { this.deviceOrientation(evt) });
         window.addEventListener("orientationchange", () => { this.orientationChanged() });
@@ -62,7 +57,7 @@ export class MouseCatcher extends MoveCatcher {
                 pos.divideInPlace(this.divideVector);
                 let posMax = Vector2.Minimize(pos, this.deviceMaxVector);
                 let posMin = Vector2.Maximize(posMax, this.deviceMinVector);
-                this.catch(posMin);
+                this.sendToListener(pos);
             }
         }
     }
@@ -74,7 +69,23 @@ export class MouseCatcher extends MoveCatcher {
             let h = window.innerHeight;
             pos.x = 4 * (evt.y - h / 2) / h;
             pos.y = 4 * (evt.x - w / 2) / w;
-            this.catch(pos);
+            this.sendToListener(pos);
+        }
+    }
+
+    listeners: Array<Function> = [];
+    addListener(callback: Function) {
+        this.listeners.push(callback);
+    }
+
+    removeListener(callback: Function) {
+        remove(this.listeners, (c) => { c == callback });
+    }
+
+    sendToListener(pos: Vector2) {
+        for (let i = 0; i < this.listeners.length; i++) {
+            // Clone to make sure there is not something which can alter real positionCatch
+            this.listeners[i](pos.clone());
         }
     }
 }

@@ -17,7 +17,7 @@ export class PositionEntity {
     
     constructor(type:string, system: System, options: PositionEntityInterface) {
         this.system = system;
-        this.key = type +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        this.key = type + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
         if (options.position) {
             let pos = new Vector2(options.position.x, options.position.y);

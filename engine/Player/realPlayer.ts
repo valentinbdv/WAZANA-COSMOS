@@ -1,24 +1,24 @@
 import { System } from '../System/system';
 import { MouseCatcher } from './mouseCatcher';
-import { MoveCatcher } from './moveCatcher';
 import { GravityGrid } from '../System/GravityGrid';
 import { Player } from './player';
+import { Room } from "../Server/online";
 
 import hotkeys from 'hotkeys-js';
+import { Vector2 } from '@babylonjs/core/Maths/math';
 
 export class RealPlayer extends Player {
 
-    moveCatcher: MouseCatcher;
-    cameraCatcher: MoveCatcher;
+    room: Room;
 
-    constructor(system: System, gravityGrid: GravityGrid) {
+    constructor(system: System, gravityGrid: GravityGrid, room: Room) {
         super(system, gravityGrid);
         this.addMouseEvent();
         this.addZoomCatcher();
         this.system.camera.parent = this.movingMesh;
+        this.room = room;
 
         hotkeys('space', (event, param) => {
-
             if (this.moving) this.accelerate();
         });
 
@@ -28,12 +28,18 @@ export class RealPlayer extends Player {
     }
 
     addMouseEvent() {
-        let mouseCatcher = new MouseCatcher(this.system.animationManager);
-        this.addCactcher(mouseCatcher);
+        let mouseCatcher = new MouseCatcher();
 
-        // setTimeout(() => {
-        //     this.moving = false;
-        // }, 2000);
+        mouseCatcher.addListener((pos: Vector2, step: Vector2) => {
+            if (!this.moving) return;
+            if (!this.room.started) {
+                this.moveCatcher.catch(pos);
+            } else {
+                console.log(pos);
+                
+                this.room.send({ command: 'move', destination: pos });
+            }
+        });
 
         setInterval(() => {
             this.gravityGrid.setCenterMap(this.position);

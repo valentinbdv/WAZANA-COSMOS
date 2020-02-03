@@ -20,7 +20,7 @@ export class IntroUI {
 
         this.addNebulaChoice();
         this.addStarChoice();
-        this.addStarCategory();
+        this.addPlayerLayout();
         this.addStartButton();
         this.show();
     }
@@ -64,15 +64,15 @@ export class IntroUI {
         this.gravityText.setText('Gravity Field: ' + StarCategories[this.starNumber].gravity);
     }
 
-    starCategory: ui_group;
+    playerLayout: ui_group;
     planetText: ui_text;
     velocityText: ui_text;
     gravityText: ui_text;
-    addStarCategory() {
-        this.starCategory = new ui_control(this.system, { x: 0, y: 130 }, { width: 300, height: 100 }, { zIndex: 100 });
-        this.planetText = this.starCategory.addText('', { x: 0, y: -30 }, { fontSize: 20, color: colormain });
-        this.velocityText = this.starCategory.addText('', { x: 0, y: 0 }, { fontSize: 20, color: colormain });
-        this.gravityText = this.starCategory.addText('', { x: 0, y: 30 }, { fontSize: 20, color: colormain });
+    addPlayerLayout() {
+        this.playerLayout = new ui_control(this.system, { x: 0, y: 130 }, { width: 300, height: 100 }, { zIndex: 100 });
+        this.planetText = this.playerLayout.addText('', { x: 0, y: -30 }, { fontSize: 20, color: colormain });
+        this.velocityText = this.playerLayout.addText('', { x: 0, y: 0 }, { fontSize: 20, color: colormain });
+        this.gravityText = this.playerLayout.addText('', { x: 0, y: 30 }, { fontSize: 20, color: colormain });
     }
 
     nebulaUI: ui_group;
@@ -126,7 +126,7 @@ export class IntroUI {
     show() {
         this.starUI.showAll();
         this.nebulaUI.showAll();
-        this.starCategory.showAll();
+        this.playerLayout.showAll();
         this.startButton.show();
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));
@@ -137,7 +137,7 @@ export class IntroUI {
     hide() {
         this.starUI.hideAll();
         this.nebulaUI.hideAll();
-        this.starCategory.hideAll();
+        this.playerLayout.hideAll();
         this.startButton.hide();
     }
 }

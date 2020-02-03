@@ -1,13 +1,13 @@
-import { System } from './system';
+import { System } from '../System/system';
+import { GravityGrid } from '../System/GravityGrid';
+import { Planet, PlanetInterface } from '../Entity/planet';
+import { StarDust, StarDustInterface } from '../Entity/starDust';
+import { Player, PlayerInterface } from '../player/player';
+import { BlackHole } from '../Entity/blackHole';
 
 import { IEasingFunction } from '@babylonjs/core/Animations/easing';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import remove from 'lodash/remove';
-import { Planet, PlanetInterface } from '../Entity/planet';
-import { StarDust, StarDustInterface } from '../Entity/starDust';
-import { Player, minSize } from '../player/player';
-import { BlackHole } from '../Entity/blackHole';
-import { GravityGrid } from './GravityGrid';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -15,7 +15,7 @@ import { GravityGrid } from './GravityGrid';
  * The system is really important as it is often sent in every other class created to manage core assets
  */
 
-export class PlanetField {
+export class TileMap {
 
     system: System;
     curve: IEasingFunction;
@@ -29,12 +29,11 @@ export class PlanetField {
         
         let frame = 0;
         this.system.scene.registerBeforeRender(() => {
-            for (let i = 0; i < this.planets.length; i++) {
-                const planet = this.planets[i];
+            for (const key in this.planets) {
+                const planet = this.planets[key];
                 planet.mesh.rotation.y += 0.01;
             }
             if (frame > 10 && this.check) {
-                this.checkPlayers();
                 this.checkRessourceMap(this.playerToFollow.position);
                 frame = 0;
             }
@@ -42,33 +41,41 @@ export class PlanetField {
         });
     }
 
+    createPlayer(playerCategory: PlayerInterface) {
+        let player = new Player(this.system, this.gravityGrid);
+        // player.setCategory(playerCategory);
+        player.key = playerCategory.key;
+        this.addPlayer(player);
+        return player;
+    }
+
     playerToFollow: Player;
     setPlayerToFollow(player: Player) {
         this.playerToFollow = player;
     }
 
-    players: Array<Player> = [];
+    players: Object = {};
     addPlayer(player: Player) {
-        this.players.push(player);
+        this.players[player.key] = player;
     }
 
     removePlayer(player: Player) {
-        remove(this.players, (p) => { return player.key == p.key })
+        delete this.players[player.key];
     }
 
-    planets: Array<Planet> = [];
+    planets: Object = {};
     addPlanet() {
-        let planetNumber = this.planets.length;
+        let planetNumber = Object.keys(this.planets).length;
         let radius = 2 + planetNumber;
         let velocity = 5 / (1 + planetNumber / 2);
         let planetInterface: PlanetInterface = { radius: radius, size: 1, velocity: velocity };
         let planet = new Planet(this.system, planetInterface);
-        this.planets.push(planet);
+        this.planets[planet.key] = planet;
         return planet;
     }
 
     removePlanet(planet: Planet) {
-        remove(this.planets, (p) => { return planet.key == p.key });
+        delete this.planets[planet.key];
     }
 
     disposePlanet(planet: Planet) {
@@ -100,12 +107,6 @@ export class PlanetField {
 
     dustNeeded = 200;
     checkRessourceMap(center: Vector2) {
-        // for (let i = 0; i < this.planets.length; i++) {
-        //     const planet = this.planets[i];
-        //     let dist = Math.sqrt(Vector2.Distance(planet.position, center));
-        //     if (dist > 10) this.disposePlanet(planet);
-        // }
-
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Math.sqrt(Vector2.Distance(dust.position, center));
@@ -128,17 +129,7 @@ export class PlanetField {
         return new Vector2(x, y);
     }
 
-    checkPlayers() {
-        for (let i = 0; i < this.players.length; i++) {
-            const player = this.players[i];
-            if (!player.accelerating) this.checkPlayerRessources(player);
-
-            // this.checkAbsorbtion(player);
-        }
-    }
-
     checkPlayerRessources(player: Player) {
-
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Vector2.Distance(dust.position, player.position);
@@ -146,35 +137,6 @@ export class PlanetField {
                 this.removeDust(dust);
                 player.addDust(dust);
             }
-        }
-    }
-
-    // checkAbsorbtion(player: Player) {
-    //     let minDist = 1000000;
-    //     let testTarget: Player;
-    //     let closestTarget: Player;
-    //     for (let i = 0; i < this.players.length; i++) {
-    //         const otherplayer = this.players[i];
-    //         let dist = Vector2.Distance(player.position, otherplayer.position) * 0.8;
-    //         if (minDist > dist && otherplayer.key != player.key && player.gravityField > otherplayer.gravityField) {
-    //             minDist = dist;
-    //             closestTarget = otherplayer;
-    //             if (dist < (player.gravityField * 10)) {
-    //                 testTarget = otherplayer;
-    //             }
-    //         }
-
-    //     }
-
-    //     if (player.ia && closestTarget && minDist > player.gravityField * 10) player.goToPlayer(closestTarget);
-    // }
-
-    deletePlayer(player: Player) {
-        this.removePlayer(player);
-        if (player.aborber) {
-            player.dive();
-        } else {
-            player.explode();
         }
     }
 }

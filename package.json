@@ -11,7 +11,8 @@
     "build-all-viewer": "npm run clean && npm run build-engine && npm run build-worker && npm run build-viewer",
     "build-engine": "parcel build engine/index.ts --global StarEngine -o engine.js",
     "build-worker": "parcel build engine/worker.ts -o worker.js",
-    "build-viewer": "parcel build engine/viewer.ts --global star -o viewer.js"
+    "build-viewer": "parcel build engine/viewer.ts --global star -o viewer.js",
+    "testcircular": "madge engine --extensions ts --circular"
   },
   "dependencies": {
     "@babylonjs/core": "^4.1.0-beta.4",

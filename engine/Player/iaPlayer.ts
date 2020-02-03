@@ -1,5 +1,4 @@
 import { System } from '../System/system';
-import { MoveCatcher } from './moveCatcher';
 import { GravityGrid } from '../System/GravityGrid';
 import { Player } from './player';
 
@@ -16,10 +15,7 @@ export class IAPlayer extends Player {
     }
 
     moveInt;
-    startMovingAround() {
-        let moveCatcher = new MoveCatcher(this.system.animationManager);
-        this.addCactcher(moveCatcher);
-        
+    startMovingAround() {        
         this.moveInt = setInterval(() => {
             let move = new Vector2((Math.random() - 0.5), (Math.random() - 0.5));
             this.moveCatcher.catch(move);
