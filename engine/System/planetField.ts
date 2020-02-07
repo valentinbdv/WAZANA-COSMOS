@@ -138,7 +138,6 @@ export class PlanetField {
     }
 
     checkPlayerRessources(player: Player) {
-
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Vector2.Distance(dust.position, player.position);

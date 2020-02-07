@@ -26,9 +26,9 @@ export class Planet extends PositionEntity {
         super('planet', system, options);
 
         this.addMesh();
-        
         if (options.radius && options.velocity) this.setGeostationnaryMovement(options.radius, options.velocity);
         if (options.size) this.setSize(options.size);
+        if (options.position) this.setPosition(new Vector2(options.position.x, options.position.y));
         this.showAnimation = new Animation(this.system.animationManager);
         this.show();
     }

@@ -264,12 +264,6 @@ export class Star extends MovingEntity {
     //     }
     // }
 
-    planets: Array<Planet> = [];
-    fixePlanet(planet: Planet) {
-        planet.setParent(this.movingMesh);
-        this.planets.push(planet);
-    }
-
     dispose() {
         // Need to keep movingMesh in case this is a blackHole
         // this._dispose();
@@ -278,14 +272,5 @@ export class Star extends MovingEntity {
         this.surface.dispose();
         this.surfaceMaterial.dispose();
         this.light.dispose();
-        this.removeAllPlanets();
-    }
-    
-    removeAllPlanets(){
-        for (let i = 0; i < this.planets.length; i++) {
-            const planet = this.planets[i];
-            planet.mesh.dispose();
-        }
-        this.planets = [];
     }
 }

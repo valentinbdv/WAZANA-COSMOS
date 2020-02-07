@@ -20,7 +20,7 @@ export interface PlayerInterface {
     maxPlanet: number; 
     gravityField: number;
     velocity: number;
-    planets: Array<Planet>;
+    planets: Array< PlanetInterface >;
     absorbing: string;
     absorbed: string;
     realVelocity: number;
@@ -35,7 +35,7 @@ export interface PlayerCategory {
     velocity: number;
 }
 
-export let StarCategories: Array<PlayerCategory> = [
+export let StarCategories: Array< PlayerCategory > = [
     {
         name: 'Red Dwarf',
         temperature: 3000,
@@ -75,7 +75,7 @@ export class Player extends Star {
     maxPlanet: number;
     gravityField: number;
     velocity: number;
-    planets: Array<Planet>;
+    planets: Array< Planet > = [];
     absorbing: string;
     absorbed: string;
     realVelocity: number = 1;
@@ -134,7 +134,8 @@ export class Player extends Star {
     // }
     starVelocity: 0.03;
     move(step: Vector2) {
-        step = Vector2.Maximize(step.multiplyInPlace(new Vector2(5, 5)), new Vector2(0.0001, 0.0001));
+        if (step.y == 0) return;
+        // step = Vector2.Maximize(step.multiplyInPlace(new Vector2(5, 5)), new Vector2(0.0001, 0.0001));
         let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 30);
         let ratio = Math.abs(step.x / step.y);
         let maxX = Math.sqrt((Math.pow(max, 2) * ratio) / (ratio + 1));
@@ -165,6 +166,19 @@ export class Player extends Star {
             this.animatePlanetToStar(planet, radius, velocity);
         }
         this.fixePlanet(planet);
+    }
+
+    fixePlanet(planet: Planet) {
+        planet.setParent(this.movingMesh);
+        this.planets.push(planet);
+    }
+
+    removeAllPlanets() {
+        for (let i = 0; i < this.planets.length; i++) {
+            const planet = this.planets[i];
+            planet.mesh.dispose();
+        }
+        this.planets = [];
     }
     
     fixeAnimationLength = 50;
@@ -432,6 +446,7 @@ export class Player extends Star {
             this.movingMesh.position.y = 1 - this.particleCurve.ease(perc) * 50;
         }, () => {
             this.dispose();
+            this.removeAllPlanets();
         });
     }
     

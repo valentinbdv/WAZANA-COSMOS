@@ -5,6 +5,7 @@ import { GravityGrid } from '../System/GravityGrid';
 
 import * as Colyseus from "colyseus.js";
 import { Vector2 } from "@babylonjs/core/Maths/math";
+import { Planet, PlanetInterface } from "../Entity/planet";
 
 interface State {
     players: Array<Player>;
@@ -12,29 +13,26 @@ interface State {
     planets: Array<Player>;
 }
 
-export class Room extends TileMap {
+export class ServerMap extends TileMap {
 
     client: Colyseus.Client;
     room: Colyseus.Room;
 
-    constructor(system: System, gravityGrid: GravityGrid) {
-        super(system, gravityGrid);
-    }
-
     started = false;
+    sessionId: string;
     join(callback: Function) {
         if (!this.client) this.client = new Colyseus.Client('ws://localhost:2567');
         
         this.client.joinOrCreate("my_room").then(room => {
             this.room = room;
+            this.sessionId = room.sessionId;
             this.started = true;
             console.log(room.sessionId, "joined", room.name);
-            // this.checkPlayers(room.state.players);
 
             room.onStateChange((state: State) => {
                 // console.log(room.name, "has new state:", state);
                 this.checkPlayers(state.players);
-                this.checkPlayersMovement(state.players)
+                this.checkPlanets(state.planets);
             });
 
             room.onMessage((message) => {
@@ -46,7 +44,7 @@ export class Room extends TileMap {
             });
 
             room.onLeave(() => {
-                this.leave();
+                this.onLeave();
                 console.log(this.client, "left", room.name);
             });
 
@@ -60,30 +58,47 @@ export class Room extends TileMap {
         this.room.send(data);
     }
 
+    onLeave: Function;
     leave() {
         this.started = false;
+        this.eraseAllPlanets();
+        // this.room.leave();
     }
 
-    checkPlayers(players: Object) {
-        for (const key in players) {
-            const player: PlayerInterface = players[key];
-            if (!this.players[key]) this.createPlayer(player);
+    checkPlayers(playersData: Object) {
+        for (const key in playersData) {
+            const playerData: PlayerInterface = playersData[key];
+            if (!this.players[key]) this.createPlayer(playerData);
+            else this.checkPlayer(this.players[key], playerData);
         }
         for (const key in this.players) {
             const player:Player = this.players[key];
-            if (!players[key]) this.removePlayer(player);
-        }
+            if (!playersData[key]) this.removePlayer(player);
+        }        
     }
 
-    checkPlayersMovement(players: Object) {
-        for (const key in players) {
-            const playerdata = players[key];
-            const player = this.players[key];
-            if (player && playerdata.destination) {
-                let dest = new Vector2(playerdata.destination.x, playerdata.destination.y);
-                console.log(dest);
-                player.moveCatcher.catch(dest);
-            } 
+    checkPlayer(player: Player, playerData: PlayerInterface) {
+        if (playerData.destination) {
+            let dest = new Vector2(playerData.destination.x, playerData.destination.y);
+            player.moveCatcher.catch(dest);
+        }
+        if (playerData.planets) {
+            for (let i = 0; i < playerData.planets.length; i++) {
+                const planet: PlanetInterface = playerData.planets[i];
+                
+            }
+        }
+
+    }
+
+    checkPlanets(planets: Object) {
+        for (const key in planets) {
+            const planet: PlanetInterface = planets[key];
+            if (!this.planets[key]) this.createPlanet(planet);
+        }
+        for (const key in this.planets) {
+            const planet: Planet = this.planets[key];
+            if (!planets[key]) this.removePlanet(planet);
         }
     }
 }
