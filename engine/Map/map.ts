@@ -24,8 +24,6 @@ export class TileMap {
     constructor(system: System, gravityGrid: GravityGrid) {
         this.system = system;
         this.gravityGrid = gravityGrid;
-
-        this.checkRessourceMap(new Vector2(0, 0));
         
         let frame = 0;
         this.system.scene.registerBeforeRender(() => {
@@ -42,10 +40,10 @@ export class TileMap {
         });
     }
 
-    createPlayer(playerCategory: PlayerInterface) {
+    createPlayer(playerInterface: PlayerInterface) {
         let player = new Player(this.system, this.gravityGrid);
-        // player.setCategory(playerCategory);
-        player.key = playerCategory.key;
+        // player.setCategory(playerInterface);
+        player.key = playerInterface.key;
         this.addPlayer(player);
         return player;
     }

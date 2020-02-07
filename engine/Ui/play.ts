@@ -1,6 +1,7 @@
 import { SystemUI } from '../System/systemUI'
 import { Animation } from '../System/animation'
-import { StarCategories, minSize } from '../Player/player';
+import { StarCategories } from '../Entity/star';
+import { minSize } from '../Player/player';
 import { RealPlayer } from '../Player/realPlayer';
 import { ui_group, ui_control, ui_panel } from './group';
 import { ui_text } from './node';

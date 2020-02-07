@@ -2,7 +2,7 @@ import { SystemUI } from './System/systemUI'
 import { Animation } from './System/animation'
 import { GravityGrid } from './System/GravityGrid';
 import { IAPlayer } from './Player/iaPlayer';
-import { StarCategories } from './Player/player';
+import { StarCategories } from './Entity/star';
 import { RealPlayer } from './Player/realPlayer';
 import { BlackHole } from './Entity/blackHole';
 import { Vector2 } from '@babylonjs/core/Maths/math';
