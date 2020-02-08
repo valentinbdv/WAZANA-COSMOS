@@ -41,7 +41,7 @@ export class RealPlayer extends Player {
 
         setInterval(() => {
             if (this.moving) {
-                this.gravityGrid.setCenterMap(this.position);
+                this.gravityGrid.setCenterAndSize(this.position, this.size);
                 if (this.map.started) this.map.send({ position: this.position });
             }
         }, 500);
@@ -52,7 +52,7 @@ export class RealPlayer extends Player {
         // this.cameraCatcher.start();
         // this.cameraCatcher.catch();
         this.system.scene.registerBeforeRender(() => {
-            let newSize = Math.sqrt(this.size) * 50;
+            let newSize = this.size * 50;
             let change = newSize - this.system.camera.radius;
             this.system.camera.radius += change/100;
         });

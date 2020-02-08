@@ -152,7 +152,7 @@ export class System {
         // this.scene.blockMaterialDirtyMechanism = true;
         // this.scene.setRenderingAutoClearDepthStencil(renderingGroupIdx, autoClear, depth, stencil);
 
-        this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 40, Vector3.Zero(), this.scene);
+        this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 10, Vector3.Zero(), this.scene);
         this.camera.setTarget(Vector3.Zero());
     }
 

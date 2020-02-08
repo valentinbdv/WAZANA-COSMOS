@@ -52,6 +52,8 @@ export class GravityGrid {
     addGridRibbon() {
         var sideO = Mesh.BACKSIDE;
         this.gridRibbon = Mesh.CreateRibbon("gridRibbon", this.paths, false, false, 0, this.system.scene, true, sideO);
+        this.gridRibbon.alwaysSelectAsActiveMesh = true;
+        this.gridRibbon.doNotSyncBoundingInfo = true;
         this.gridRibbon.rotation.x = Math.PI;
         this.gridRibbon.position.y = 0.01;
         // this.gridRibbon.convertToFlatShadedMesh();
@@ -77,6 +79,8 @@ export class GravityGrid {
     addRibbon() {
         var sideO = Mesh.BACKSIDE;
         this.ribbon = Mesh.CreateRibbon("ribbon", this.paths, false, false, 0, this.system.scene, true, sideO);
+        this.ribbon.alwaysSelectAsActiveMesh = true;
+        this.ribbon.doNotSyncBoundingInfo = true;
         // this.ribbon.convertToFlatShadedMesh();
         // this.gridRibbon.renderingGroupId = 3;
         // this.ribbon = Mesh.CreatePlane("ribbon", 10, this.system.scene);
@@ -96,8 +100,8 @@ export class GravityGrid {
         });
     }
 
-    mapDetail = 40;
-    mapSize = 250;
+    mapDetail = 20;
+    mapSize = 150;
     halfSize: number;
     halfDetail: number;
     step:number;
@@ -106,13 +110,16 @@ export class GravityGrid {
     keysToPath = {};
     center = new Vector2(1, 1);
     initMap() {
-        this.halfSize = this.mapSize / 2;
         this.halfDetail = this.mapDetail / 2;
-        this.step = this.mapSize / this.mapDetail;
-        this.setCenterMap(Vector2.Zero());
+        this.setCenterAndSize(Vector2.Zero(), 1);
     }
-
-    setCenterMap(pos: Vector2) {
+    
+    setCenterAndSize(pos: Vector2, size: number) {
+        // Whatever the size of the player, the ribbon will get bigger and small to alway take the all screen
+        let halfSize = Math.round(size * this.mapSize / 2);
+        this.halfSize = Math.round(halfSize / this.mapDetail) * this.mapDetail;
+        this.step = Math.round(2 * this.halfSize / this.mapDetail);
+        
         let xRound = Math.round(pos.x / this.step) * this.step;
         let yRound = Math.round(-pos.y / this.step) * this.step;
         let newCenter = new Vector2(xRound, -yRound);
