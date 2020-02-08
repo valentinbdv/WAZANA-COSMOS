@@ -3,9 +3,10 @@ import { Player, minSize } from '../player/player';
 import { TileMap } from './map';
 import { System } from '../System/system';
 import { GravityGrid } from '../System/GravityGrid';
+import { BlackHole } from '../Entity/blackHole';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
-import { BlackHole } from '../Entity/blackHole';
+import find from 'lodash/find';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -117,7 +118,9 @@ export class LocalMap extends TileMap {
 
     playerDead(player: Player) {
         this.removePlayer(player);
-        player.die();
+        player.die(() => {
+            this.addDustField(player.position);
+        });
 
         // Check if not absorbed by hole
         let isBlackHole = find(this.blackHoles, (b: BlackHole) => { return b.key == player.absorbed })

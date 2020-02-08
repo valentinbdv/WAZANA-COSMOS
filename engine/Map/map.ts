@@ -124,11 +124,21 @@ export class TileMap {
     ////////// Dust
 
     dusts: Array<StarDust> = [];
-    addDust() {
-        let dustInterface: StarDustInterface = { temperature: 6000, size: 0.01 };
+    addDust(size?: number) {
+        let dustSize = (size) ? size : 0.01;
+        let dustInterface: StarDustInterface = { temperature: 6000, size: dustSize };
         let dust = new StarDust(this.system, dustInterface);
         this.dusts.push(dust);
         return dust;
+    }
+
+    addDustField(position: Vector2) {
+        let dustNumber = Math.round( 100 );
+        for (let i = 0; i < dustNumber; i++) {
+            let newDust = this.addDust(0.03);
+            let pos = this.getNewRandomPositionFromCenter(position, 40);
+            newDust.setPosition(pos);
+        }
     }
 
     removeDust(dust: StarDust) {
@@ -169,6 +179,23 @@ export class TileMap {
         pos.x = sign1 * this.mapSize * Math.random();
         pos.y = sign2 * this.mapSize * Math.random();
         return pos;
+    }
+
+    // getNewRandomPositionFromCenter(position: Vector2, size: number): Vector2 {
+    //     let sign1 = (Math.random() > 0.5) ? 1 : -1;
+    //     let sign2 = (Math.random() > 0.5) ? 1 : -1;
+    //     let pos = new Vector2(0, 0);
+    //     pos.x = position.x + sign1 * size * Math.pow(Math.random(), 2);
+    //     pos.y = position.y + sign2 * size * Math.pow(Math.random(), 2);
+    //     return pos;
+    // }
+
+    getNewRandomPositionFromCenter(position: Vector2, size: number): Vector2 {
+        let angle = Math.random() * Math.PI * 2;
+        let centerRatio = Math.pow(Math.random(), 1.5);
+        let x = Math.cos(angle) * size * centerRatio;
+        let y = Math.sin(angle) * size * centerRatio;
+        return new Vector2(position.x + x, position.y + y);
     }
 
     checkPlayerDust(player: Player) {

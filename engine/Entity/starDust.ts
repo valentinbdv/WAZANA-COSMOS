@@ -68,7 +68,7 @@ export class StarDust extends PositionEntity {
         let step = 1 - (1 / this.fixeAnimationLength);
         this.animation.simple(this.fixeAnimationLength / 2, (count, perc) => {
             let progress = this.curve.ease(perc/2);
-            let sizeProgress = Math.sqrt(this.size) * (1 - progress);
+            let sizeProgress = Math.sqrt(this.size) * (1 - progress/2);
             this.mesh.scaling = new Vector3(sizeProgress, sizeProgress, sizeProgress);
             
             let change = entity.position.subtract(this.position);

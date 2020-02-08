@@ -7,7 +7,6 @@ import { StarCategory, StarInterface } from '../Entity/star';
 
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
-import remove from 'lodash/remove';
 
 export let minSize = 0.5; 
 
@@ -184,19 +183,18 @@ export class Player extends StarFighter {
     
     died = false;
     onDied: Function;
-    die() {
+    die(callback?: Function) {
         this.removeAllPlanets();
         if (this.aborber) {
             this.dive(this.aborber.position);
         } else {
-            this.explode();
+            this.explode(callback);
         }
         if (this.onDied) this.onDied();
         this.absorbStop();
         this.died = true;
         this.secondLight.excludedMeshes = [];
         this.secondLight.includedOnlyMeshes = [this.gravityGrid.ribbon];
-        // remove(this.secondLight.excludedMeshes, (m) => { m == this.gravityGrid.ribbon });
         this.moving = false;
         this.gravityGrid.eraseStar(this.key);
     }
