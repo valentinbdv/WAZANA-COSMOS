@@ -1,6 +1,5 @@
 import { System } from '../System/system';
 import { Animation } from '../System/animation';
-import { Planet } from './planet';
 import { MovingEntity, MovingEntityInterface } from './movingEntity';
 
 import { Vector3, Color3, Color4 } from '@babylonjs/core/Maths/math';
@@ -198,7 +197,7 @@ export class Star extends MovingEntity {
         // console.log(this.surfaceMaterial);
         this.system.addSkyChangeListener((texture) => {
             this.setTexture(texture);
-            this.setReflectionLevel(0);
+            this.setReflectionLevel(0.1);
         });
     }
 
@@ -235,9 +234,10 @@ export class Star extends MovingEntity {
     }
 
     shine() {
-        this.shineAnimation.simple(50, (count, x) => {
+        if (this.shineAnimation.running) return;
+        this.shineAnimation.simple(20, (count, x) => {
             let y = 1 - 4 * Math.pow(x - 0.5, 2);
-            this.setReflectionLevel(y);
+            this.setReflectionLevel(y/2);
         }, () => {
             this.setReflectionLevel(0);
         });
@@ -262,12 +262,14 @@ export class Star extends MovingEntity {
 
     updateSize(size: number, time?:number, callback?: Function) {
         this.shineAnimation.stop();
-        let currentsize = this.size;
+        let currentsize = Math.pow(this.size, 2);
         let change = size - currentsize;
         let animTime = (time)? time : 20;
+        
         this.shineAnimation.simple(animTime, (count, perc) => {
-            let y = Math.min(perc, 1 - perc);
-            this.setReflectionLevel(y);
+            this.setReflectionLevel(perc);
+            this.setOpacity(1 - perc);
+            this.light.intensity = 1000 + perc * 10000;
             let newsize = currentsize + this.curve.ease(perc) * change;
             this.setSize(newsize);
         }, () => {
@@ -312,5 +314,22 @@ export class Star extends MovingEntity {
         this.surface.dispose();
         this.surfaceMaterial.dispose();
         this.light.dispose();
+    }
+
+    setOpacity(opacity: number) {
+        this.heart.visibility = opacity;
+        this.surface.visibility = opacity;
+    }
+
+    show() {
+        this.heart.isVisible = true;
+        this.surface.isVisible = true;
+        this.light.intensity = 1000;
+    }
+
+    hide() {
+        this.heart.isVisible = false;
+        this.surface.isVisible = false;
+        this.light.intensity = 0;
     }
 }

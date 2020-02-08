@@ -2,8 +2,9 @@ import { System } from '../System/system';
 import { GravityGrid } from '../System/GravityGrid';
 import { Planet, PlanetInterface } from '../Entity/planet';
 import { StarDust, StarDustInterface } from '../Entity/starDust';
-import { Player, PlayerInterface } from '../player/player';
-import { BlackHole } from '../Entity/blackHole';
+import { Player } from '../player/player';
+import { BlackHole, BlackHoleInterface } from '../Entity/blackHole';
+import { StarInterface } from '../Entity/star';
 
 import { IEasingFunction } from '@babylonjs/core/Animations/easing';
 import { Vector2 } from '@babylonjs/core/Maths/math';
@@ -32,18 +33,20 @@ export class TileMap {
                 planet.mesh.rotation.y += 0.01;
             }
             if (frame > 10 && this.check) {
-                this.checkPlayersRessources();
-                this.checkRessourceMap(this.playerToFollow.position);
+                this.checkPlayersDust();
+                this.checkDustMap(this.playerToFollow.position);
                 frame = 0;
             }
             frame++;
         });
     }
 
-    createPlayer(playerInterface: PlayerInterface) {
-        let player = new Player(this.system, this.gravityGrid);
-        // player.setCategory(playerInterface);
-        player.key = playerInterface.key;
+    ////////// PLAYER
+
+    createPlayer(starInterface: StarInterface) {
+        let player = new Player(this.system, this.gravityGrid, starInterface);
+        // player.setCategory(starInterface);
+        player.key = starInterface.key;
         this.addPlayer(player);
         return player;
     }
@@ -62,9 +65,38 @@ export class TileMap {
         delete this.players[player.key];
     }
 
+    ////////// BLACKHOLE
+
+    createBlackHole(blackHoleInterface: BlackHoleInterface) {
+        let blackHole = new BlackHole(this.system, this.gravityGrid, blackHoleInterface);
+        this.addBlackHole(blackHole)
+        return blackHole;
+    }
+
+    blackHoles: Object = {};
+    addBlackHole(blackHole: BlackHole) {
+        this.blackHoles[blackHole.key] = blackHole;
+    }
+
+    removeBlackHole(blackHole: BlackHole) {
+        delete this.blackHoles[blackHole.key];
+    }
+
+    disposeBlackHole(blackHole: BlackHole) {
+        this.removeBlackHole(blackHole);
+        blackHole.movingMesh.dispose();
+    }
+
+    eraseAllBlackHoles() {
+        for (const key in this.blackHoles) {
+            this.disposeBlackHole(this.blackHoles[key]);
+        }
+    }
+
+    ////////// PLANET
+
     createPlanet(planetInterface: PlanetInterface) {
         let planet = new Planet(this.system, planetInterface);
-        console.log('CREATE PLANET', planetInterface.key, planet.key);
         this.addPlanet(planet)
         return planet;
     }
@@ -89,6 +121,8 @@ export class TileMap {
         }
     }
 
+    ////////// Dust
+
     dusts: Array<StarDust> = [];
     addDust() {
         let dustInterface: StarDustInterface = { temperature: 6000, size: 0.01 };
@@ -112,7 +146,7 @@ export class TileMap {
     }
 
     dustNeeded = 200;
-    checkRessourceMap(center: Vector2) {
+    checkDustMap(center: Vector2) {
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Math.sqrt(Vector2.Distance(dust.position, center));
@@ -122,20 +156,22 @@ export class TileMap {
         let newDustNeeded = this.dustNeeded - this.dusts.length;
         for (let i = 0; i < newDustNeeded; i++) {
             let newPlanet = this.addDust();
-            let pos = this.getNewRandomPosition(center);
+            let pos = this.getNewRandomPosition();
             newPlanet.setPosition(pos);
         }
     }
 
-    getNewRandomPosition(center: Vector2): Vector2 {
-        let sign1 = (Math.random() > 0.5)? 1 : -1;
-        let sign2 = (Math.random() > 0.5)? 1 : -1;
-        let x = center.x + sign1 * (5 + (Math.random()/2) * 100);
-        let y = center.y + sign2 * (5 + (Math.random()/2) * 100);
-        return new Vector2(x, y);
+    mapSize = 100;
+    getNewRandomPosition(): Vector2 {
+        let sign1 = (Math.random() > 0.5) ? 1 : -1;
+        let sign2 = (Math.random() > 0.5) ? 1 : -1;
+        let pos = new Vector2(0, 0);
+        pos.x = sign1 * this.mapSize * Math.random();
+        pos.y = sign2 * this.mapSize * Math.random();
+        return pos;
     }
 
-    checkPlayerRessources(player: Player) {
+    checkPlayerDust(player: Player) {
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Vector2.Distance(dust.position, player.position);
@@ -146,10 +182,10 @@ export class TileMap {
         }
     }
 
-    checkPlayersRessources() {
+    checkPlayersDust() {
         for (const key in this.players) {
             const player = this.players[key];
-            if (!player.accelerating) this.checkPlayerRessources(player);
+            if (!player.accelerating) this.checkPlayerDust(player);
         }
     }
 }

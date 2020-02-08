@@ -2,13 +2,14 @@ import { System } from '../System/system';
 import { GravityGrid } from '../System/GravityGrid';
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from '../Entity/planet';
+import { StarFighter } from '../Entity/starFighter';
+import { StarCategory, StarInterface } from '../Entity/star';
 
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
-import { StarFighter } from '../Entity/starFighter';
-import { StarCategory } from '../Entity/star';
+import remove from 'lodash/remove';
 
-export let minSize = 0.2; 
+export let minSize = 0.5; 
 
 export interface PlayerInterface {
     key: string;
@@ -47,8 +48,8 @@ export class Player extends StarFighter {
     particleCurve: IEasingFunction;
     ia = false;
 
-    constructor(system: System, gravityGrid: GravityGrid) {
-        super(system);
+    constructor(system: System, gravityGrid: GravityGrid, playerInterface: StarInterface) {
+        super(system, playerInterface);
         this.gravityGrid = gravityGrid;
         this.secondLight.excludedMeshes.push(this.gravityGrid.ribbon);
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -180,53 +181,24 @@ export class Player extends StarFighter {
             this.realVelocity = 1;
         });
     }
-
-    // explode(callback?: Function) {
-    //     this._explode(callback);
-    // }
-    // _explode(callback?: Function) {
-    //     this.absorbStop();
-    //     this.die();
-    //     this.updateSize(40, 80, () => {
-    //         this.updateSize(0.1, 30, () => {
-    //             setTimeout(() => {
-    //                 // Wait for the particle effect to end
-    //                 this.dispose();
-    //                 // Need to keep movingMesh in case this is a blackHole
-    //                 // this.particle.dispose();
-    //             }, 2000);
-    //             this.setExplodeUpdateFunction();
-    //             this.particle.start();
-    //             if (callback) callback();
-    //             if (this.onDied) this.onDied();
-    //         });
-    //     });
-    // }
-
-    // dive() {
-    //     this.die();
-    //     this.particle.stop();
-    //     let changeposition: Vector2 = this.aborber.position.subtract(this.position);
-        
-    //     this.fixeAnimation.simple(this.fixeAnimationLength, (count, perc) => {
-    //         let progressposition: Vector2 = changeposition.multiply(new Vector2(perc, perc));
-    //         let pos: Vector2 = this.position.add(progressposition);
-
-    //         this.movingMesh.position.x = pos.x;
-    //         this.movingMesh.position.z = pos.y;
-    //         this.movingMesh.position.y = 1 - this.particleCurve.ease(perc) * 50;
-    //     }, () => {
-    //         this.dispose();
-    //         this.removeAllPlanets();
-    //     });
-    // }
     
     died = false;
     onDied: Function;
     die() {
+        this.removeAllPlanets();
+        if (this.aborber) {
+            this.dive(this.aborber.position);
+        } else {
+            this.explode();
+        }
+        if (this.onDied) this.onDied();
+        this.absorbStop();
+        this.died = true;
+        this.secondLight.excludedMeshes = [];
+        this.secondLight.includedOnlyMeshes = [this.gravityGrid.ribbon];
+        // remove(this.secondLight.excludedMeshes, (m) => { m == this.gravityGrid.ribbon });
         this.moving = false;
         this.gravityGrid.eraseStar(this.key);
-        this.died = true;
     }
 
     // For IA

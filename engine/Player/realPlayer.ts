@@ -12,7 +12,7 @@ export class RealPlayer extends Player {
     map: onlineMap;
 
     constructor(system: System, gravityGrid: GravityGrid, map: onlineMap) {
-        super(system, gravityGrid);
+        super(system, gravityGrid, { temperature: 5000, size: 0.5, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.addMouseEvent();
         this.addZoomCatcher();
         this.system.camera.parent = this.movingMesh;

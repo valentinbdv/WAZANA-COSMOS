@@ -1,11 +1,11 @@
 import { System } from '../System/system';
-import { point3D } from '../System/interface';
+import { point2D } from '../System/interface';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
 export interface PositionEntityInterface {
     key?: string,
-    position ? : point3D,
+    position ? : point2D,
     size?: number,
 }
 

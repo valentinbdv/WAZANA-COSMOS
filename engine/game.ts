@@ -9,7 +9,7 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 import { IntroUI } from './Ui/intro';
 import { PlayUI } from './Ui/play';
 import { Player } from "./player/player";
-import { ServerMap } from './Map/serverMap';
+import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
 
 interface State {
@@ -60,9 +60,9 @@ export class GameEngine {
         this.system.launchRender();
 
         this.introUI = new IntroUI(this.system, this.realPlayer);
-        this.introUI.onStart = () => {
-            this.joinGameServer();
-            // this.joinGameLocal();
+        this.introUI.onStart = (mode: 'local' | 'online') => {
+            if (mode == 'online') this.joinGameServer();
+            else this.joinGameLocal();
         };
 
         this.playUI = new PlayUI(this.system, this.realPlayer);
@@ -86,14 +86,14 @@ export class GameEngine {
     }
     
     joinGameLocal() {
-        // this.startGame();
-        // this.localMap.checkPlayerAndRessources(true);
-        // this.localMap.addPlayer(this.realPlayer);
-        // let ia1 = new IAPlayer(this.system, this.gravityGrid);
-        // this.localMap.addPlayer(ia1);
-        // ia1.setSize(1);
-        // ia1.setPosition(new Vector2(50, 50));
-        // ia1.setTemperature(25000);
+        this.startGame();
+        this.localMap.checkPlayerAndRessources(true);
+        this.localMap.addPlayer(this.realPlayer);
+        let ia1 = new IAPlayer(this.system, this.gravityGrid);
+        this.localMap.addPlayer(ia1);
+        ia1.setSize(1);
+        ia1.setPosition(new Vector2(5, 5));
+        ia1.setTemperature(25000);
     }
     
     joinGameServer() {

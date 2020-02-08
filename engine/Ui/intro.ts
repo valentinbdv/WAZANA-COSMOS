@@ -113,21 +113,29 @@ export class IntroUI {
         if (this.nebulaNumber == 5) this.nebulaArrowRight.hide();
     }
 
-    startButton: ui_button;
+    startOnline: ui_button;
+    startLocal: ui_button;
     onStart: Function;
     addStartButton() {
-        this.startButton = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Start' }, { x: 0, y: 250 }, { width: 200, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
-        this.startButton.on('click', () => {
-            this.onStart();
+        this.startOnline = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Play online' }, { x: -110, y: 250 }, { width: 180, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
+        this.startOnline.on('click', () => {
+            this.onStart('online');
         });
-        this.startButton._setStyle({ zIndex: 100 });
+        this.startOnline._setStyle({ zIndex: 100 });
+
+        this.startLocal = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Play against AI' }, { x: 110, y: 250 }, { width: 180, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
+        this.startLocal.on('click', () => {
+            this.onStart('local');
+        });
+        this.startLocal._setStyle({ zIndex: 100 });
     }
 
     show() {
         this.starUI.showAll();
         this.nebulaUI.showAll();
         this.playerLayout.showAll();
-        this.startButton.show();
+        this.startOnline.show();
+        this.startLocal.show();
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));
         this.checkStarArrows();
@@ -138,6 +146,7 @@ export class IntroUI {
         this.starUI.hideAll();
         this.nebulaUI.hideAll();
         this.playerLayout.hideAll();
-        this.startButton.hide();
+        this.startOnline.hide();
+        this.startLocal.hide();
     }
 }

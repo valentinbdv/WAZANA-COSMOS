@@ -83,4 +83,11 @@ export class MovingEntity extends PositionEntity {
         this.movingMesh.dispose();
     }
 
+    show() {
+        this.movingMesh.isVisible = true;
+    }
+
+    hide() {
+        this.movingMesh.isVisible = false;
+    }
 }

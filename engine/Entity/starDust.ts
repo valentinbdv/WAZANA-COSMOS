@@ -17,7 +17,6 @@ export class StarDust extends PositionEntity {
 
     constructor(system: System, options: StarDustInterface) {
         super('dust', system, options);
-
         this.animation = new Animation(this.system.animationManager);
         this.addDust();
         this.show();

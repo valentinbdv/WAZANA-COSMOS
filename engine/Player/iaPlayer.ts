@@ -9,7 +9,7 @@ export class IAPlayer extends Player {
     ia = true;
 
     constructor(system: System, gravityGrid: GravityGrid) {
-        super(system, gravityGrid);
+        super(system, gravityGrid, { temperature: 5000, size: 0.5, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.startMovingAround();
         this.setSize(0.6);
     }

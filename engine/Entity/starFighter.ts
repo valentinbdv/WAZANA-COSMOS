@@ -1,5 +1,5 @@
 import { System } from '../System/system';
-import { Star } from './star';
+import { Star, StarInterface } from './star';
 import { Animation } from '../System/animation';
 
 import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
@@ -13,8 +13,8 @@ export class StarFighter extends Star {
     diveAnimation: Animation;
     particleCurve: IEasingFunction;
 
-    constructor(system: System) {
-        super(system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 0 }, maxPlanet: 5 });
+    constructor(system: System, starInterface: StarInterface) {
+        super(system, starInterface);
 
         this.particleCurve = new CubicEase();
         this.diveAnimation = new Animation(system.animationManager);
@@ -35,7 +35,7 @@ export class StarFighter extends Star {
         this.absorbingInt = setInterval(() => {
             this.target.decrease();
             this.increase();
-        }, 500);
+        }, 100);
     }
 
     getAbsorbByTarget(aborber: BlackHole) {
@@ -45,7 +45,7 @@ export class StarFighter extends Star {
         this.setGetAbsobUpdateFunction();
         this.particle.start();
         this.absorbingInt = setInterval(() => {
-            this.changeSize(-0.1);
+            this.changeSize(-0.2);
         }, 500);
     }
 
@@ -59,15 +59,17 @@ export class StarFighter extends Star {
     addDust(dust: StarDust) {
         dust.goToEntity(this, () => {
             this.changeSize(dust.size / 5);
+            this.shine();
         });
     }
 
     decrease() {
-        this.changeSize(-0.02);
+        this.changeSize(-0.01);
     }
 
     increase() {
-        this.changeSize(0.005);
+        this.changeSize(0.001);
+        this.shine();
     }
 
     changeSize(change: number) {
@@ -213,7 +215,9 @@ export class StarFighter extends Star {
     }
     _explode(callback?: Function) {
         this.updateSize(40, 80, () => {
-            this.updateSize(0.1, 30, () => {
+            this.setReflectionLevel(1);
+            this.updateSize(0.01, 30, () => {
+                this.hide();
                 setTimeout(() => {
                     // Wait for the particle effect to end
                     this.dispose();
@@ -228,7 +232,7 @@ export class StarFighter extends Star {
     }
 
     diveAnimationLength = 50;
-    dive(position: Vector2, callback: Function) {
+    dive(position: Vector2, callback?: Function) {
         this.particle.stop();
         let changeposition: Vector2 = position.subtract(this.position);
         
@@ -240,7 +244,7 @@ export class StarFighter extends Star {
             this.movingMesh.position.z = pos.y;
             this.movingMesh.position.y = 1 - this.particleCurve.ease(perc) * 50;
         }, () => {
-            callback();
+            if (callback) callback();
         });
     }
 }
