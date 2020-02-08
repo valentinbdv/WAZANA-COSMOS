@@ -18,6 +18,7 @@ export class PositionEntity {
     
     constructor(type:string, system: System, options: PositionEntityInterface) {
         this.system = system;
+        
         if (options.key) this.key = options.key;
         else this.key = type + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 

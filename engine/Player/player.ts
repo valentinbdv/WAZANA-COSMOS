@@ -3,10 +3,10 @@ import { GravityGrid } from '../System/GravityGrid';
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from '../Entity/planet';
 
-import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
+import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
-import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
 import { StarFighter } from '../Entity/starFighter';
+import { StarCategory } from '../Entity/star';
 
 export let minSize = 0.2; 
 
@@ -18,7 +18,7 @@ export interface PlayerInterface {
     maxPlanet: number; 
     gravityField: number;
     velocity: number;
-    planets: Array< PlanetInterface >;
+    planets: Array< string >;
     absorbing: string;
     absorbed: string;
     realVelocity: number;
@@ -46,7 +46,6 @@ export class Player extends StarFighter {
     fixeCurve: IEasingFunction;
     particleCurve: IEasingFunction;
     ia = false;
-    categories = [];
 
     constructor(system: System, gravityGrid: GravityGrid) {
         super(system);
@@ -63,7 +62,7 @@ export class Player extends StarFighter {
         this.createParticle();
     }
 
-    setCategory(category: PlayerCategory) {
+    setCategory(category: StarCategory) {
         this.setVelocity(category.velocity);
         this.setTemperature(category.temperature);
         this.setMaxPlanet(category.planets)

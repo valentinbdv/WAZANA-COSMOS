@@ -35,12 +35,15 @@ export class RealPlayer extends Player {
             if (!this.map.started) {
                 this.moveCatcher.catch(pos);
             } else {
-                this.map.send({ command: 'move', destination: pos });
+                this.map.send({ destination: pos });
             }
         });
 
         setInterval(() => {
-            this.gravityGrid.setCenterMap(this.position);
+            if (this.moving) {
+                this.gravityGrid.setCenterMap(this.position);
+                if (this.map.started) this.map.send({ position: this.position });
+            }
         }, 500);
     }
 

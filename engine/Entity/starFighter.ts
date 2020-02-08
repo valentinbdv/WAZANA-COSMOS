@@ -1,10 +1,9 @@
 import { System } from '../System/system';
-import { GravityGrid } from '../System/GravityGrid';
 import { Star } from './star';
 import { Animation } from '../System/animation';
 
 import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
-import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
+import { IEasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
 import { BlackHole } from './blackHole';
 import { StarDust } from './starDust';
@@ -13,8 +12,6 @@ export class StarFighter extends Star {
 
     diveAnimation: Animation;
     particleCurve: IEasingFunction;
-    ia = false;
-    categories = [];
 
     constructor(system: System) {
         super(system, { temperature: 5000, size: 0.5, position: { x: 0, y: 0, z: 0 }, maxPlanet: 5 });

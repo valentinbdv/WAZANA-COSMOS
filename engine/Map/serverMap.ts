@@ -28,6 +28,7 @@ export class ServerMap extends TileMap {
             this.sessionId = room.sessionId;
             this.started = true;
             console.log(room.sessionId, "joined", room.name);
+            this.checkPlanets(room.state.planets);
 
             room.onStateChange((state: State) => {
                 // console.log(room.name, "has new state:", state);
@@ -82,10 +83,17 @@ export class ServerMap extends TileMap {
             let dest = new Vector2(playerData.destination.x, playerData.destination.y);
             player.moveCatcher.catch(dest);
         }
+        console.log(playerData.planets);
         if (playerData.planets) {
             for (let i = 0; i < playerData.planets.length; i++) {
-                const planet: PlanetInterface = playerData.planets[i];
-                
+                const planetkey: string = playerData.planets[i];
+                console.log(this.planets[planetkey]);
+                if (this.planets[planetkey]) {
+                    console.log('ADD', planetkey);
+    
+                    player.addPlanet(this.planets[planetkey]);
+                    this.removePlanet(this.planets[planetkey]);
+                }
             }
         }
 
@@ -96,9 +104,9 @@ export class ServerMap extends TileMap {
             const planet: PlanetInterface = planets[key];
             if (!this.planets[key]) this.createPlanet(planet);
         }
-        for (const key in this.planets) {
-            const planet: Planet = this.planets[key];
-            if (!planets[key]) this.removePlanet(planet);
-        }
+        // for (const key in this.planets) {
+        //     const planet: Planet = this.planets[key];
+        //     if (!planets[key]) this.removePlanet(planet);
+        // }
     }
 }

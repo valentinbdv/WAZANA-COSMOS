@@ -64,6 +64,7 @@ export class TileMap {
 
     createPlanet(planetInterface: PlanetInterface) {
         let planet = new Planet(this.system, planetInterface);
+        console.log('CREATE PLANET', planetInterface.key, planet.key);
         this.addPlanet(planet)
         return planet;
     }
