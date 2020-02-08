@@ -13,7 +13,7 @@ interface State {
     planets: Array<Player>;
 }
 
-export class ServerMap extends TileMap {
+export class onlineMap extends TileMap {
 
     client: Colyseus.Client;
     room: Colyseus.Room;
@@ -28,7 +28,6 @@ export class ServerMap extends TileMap {
             this.sessionId = room.sessionId;
             this.started = true;
             console.log(room.sessionId, "joined", room.name);
-            this.checkPlanets(room.state.planets);
 
             room.onStateChange((state: State) => {
                 // console.log(room.name, "has new state:", state);

@@ -2,16 +2,16 @@ import { System } from '../System/system';
 import { MouseCatcher } from './mouseCatcher';
 import { GravityGrid } from '../System/GravityGrid';
 import { Player } from './player';
-import { ServerMap } from "../Map/serverMap";
+import { onlineMap } from "../Map/onlineMap";
 
 import hotkeys from 'hotkeys-js';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
 export class RealPlayer extends Player {
 
-    map: ServerMap;
+    map: onlineMap;
 
-    constructor(system: System, gravityGrid: GravityGrid, map: ServerMap) {
+    constructor(system: System, gravityGrid: GravityGrid, map: onlineMap) {
         super(system, gravityGrid);
         this.addMouseEvent();
         this.addZoomCatcher();

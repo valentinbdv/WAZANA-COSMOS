@@ -33,7 +33,7 @@ export class GameEngine {
     realPlayer: RealPlayer;
     introUI: IntroUI;
     playUI: PlayUI;
-    serverMap: ServerMap;
+    onlineMap: onlineMap;
 
     constructor(gameOptions: GameInterface) {
         this.system = new SystemUI(gameOptions.canvas);
@@ -41,19 +41,19 @@ export class GameEngine {
 
         this.gravityGrid = new GravityGrid(this.system);
         this.localMap = new LocalMap(this.system, this.gravityGrid);
-        this.serverMap = new ServerMap(this.system, this.gravityGrid);
-        this.serverMap.onLeave = () => {
+        this.onlineMap = new onlineMap(this.system, this.gravityGrid);
+        this.onlineMap.onLeave = () => {
             this.stopGame();
         }
 
-        this.realPlayer = new RealPlayer(this.system, this.gravityGrid, this.serverMap);
+        this.realPlayer = new RealPlayer(this.system, this.gravityGrid, this.onlineMap);
         this.realPlayer.setMoving(false);
         this.realPlayer.setCategory(StarCategories[0]);
         this.realPlayer.onDied = () => {
             this.introUI.show();
         };
 
-        this.serverMap.setPlayerToFollow(this.realPlayer);
+        this.onlineMap.setPlayerToFollow(this.realPlayer);
         this.localMap.setPlayerToFollow(this.realPlayer);
         
         this.system.setSky(1);
@@ -72,9 +72,9 @@ export class GameEngine {
         this.introUI.show();
         this.playUI.hide();
         this.realPlayer.setMoving(false);
-        this.serverMap.checkPlayerAndRessources(false);
+        this.onlineMap.checkPlayerAndRessources(false);
         this.localMap.checkPlayerAndRessources(false);
-        this.serverMap.leave();
+        this.onlineMap.leave();
     }
 
     startGame() {
@@ -97,11 +97,11 @@ export class GameEngine {
     }
     
     joinGameServer() {
-        this.serverMap.join((newRoom) => {
+        this.onlineMap.join((newRoom) => {
             this.startGame();
-            this.serverMap.checkPlayerAndRessources(true);
-            this.realPlayer.key = this.serverMap.sessionId;
-            this.serverMap.addPlayer(this.realPlayer);
+            this.onlineMap.checkPlayerAndRessources(true);
+            this.realPlayer.key = this.onlineMap.sessionId;
+            this.onlineMap.addPlayer(this.realPlayer);
         });
     }
 }
