@@ -103,10 +103,11 @@ export class System {
         this.engine.enableOfflineSupport = false;
 
         this.animationManager = new AnimationManager();
+        this.loadCheck = new Animation(this.animationManager);
         this.buildScene();
         // Glow layer takes too much performance
         // this.addGlow();
-        this.addSky();
+        // this.addSky();
         this.addDustMesh();
         this.addPlanetMesh();
         // this.addLight();
@@ -142,16 +143,23 @@ export class System {
         // this.scene.shadowsEnabled = false;
         this.scene.ambientColor = new Color3(0.0, 0.0, 0.0);
         // this.scene.clearColor = new Color4(0.0, 0.0, 0.0, 0.0);
+        this.scene.autoClear = false; // Color buffer
+        this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
+        this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
+        // Can't freeze because of particles
+        // this.scene.freezeActiveMeshes();
+        // Can't blockMaterialDirtyMechanism because of PBR
+        // this.scene.blockMaterialDirtyMechanism = true;
+        // this.scene.setRenderingAutoClearDepthStencil(renderingGroupIdx, autoClear, depth, stencil);
 
         this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 40, Vector3.Zero(), this.scene);
         this.camera.setTarget(Vector3.Zero());
     }
 
     addSky() {
-        this.loadCheck = new Animation(this.animationManager);
         this.skybox = MeshBuilder.CreateSphere("sbsphere", { diameter: 32 }, this.scene);
         this.skybox.scaling = new Vector3(this.size + 20, this.size + 20, this.size + 20);
-        this.skyboxMaterial = new PBRMaterial("this.skyBox", this.scene);
+        this.skyboxMaterial = new PBRMaterial("skyBox", this.scene);
         this.skyboxMaterial.backFaceCulling = false;
         this.skyboxMaterial.roughness = 0.2;
         this.skybox.material = this.skyboxMaterial;
@@ -175,9 +183,9 @@ export class System {
                 this.loadCheck.stop();
                 this.sceneTexture.gammaSpace = false;
                 this.scene.environmentTexture = this.sceneTexture;
-                this.skyboxMaterial.reflectionTexture = this.sceneTexture.clone();
-                this.skyboxMaterial.reflectionTexture.level = 0.2;
-                this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+                // this.skyboxMaterial.reflectionTexture = this.sceneTexture.clone();
+                // this.skyboxMaterial.reflectionTexture.level = 0.2;
+                // this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
                 this.sendToSkyChangeListeners();
             }
         });
@@ -196,6 +204,17 @@ export class System {
         for (let i = 0; i < this.listeners.length; i++) {
             this.listeners[i](this.sceneTexture);
         }
+        // Freeze all material to have better performance
+        for (let i = 0; i < this.scene.materials.length; i++) {
+            const material = this.scene.materials[i];
+            material.unfreeze();
+        }
+        setTimeout(() => {
+            for (let i = 0; i < this.scene.materials.length; i++) {
+                const material = this.scene.materials[i];
+                material.freeze();
+            }
+        }, 100);
     }
 
     light: DirectionalLight
@@ -217,7 +236,9 @@ export class System {
         // this.mesh = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         // this.mesh.isBlocker = false;
         this.dustMesh = MeshBuilder.CreateSphere("dust", { diameter: 1 }, this.scene);
-        this.dustMesh.material = this.dustMaterial;
+        this.dustMesh.alwaysSelectAsActiveMesh = true;
+        this.dustMesh.doNotSyncBoundingInfo = true;
+        this.dustMesh.material = this.dustMaterial; 
         this.dustMesh.isVisible = false;
     }
 
@@ -225,6 +246,8 @@ export class System {
     planetMaterial: PBRMaterial;
     addPlanetMesh() {
         this.planetMesh = new PearlMesh("planet", this.scene);
+        this.planetMesh.alwaysSelectAsActiveMesh = true;
+        this.planetMesh.doNotSyncBoundingInfo = true;
         this.planetMaterial = new PBRMaterial("planetMaterial", this.scene);
         // this.planetMaterial.roughness = 1;
         // this.meshMaterial.emissiveColor = color;

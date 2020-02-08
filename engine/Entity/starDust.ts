@@ -26,6 +26,8 @@ export class StarDust extends PositionEntity {
     mesh: InstancedMesh;
     addDust() {
         this.mesh = this.system.dustMesh.createInstance(this.key + "duststar");
+        this.mesh.alwaysSelectAsActiveMesh = true;
+        this.mesh.doNotSyncBoundingInfo = true;
         this.setSize(0);
         this.mesh.isVisible = true;
     }
@@ -63,18 +65,17 @@ export class StarDust extends PositionEntity {
         this.mesh.position.y = 1;
     }
 
-    fixeAnimationLength = 20;
+    fixeAnimationLength = 40;
     goToEntity(entity: PositionEntity, callback?: Function) {
-        let step = 1 - (1 / this.fixeAnimationLength);
         this.animation.simple(this.fixeAnimationLength / 2, (count, perc) => {
-            let progress = this.curve.ease(perc/2);
+            let progress = this.curve.ease(perc);
             let sizeProgress = Math.sqrt(this.size) * (1 - progress/2);
             this.mesh.scaling = new Vector3(sizeProgress, sizeProgress, sizeProgress);
             
             let change = entity.position.subtract(this.position);
-            let changePos = change.multiply(new Vector2(step, step));
-            // let changePos = change.multiply(new Vector2(1 - progress, 1 - progress));
-            let newPos = entity.position.subtract(changePos);
+            // let changePos = change.multiply(new Vector2(step, step));
+            let changePos = change.multiply(new Vector2(progress, progress));
+            let newPos = this.position.add(changePos);
             this.setPosition(newPos);
         }, () => {
             this.mesh.dispose();

@@ -10,6 +10,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { IEasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/easing';
 import { CubeTexture } from '@babylonjs/core/Materials/Textures/cubeTexture';
+import { Planet } from './planet';
 
 // https://www.youtube.com/watch?v=i4RtO_qIQHk
 
@@ -75,7 +76,8 @@ export class Star extends MovingEntity {
 
     // rotateProgress = 0;
     cycleProgress = 0;
-    
+    planets: Array< Planet > = [];
+
     constructor(system: System, options: StarInterface) {
         super('star', system, options);
 
@@ -102,11 +104,8 @@ export class Star extends MovingEntity {
                 planet.mesh.position.z = (this.size + planet.radius) * Math.sin((planet.velocity * planet.cycle) / 100 + planet.offset);
                 planet.mesh.rotation.y = planet.velocity * ( this.cycleProgress / 100 );
                 planet.cycle += this.cycleProgress;
-                // planet.mesh.position.y = (this.size + planet.radius) * Math.sin(planet.velocity * this.rotateProgress / 100);
             }
             this.surface.rotation.y += this.cycleProgress / 200;
-            // this.rotateProgress += 1 / Math.sqrt(this.size);
-            // this.rotateProgress = this.rotateProgress % Math.PI;
         });
 
         this.curve = new BezierCurveEase(.76, .01, .51, 1.33);
@@ -150,6 +149,8 @@ export class Star extends MovingEntity {
     addHeart() {
         // this.heart = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         this.heart = MeshBuilder.CreateSphere(this.key + "star", { diameter: 2.8 }, this.system.scene);
+        this.heart.alwaysSelectAsActiveMesh = true;
+        this.heart.doNotSyncBoundingInfo = true;
         this.heartMaterial = new StandardMaterial(this.key + "material", this.system.scene);
         this.heartMaterial.backFaceCulling = false;
         // console.log(this.heartMaterial);
@@ -172,6 +173,8 @@ export class Star extends MovingEntity {
         };
 
         this.surface = MeshBuilder.CreatePolyhedron("h", { custom: heptagonalPrism, size: 2, sideOrientation: Mesh.DOUBLESIDE }, this.system.scene);
+        this.surface.alwaysSelectAsActiveMesh = true;
+        this.surface.doNotSyncBoundingInfo = true;
         // this.surface.renderingGroupId = 1;
 
         // Cool Poly 2, 3, 

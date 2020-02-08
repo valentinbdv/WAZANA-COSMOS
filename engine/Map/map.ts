@@ -181,15 +181,6 @@ export class TileMap {
         return pos;
     }
 
-    // getNewRandomPositionFromCenter(position: Vector2, size: number): Vector2 {
-    //     let sign1 = (Math.random() > 0.5) ? 1 : -1;
-    //     let sign2 = (Math.random() > 0.5) ? 1 : -1;
-    //     let pos = new Vector2(0, 0);
-    //     pos.x = position.x + sign1 * size * Math.pow(Math.random(), 2);
-    //     pos.y = position.y + sign2 * size * Math.pow(Math.random(), 2);
-    //     return pos;
-    // }
-
     getNewRandomPositionFromCenter(position: Vector2, size: number): Vector2 {
         let angle = Math.random() * Math.PI * 2;
         let centerRatio = Math.pow(Math.random(), 1.5);

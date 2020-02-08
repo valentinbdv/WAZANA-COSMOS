@@ -52,6 +52,8 @@ export class GravityField {
     addGridRibbon() {
         var sideO = Mesh.BACKSIDE;
         this.gridRibbon = Mesh.CreateRibbon("gridRibbon", this.paths, false, false, 0, this.system.scene, true, sideO);
+        this.gridRibbon.alwaysSelectAsActiveMesh = true;
+        this.gridRibbon.doNotSyncBoundingInfo = true;
         this.gridRibbon.rotation.x = Math.PI;
         this.gridRibbon.position.y = 0.01;
         // this.gridRibbon.convertToFlatShadedMesh();
@@ -77,6 +79,8 @@ export class GravityField {
     addRibbon() {
         var sideO = Mesh.BACKSIDE;
         this.ribbon = Mesh.CreateRibbon("ribbon", this.paths, false, false, 0, this.system.scene, true, sideO);
+        this.ribbon.alwaysSelectAsActiveMesh = true;
+        this.ribbon.doNotSyncBoundingInfo = true;
         // this.ribbon.convertToFlatShadedMesh();
         // this.gridRibbon.renderingGroupId = 3;
         // this.ribbon = Mesh.CreatePlane("ribbon", 10, this.system.scene);

@@ -34,7 +34,6 @@ export class Player extends StarFighter {
     maxPlanet: number;
     gravityField: number;
     velocity: number;
-    planets: Array< Planet > = [];
     absorbing: string;
     absorbed: string;
     realVelocity: number = 1;

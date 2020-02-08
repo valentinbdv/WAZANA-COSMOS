@@ -42,6 +42,8 @@ export class Planet extends PositionEntity {
     addMesh() {
         // this.mesh = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         this.mesh = this.system.planetMesh.createInstance(this.key + "duststar");
+        this.mesh.alwaysSelectAsActiveMesh = true;
+        this.mesh.doNotSyncBoundingInfo = true;
         this.mesh.isVisible = true;
         this.mesh.rotation.x = Math.random() * Math.PI;
         this.mesh.rotation.y = Math.random() * Math.PI;

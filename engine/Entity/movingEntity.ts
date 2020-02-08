@@ -3,7 +3,7 @@ import { PositionEntity, PositionEntityInterface } from './positionEntity';
 import { MoveCatcher } from '../Player/moveCatcher';
 
 import { Vector3, Vector2 } from '@babylonjs/core/Maths/math';
-import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
+import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
 export interface MovingEntityInterface extends PositionEntityInterface {
     velocity ? : number,
@@ -11,7 +11,7 @@ export interface MovingEntityInterface extends PositionEntityInterface {
 
 export class MovingEntity extends PositionEntity {
 
-    movingMesh: AbstractMesh;
+    movingMesh: TransformNode;
     moveCatcher: MoveCatcher;
     moving = true;
 
@@ -49,7 +49,7 @@ export class MovingEntity extends PositionEntity {
     }
 
     addMovingMesh() {
-        this.movingMesh = new AbstractMesh(this.key, this.system.scene);
+        this.movingMesh = new TransformNode(this.key, this.system.scene);
     }
 
     gravity = 1;
@@ -84,10 +84,8 @@ export class MovingEntity extends PositionEntity {
     }
 
     show() {
-        this.movingMesh.isVisible = true;
     }
 
     hide() {
-        this.movingMesh.isVisible = false;
     }
 }
