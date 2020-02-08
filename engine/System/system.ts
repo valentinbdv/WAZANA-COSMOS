@@ -146,6 +146,8 @@ export class System {
         this.scene.autoClear = false; // Color buffer
         this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
         this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
+        this.scene.shadowsEnabled = false;
+        this.scene.fogEnabled = false;
         // Can't freeze because of particles
         // this.scene.freezeActiveMeshes();
         // Can't blockMaterialDirtyMechanism because of PBR
@@ -205,16 +207,24 @@ export class System {
             this.listeners[i](this.sceneTexture);
         }
         // Freeze all material to have better performance
+        this.unFreezeMaterials();
+        setTimeout(() => {
+            this.freezeMaterials();
+        }, 100);
+    }
+
+    unFreezeMaterials() {
         for (let i = 0; i < this.scene.materials.length; i++) {
             const material = this.scene.materials[i];
             material.unfreeze();
         }
-        setTimeout(() => {
-            for (let i = 0; i < this.scene.materials.length; i++) {
-                const material = this.scene.materials[i];
-                material.freeze();
-            }
-        }, 100);
+    }
+
+    freezeMaterials() {
+        for (let i = 0; i < this.scene.materials.length; i++) {
+            const material = this.scene.materials[i];
+            material.freeze();
+        }
     }
 
     light: DirectionalLight

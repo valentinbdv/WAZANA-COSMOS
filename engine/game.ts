@@ -91,7 +91,7 @@ export class GameEngine {
         this.localMap.addPlayer(this.realPlayer);
         let ia1 = new IAPlayer(this.system, this.gravityGrid);
         this.localMap.addPlayer(ia1);
-        ia1.setSize(1);
+        ia1.setSize(0.6);
         ia1.setPosition(new Vector2(5, 5));
         ia1.setTemperature(25000);
     }

@@ -23,6 +23,7 @@ export class LocalMap extends TileMap {
         this.system.scene.registerBeforeRender(() => {
             if (frame > 10 && this.check) {
                 this.checkPlayersAbsorbtion();
+                this.checkRessourceMap();
                 frame = 0;
             }
             frame++;
@@ -36,7 +37,6 @@ export class LocalMap extends TileMap {
             this.checkPlanetMap(player);
             if (player.size < minSize) this.playerDead(player);
         }
-
     }
 
     checkPlayerAbsorbtion(player: Player) {

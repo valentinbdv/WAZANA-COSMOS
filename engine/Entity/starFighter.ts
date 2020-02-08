@@ -58,7 +58,7 @@ export class StarFighter extends Star {
 
     addDust(dust: StarDust) {
         dust.goToEntity(this, () => {
-            this.changeSize(dust.size / 5);
+            this.changeSize(dust.size / (this.size * 20));
             this.shine();
         });
     }
@@ -214,9 +214,11 @@ export class StarFighter extends Star {
         this._explode(callback);
     }
     _explode(callback?: Function) {
-        this.updateSize(40, 80, () => {
+        this.system.unFreezeMaterials();
+        this.updateSize(50 * this.size, 80, () => {
             this.setReflectionLevel(1);
             this.updateSize(0.01, 30, () => {
+                this.system.freezeMaterials();
                 this.hide();
                 setTimeout(() => {
                     // Wait for the particle effect to end

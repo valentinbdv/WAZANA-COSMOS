@@ -34,7 +34,7 @@ export class TileMap {
             }
             if (frame > 10 && this.check) {
                 this.checkPlayersDust();
-                this.checkDustMap(this.playerToFollow.position);
+                this.checkDustMap();
                 frame = 0;
             }
             frame++;
@@ -155,23 +155,49 @@ export class TileMap {
         this.check = check;
     }
 
-    dustNeeded = 200;
-    checkDustMap(center: Vector2) {
+    dustDensity = 100;
+    sizeDustRatio = 5;
+    checkDustMap() {
+        let c = this.playerToFollow.position;
+        let s = this.playerToFollow.size;
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
-            let dist = Math.sqrt(Vector2.Distance(dust.position, center));
-            if (dist > 10) this.disposeDust(dust);
+            let dist = Vector2.Distance(dust.position, c);
+            if (dist > Math.sqrt(s) * this.sizeDustRatio * 15) this.disposeDust(dust);
         }
 
-        let newDustNeeded = this.dustNeeded - this.dusts.length;
+        let newDustNeeded = Math.round(s * this.dustDensity - this.dusts.length);
         for (let i = 0; i < newDustNeeded; i++) {
             let newPlanet = this.addDust();
-            let pos = this.getNewRandomPosition();
+            let pos = this.getNewDustRandomPosition();
             newPlanet.setPosition(pos);
         }
     }
 
-    mapSize = 100;
+    getNewDustRandomPosition(): Vector2 {
+        let c = this.playerToFollow.position;
+        let s = this.playerToFollow.size;
+        let sign1 = (Math.random() > 0.5) ? 1 : -1;
+        let sign2 = (Math.random() > 0.5) ? 1 : -1;
+        let x = c.x + sign1 * Math.sqrt(s) * (this.sizeDustRatio / 2 + Math.random() * this.sizeDustRatio * 10);
+        let y = c.y + sign2 * Math.sqrt(s) * (this.sizeDustRatio / 2 + Math.random() * this.sizeDustRatio * 10);
+        return new Vector2(x, y);
+    }
+    
+    // getCloseDust(): Array< StarDust > {
+    //     let dusts = [];
+    //     let c = this.playerToFollow.position;
+    //     let s = this.playerToFollow.size * 5;
+    //     for (let i = 0; i < this.dusts.length; i++) {
+    //         const dust = this.dusts[i];
+    //         let xTest = dust.position.x < c.x + s && dust.position.x > c.x - s;
+    //         let yTest = dust.position.y < c.y + s && dust.position.y > c.y - s;
+    //         if (xTest && yTest) dusts.push(dust);
+    //     }
+    //     return dusts;
+    // }
+
+    mapSize = 1000;
     getNewRandomPosition(): Vector2 {
         let sign1 = (Math.random() > 0.5) ? 1 : -1;
         let sign2 = (Math.random() > 0.5) ? 1 : -1;
