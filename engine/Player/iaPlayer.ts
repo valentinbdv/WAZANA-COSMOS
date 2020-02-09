@@ -11,21 +11,22 @@ export class IAPlayer extends Player {
     constructor(system: System, gravityGrid: GravityGrid) {
         super(system, gravityGrid, { temperature: 5000, size: 0.5, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.startMovingAround();
-        this.setSize(0.6);
+        this.setSize(0.5 + Math.random());
     }
 
     moveInt;
     startMovingAround() {        
         this.moveInt = setInterval(() => {
+            if (this.died) return clearInterval(this.moveInt);
             let move = new Vector2((Math.random() - 0.5), (Math.random() - 0.5));
             this.moveCatcher.catch(move);
         }, 2000);
     }
 
-    explode(callback: Function) {
-        clearInterval(this.moveInt);
-        this._explode(callback);
-    }
+    // explode(callback: Function) {
+    //     clearInterval(this.moveInt);
+    //     this._explode(callback);
+    // }
 
     goToPlayer(player: Player) {
         let move = player.position.subtract(this.position);

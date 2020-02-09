@@ -49,7 +49,7 @@ export class Player extends StarFighter {
     constructor(system: System, gravityGrid: GravityGrid, playerInterface: StarInterface) {
         super(system, playerInterface);
         this.gravityGrid = gravityGrid;
-        this.secondLight.excludedMeshes.push(this.gravityGrid.ribbon);
+        // this.secondLight.excludedMeshes.push(this.gravityGrid.ribbon);
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.fixeAnimation = new Animation(this.system.animationManager);
         this.accelerateAnimation = new Animation(this.system.animationManager);
@@ -61,7 +61,9 @@ export class Player extends StarFighter {
         this.createParticle();
     }
 
+    category: StarCategory;
     setCategory(category: StarCategory) {
+        this.category = category;
         this.setVelocity(category.velocity);
         this.setTemperature(category.temperature);
         this.setMaxPlanet(category.planets)
@@ -122,6 +124,7 @@ export class Player extends StarFighter {
         } else {
             this.animatePlanetToStar(planet, radius, velocity);
         }
+        this.secondLight.includedOnlyMeshes.push(planet.mesh);
         this.fixePlanet(planet);
     }
 
@@ -185,11 +188,16 @@ export class Player extends StarFighter {
     die(callback?: Function) {
         this.removeAllPlanets();
         if (this.aborber) {
-            this.dive(this.aborber.position);
+            this.dive(this.aborber.position, () => {
+                if (callback) callback();
+                if (this.onDied) this.onDied();
+            });
         } else {
-            this.explode(callback);
+            this.explode(() => {
+                if (callback) callback();
+                if (this.onDied) this.onDied();
+            });
         }
-        if (this.onDied) this.onDied();
         this.absorbStop();
         this.died = true;
         this.secondLight.excludedMeshes = [];

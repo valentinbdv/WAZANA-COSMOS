@@ -41,6 +41,11 @@ export class TileMap {
         });
     }
 
+    check = false;
+    checkPlayerAndRessources(check: boolean) {
+        this.check = check;
+    }
+
     ////////// PLAYER
 
     createPlayer(starInterface: StarInterface) {
@@ -63,6 +68,19 @@ export class TileMap {
 
     removePlayer(player: Player) {
         delete this.players[player.key];
+    }
+
+
+    disposePlayer(player: Player) {
+        this.removePlayer(player);
+        player.dispose();
+    }
+
+    eraseAllPlayers() {
+        for (const key in this.players) {
+            let player = this.players[key];
+            if (player != this.playerToFollow) this.disposePlayer(player);
+        }
     }
 
     ////////// BLACKHOLE
@@ -150,11 +168,13 @@ export class TileMap {
         dust.mesh.dispose();
     }
 
-    check = false;
-    checkPlayerAndRessources(check: boolean) {
-        this.check = check;
+    eraseAllDusts() {
+        for (let i = 0; i < this.dusts.length; i++) {
+            this.disposeDust(this.dusts[i]);
+        }
     }
 
+    /////////// CHECK FUNCTIONS 
     dustDensity = 100;
     sizeDustRatio = 5;
     checkDustMap() {
@@ -231,5 +251,19 @@ export class TileMap {
             const player = this.players[key];
             if (!player.accelerating) this.checkPlayerDust(player);
         }
+    }
+
+    killPlayer(player: Player) {
+        this.removePlayer(player);
+        player.die(() => {
+            this.addDustField(player.position);
+        });
+    }
+
+    eraseAllEntity() {
+        this.eraseAllPlanets();
+        this.eraseAllBlackHoles();
+        this.eraseAllPlayers();
+        this.eraseAllDusts();
     }
 }

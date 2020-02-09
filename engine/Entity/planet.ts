@@ -1,10 +1,10 @@
 import { System } from '../System/system';
 
 import { Vector3, Vector2 } from '@babylonjs/core/Maths/math';
-import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { PositionEntity, PositionEntityInterface } from './positionEntity';
 import { Animation } from '../System/animation';
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
+import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
 export interface PlanetInterface extends PositionEntityInterface {
     radius ? : number,
@@ -41,6 +41,7 @@ export class Planet extends PositionEntity {
     mesh: InstancedMesh;
     addMesh() {
         // this.mesh = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
+        // this.mesh = this.system.planetMesh.clone(this.key + "duststar");
         this.mesh = this.system.planetMesh.createInstance(this.key + "duststar");
         this.mesh.alwaysSelectAsActiveMesh = true;
         this.mesh.doNotSyncBoundingInfo = true;
@@ -59,7 +60,7 @@ export class Planet extends PositionEntity {
         });
     }
 
-    setParent(parent: AbstractMesh) {
+    setParent(parent: TransformNode) {
         this.mesh.parent = parent;
     }
 

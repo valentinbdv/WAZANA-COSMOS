@@ -50,7 +50,7 @@ export class GameEngine {
         this.realPlayer.setMoving(false);
         this.realPlayer.setCategory(StarCategories[0]);
         this.realPlayer.onDied = () => {
-            this.introUI.show();
+            this.stopGame();
         };
 
         this.onlineMap.setPlayerToFollow(this.realPlayer);
@@ -69,12 +69,18 @@ export class GameEngine {
     }
 
     stopGame() {
+        console.log('stop');
+        this.realPlayer.setSize(1);
+        this.realPlayer.setCategory(this.realPlayer.category);
+        this.realPlayer.setPosition(Vector2.Zero());
+        this.realPlayer.setMoving(false);
         this.introUI.show();
         this.playUI.hide();
-        this.realPlayer.setMoving(false);
         this.onlineMap.checkPlayerAndRessources(false);
+        this.onlineMap.eraseAllEntity();
         this.localMap.checkPlayerAndRessources(false);
-        this.onlineMap.leave();
+        this.localMap.eraseAllEntity();
+        this.localMap.eraseAllIas();
     }
 
     startGame() {
@@ -89,11 +95,7 @@ export class GameEngine {
         this.startGame();
         this.localMap.checkPlayerAndRessources(true);
         this.localMap.addPlayer(this.realPlayer);
-        let ia1 = new IAPlayer(this.system, this.gravityGrid);
-        this.localMap.addPlayer(ia1);
-        ia1.setSize(0.6);
-        ia1.setPosition(new Vector2(5, 5));
-        ia1.setTemperature(25000);
+
     }
     
     joinGameServer() {

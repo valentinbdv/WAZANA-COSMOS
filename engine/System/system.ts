@@ -110,6 +110,7 @@ export class System {
         // this.addSky();
         this.addDustMesh();
         this.addPlanetMesh();
+        this.addRibbonMaterial();
         // this.addLight();
         // this.addControl();
 
@@ -188,6 +189,8 @@ export class System {
                 // this.skyboxMaterial.reflectionTexture = this.sceneTexture.clone();
                 // this.skyboxMaterial.reflectionTexture.level = 0.2;
                 // this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+                this.ribbonMaterial.reflectionTexture = this.sceneTexture.clone();
+                this.ribbonMaterial.reflectionTexture.level = 0.2;
                 this.sendToSkyChangeListeners();
             }
         });
@@ -214,17 +217,23 @@ export class System {
     }
 
     unFreezeMaterials() {
-        for (let i = 0; i < this.scene.materials.length; i++) {
-            const material = this.scene.materials[i];
-            material.unfreeze();
-        }
+        // for (let i = 0; i < this.scene.materials.length; i++) {
+        //     const material = this.scene.materials[i];
+        //     material.unfreeze();
+        // }
+        this.dustMaterial.unfreeze();
+        this.planetMaterial.unfreeze();
+        this.ribbonMaterial.unfreeze();
     }
 
     freezeMaterials() {
-        for (let i = 0; i < this.scene.materials.length; i++) {
-            const material = this.scene.materials[i];
-            material.freeze();
-        }
+        // for (let i = 0; i < this.scene.materials.length; i++) {
+        //     const material = this.scene.materials[i];
+        //     material.freeze();
+        // }
+        this.dustMaterial.freeze();
+        this.planetMaterial.freeze();
+        this.ribbonMaterial.freeze();
     }
 
     light: DirectionalLight
@@ -263,6 +272,14 @@ export class System {
         // this.meshMaterial.emissiveColor = color;
         this.planetMesh.material = this.planetMaterial;
         this.planetMesh.isVisible = false;
+    }
+
+    ribbonMaterial: PBRMaterial;
+    addRibbonMaterial() {
+        this.ribbonMaterial = new PBRMaterial("ribbonMaterial", this.scene);
+        this.ribbonMaterial.roughness = 0.5;
+        this.ribbonMaterial.metallic = 1;
+        this.ribbonMaterial.alpha = 1;
     }
 
     /**

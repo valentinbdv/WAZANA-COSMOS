@@ -86,18 +86,8 @@ export class GravityGrid {
         // this.ribbon = Mesh.CreatePlane("ribbon", 10, this.system.scene);
         // this.ribbon.isVisible = false;
         this.ribbon.rotation.x = Math.PI;
-        this.material = new PBRMaterial("material", this.system.scene);
-
-        this.material.roughness = 0.5;
-        this.material.metallic = 1;
-        this.material.alpha = 1;
-
-        this.ribbon.material = this.material;
-
-        this.system.addSkyChangeListener((texture) => {
-            this.material.reflectionTexture = texture.clone();
-            this.material.reflectionTexture.level = 0.2;
-        });
+        
+        this.ribbon.material = this.system.ribbonMaterial;
     }
 
     mapDetail = 20;

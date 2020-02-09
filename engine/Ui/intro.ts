@@ -123,7 +123,7 @@ export class IntroUI {
         });
         this.startOnline._setStyle({ zIndex: 100 });
 
-        this.startLocal = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Play against AI' }, { x: 110, y: 250 }, { width: 180, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
+        this.startLocal = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Play against AI' }, { x: 0, y: 250 }, { width: 180, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
         this.startLocal.on('click', () => {
             this.onStart('local');
         });
@@ -134,7 +134,7 @@ export class IntroUI {
         this.starUI.showAll();
         this.nebulaUI.showAll();
         this.playerLayout.showAll();
-        this.startOnline.show();
+        this.startOnline.hide();
         this.startLocal.show();
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));

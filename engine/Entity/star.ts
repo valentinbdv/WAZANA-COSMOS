@@ -88,13 +88,8 @@ export class Star extends MovingEntity {
         this.addSecondLight();
 
         let p = options.position;
-        this.movingMesh.position = new Vector3(p.x, p.y, p.z);
+        this.movingMesh.position = new Vector3(p.x, 0, p.y);
         this.setSize(options.size);
-
-        // this.setSurfaceColor(new Color3(0, 0, 0));
-        // this.setFireColor(color);
-        // this.setFlareColor(color);
-        // this.setGlareColor(color);
         this.setTemperature(options.temperature);
 
         this.system.scene.registerBeforeRender(() => {
@@ -127,6 +122,7 @@ export class Star extends MovingEntity {
         this.heartMaterial.emissiveColor = color;
         this.heartMaterial.diffuseColor = Color3.White();
         this.surfaceMaterial.reflectivityColor = color;
+        // this.surfaceMaterial.albedoColor = color;
         this.secondLight.diffuse = color;
         this.light.diffuse = color;
     }
@@ -153,6 +149,7 @@ export class Star extends MovingEntity {
         this.heart.doNotSyncBoundingInfo = true;
         this.heartMaterial = new StandardMaterial(this.key + "material", this.system.scene);
         this.heartMaterial.backFaceCulling = false;
+        this.heartMaterial.maxSimultaneousLights = 0;
         // console.log(this.heartMaterial);
         // this.system.starGlowLayer.addIncludedOnlyMesh(this.heart);
         this.heart.material = this.heartMaterial;
@@ -186,7 +183,7 @@ export class Star extends MovingEntity {
         // this.surfaceMaterial.roughness = 0.5;
         // this.surfaceMaterial.metallic = 1;
         this.surfaceMaterial.alpha = 0.5;
-        
+
         // this.surfaceMaterial.linkRefractionWithTransparency = true;
         this.surfaceMaterial.indexOfRefraction = 0;
         // this.surfaceMaterial.alpha = 0;
@@ -212,7 +209,6 @@ export class Star extends MovingEntity {
     light: PointLight
     addLight() {
         this.light = new PointLight('light', new Vector3(0, 0, 0), this.system.scene);
-        this.light.intensity = 1000;
         this.light.radius = 0.1;
         this.light.shadowEnabled = false;
         this.light.parent = this.movingMesh;
@@ -223,17 +219,13 @@ export class Star extends MovingEntity {
     secondLight: PointLight
     addSecondLight() {
         this.secondLight = new PointLight('secondLight', new Vector3(0, 0, 0), this.system.scene);
-        this.secondLight.intensity = 50;
-        this.secondLight.radius = 10;
+        this.secondLight.radius = 1;
         this.secondLight.shadowEnabled = false;
         this.secondLight.parent = this.movingMesh;
-        this.secondLight.excludedMeshes.push(this.surface);
-        this.secondLight.excludedMeshes.push(this.heart);
+        // this.secondLight.excludedMeshes.push(this.surface);
+        // this.secondLight.excludedMeshes.push(this.heart);
+        this.secondLight.excludedMeshes = [];
         // console.log(this.secondLight);
-    }
-
-    setSurfaceColor(color: Color3) {
-        this.surfaceMaterial.emissiveColor = color;
     }
 
     shine() {
@@ -259,7 +251,7 @@ export class Star extends MovingEntity {
         this.surface.scaling = sizeVector;
         this.heart.scaling = sizeVector;
         this.light.intensity = 1000 * size;
-        this.secondLight.intensity = 100 * size;
+        this.secondLight.intensity = 1000 * size;
         this.cycleProgress = 1 / Math.sqrt(this.size);
     }
 
@@ -281,33 +273,6 @@ export class Star extends MovingEntity {
             if (callback) callback();
         });
     }
-
-    // setFireColor(color: Color3) {
-    //     let surface = this.set.systems[0]._colorGradients;
-    //     for (let i = 0; i < surface.length; i++) {
-    //         surface[i].color1.r = color.r;
-    //         surface[i].color1.g = color.g;
-    //         surface[i].color1.b = color.b;
-    //     }
-    // }
-
-    // setFlareColor(color: Color3) {
-    //     let surface = this.set.systems[1]._colorGradients;
-    //     for (let i = 0; i < surface.length; i++) {
-    //         surface[i].color1.r = color.r;
-    //         surface[i].color1.g = color.g;
-    //         surface[i].color1.b = color.b;
-    //     }
-    // }
-
-    // setGlareColor(color: Color3) {
-    //     let surface = this.set.systems[2]._colorGradients;
-    //     for (let i = 0; i < surface.length; i++) {
-    //         surface[i].color1.r = color.r;
-    //         surface[i].color1.g = color.g;
-    //         surface[i].color1.b = color.b;
-    //     }
-    // }
 
     dispose() {
         // Need to keep movingMesh in case this is a blackHole
