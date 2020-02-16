@@ -1,7 +1,5 @@
 import { Player, PlayerInterface } from "../player/player";
 import { TileMap } from "./map";
-import { System } from '../System/system';
-import { GravityGrid } from '../System/GravityGrid';
 
 import * as Colyseus from "colyseus.js";
 import { Vector2 } from "@babylonjs/core/Maths/math";
@@ -13,10 +11,15 @@ interface State {
     planets: Array<Player>;
 }
 
-export class onlineMap extends TileMap {
+export class onlineMap {
 
     client: Colyseus.Client;
     room: Colyseus.Room;
+    tileMap: TileMap
+
+    constructor(tileMap: TileMap) {
+        this.tileMap = tileMap;
+    }
 
     started = false;
     sessionId: string;
@@ -61,19 +64,19 @@ export class onlineMap extends TileMap {
     onLeave: Function;
     leave() {
         this.started = false;
-        this.eraseAllPlanets();
+        this.tileMap.eraseAllPlanets();
         // this.room.leave();
     }
 
     checkPlayers(playersData: Object) {
         for (const key in playersData) {
             const playerData: PlayerInterface = playersData[key];
-            if (!this.players[key]) this.createPlayer(playerData);
-            else this.checkPlayer(this.players[key], playerData);
+            if (!this.tileMap.players[key]) this.tileMap.createPlayer(playerData);
+            else this.checkPlayer(this.tileMap.players[key], playerData);
         }
-        for (const key in this.players) {
-            const player:Player = this.players[key];
-            if (!playersData[key]) this.removePlayer(player);
+        for (const key in this.tileMap.players) {
+            const player:Player = this.tileMap.players[key];
+            if (!playersData[key]) this.tileMap.removePlayer(player);
         }        
     }
 
@@ -86,13 +89,13 @@ export class onlineMap extends TileMap {
         if (playerData.planets) {
             for (let i = 0; i < playerData.planets.length; i++) {
                 const planetkey: string = playerData.planets[i];
-                console.log(this.planets[planetkey]);
-                if (this.planets[planetkey]) {
+                console.log(this.tileMap.planets[planetkey]);
+                if (this.tileMap.planets[planetkey]) {
                     console.log('ADD', planetkey);
-                    let planet = this.planets[planetkey]
+                    let planet = this.tileMap.planets[planetkey]
                     player.addPlanet(planet);
                     planet.attachedToStar = true;
-                    this.storagePlanet(planet);
+                    this.tileMap.storagePlanet(planet);
                 }
             }
         }
@@ -102,7 +105,7 @@ export class onlineMap extends TileMap {
     checkPlanets(planets: Object) {
         for (const key in planets) {
             const planet: PlanetInterface = planets[key];
-            if (!this.planets[key]) this.addPlanet(planet);
+            if (!this.tileMap.planets[key]) this.tileMap.addPlanet(planet);
         }
         // for (const key in this.planets) {
         //     const planet: Planet = this.planets[key];

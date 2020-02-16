@@ -9,6 +9,7 @@ import { PlayUI } from './Ui/play';
 import { Player } from "./player/player";
 import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
+import { TileMap } from './Map/map';
 
 // Pouvoir utiliser les flèches plutôt que la souris
 // Minimap
@@ -30,6 +31,7 @@ export class GameEngine {
     animation: Animation;
 
     gravityGrid: GravityGrid;
+    tileMap: TileMap;
     localMap: LocalMap;
     realPlayer: RealPlayer;
     introUI: IntroUI;
@@ -41,8 +43,9 @@ export class GameEngine {
         this.system.optimize();
 
         this.gravityGrid = new GravityGrid(this.system);
-        this.localMap = new LocalMap(this.system, this.gravityGrid);
-        this.onlineMap = new onlineMap(this.system, this.gravityGrid);
+        this.tileMap = new TileMap(this.system, this.gravityGrid);
+        this.localMap = new LocalMap(this.system, this.gravityGrid, this.tileMap);
+        this.onlineMap = new onlineMap(this.tileMap);
         this.onlineMap.onLeave = () => {
             this.stopGame();
         }
@@ -54,8 +57,7 @@ export class GameEngine {
             this.stopGame();
         };
 
-        this.onlineMap.setPlayerToFollow(this.realPlayer);
-        this.localMap.setPlayerToFollow(this.realPlayer);
+        this.tileMap.setPlayerToFollow(this.realPlayer);
         
         this.system.setSky(1);
         this.system.launchRender();
@@ -78,10 +80,8 @@ export class GameEngine {
         this.realPlayer.setMoving(false);
         this.introUI.show();
         this.playUI.hide();
-        this.onlineMap.checkPlayerAndRessources(false);
-        this.onlineMap.eraseAllEntity();
-        this.localMap.checkPlayerAndRessources(false);
-        this.localMap.eraseAllEntity();
+        this.tileMap.checkPlayerAndRessources(false);
+        this.tileMap.eraseAllEntity();
         this.localMap.eraseAllIas();
     }
 
@@ -99,17 +99,17 @@ export class GameEngine {
     
     joinGameLocal() {
         this.startGame();
-        this.localMap.checkPlayerAndRessources(true);
-        this.localMap.addPlayer(this.realPlayer);
+        this.tileMap.checkPlayerAndRessources(true);
+        this.tileMap.addPlayer(this.realPlayer);
 
     }
     
     joinGameServer() {
         this.onlineMap.join((newRoom) => {
             this.startGame();
-            this.onlineMap.checkPlayerAndRessources(true);
+            this.tileMap.checkPlayerAndRessources(true);
             this.realPlayer.key = this.onlineMap.sessionId;
-            this.onlineMap.addPlayer(this.realPlayer);
+            this.tileMap.addPlayer(this.realPlayer);
         });
     }
 }

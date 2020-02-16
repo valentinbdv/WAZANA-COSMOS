@@ -20,8 +20,8 @@ import filter from 'lodash/filter';
 export class TileMap {
 
     system: System;
-    curve: IEasingFunction;
     gravityGrid: GravityGrid;
+    curve: IEasingFunction;
 
     constructor(system: System, gravityGrid: GravityGrid) {
         this.system = system;
