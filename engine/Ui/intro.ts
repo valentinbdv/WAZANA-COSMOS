@@ -8,7 +8,7 @@ import { ui_arrow, ui_button } from './effect';
 import { ui_text, ui_back } from './node';
 import { colormain } from './color';
 
-import { IEasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
+import { IEasingFunction, EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
 export class IntroUI {
     
@@ -22,6 +22,7 @@ export class IntroUI {
         this.realPlayer = realPlayer;
         this.animation = new Animation(system.animationManager);
         this.curve = new CircleEase();
+        this.curve.setEasingMode(EasingFunction.EASINGMODE_EASEOUT);
 
         this.addNebulaChoice();
         this.addStarChoice();
@@ -68,12 +69,13 @@ export class IntroUI {
         this.animateChange(starCategory);
     }
 
+    animAccuracy = 100;
     animateChange(starCategory: StarCategory) {
-        this.animation.simple(20, (count, perc) => {
+        this.animation.simple(30, (count, perc) => {
             let easePerc = this.curve.ease(perc);
-            let planetPerc = Math.round(starCategory.planets * easePerc * 10) / 10;
-            let velocityPerc = Math.round(starCategory.velocity * easePerc * 10) / 10;
-            let gravityPerc = Math.round(starCategory.gravity * easePerc * 10) / 10;
+            let planetPerc = Math.round(starCategory.planets * easePerc * this.animAccuracy) / this.animAccuracy;
+            let velocityPerc = Math.round(starCategory.velocity * easePerc * this.animAccuracy) / this.animAccuracy;
+            let gravityPerc = Math.round(starCategory.gravity * easePerc * this.animAccuracy) / this.animAccuracy;
             this.planetText.setText('Planets: ' + planetPerc);
             this.planetBar.setWidth(planetPerc * 20);
             this.velocityText.setText('Velocity: ' + velocityPerc);

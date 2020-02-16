@@ -264,7 +264,7 @@ export class Star extends MovingEntity {
         this.shineAnimation.simple(animTime, (count, perc) => {
             this.setReflectionLevel(perc);
             this.setOpacity(1 - perc);
-            this.light.intensity = 1000 + perc * 10000;
+            this.light.intensity = 1000 + perc * 2000;
             let newsize = currentsize + this.curve.ease(perc) * change;
             this.setSize(newsize);
         }, () => {

@@ -151,7 +151,7 @@ export class TileMap {
     }
 
     addDustField(position: Vector2) {
-        let dustNumber = Math.round( 100 );
+        let dustNumber = 50;
         for (let i = 0; i < dustNumber; i++) {
             let newDust = this.addDust(0.03);
             let pos = this.getNewRandomPositionFromCenter(position, 40);

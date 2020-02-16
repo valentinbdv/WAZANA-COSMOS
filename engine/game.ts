@@ -10,7 +10,6 @@ import { Player } from "./player/player";
 import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
 
-// Mettre des BAR pour les perf des étoiles
 // Pouvoir utiliser les flèches plutôt que la souris
 // Minimap
 

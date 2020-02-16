@@ -150,7 +150,6 @@ export class System {
         this.scene.shadowsEnabled = false;
         this.scene.fogEnabled = false;
         // Can't freeze because of particles
-        // this.scene.freezeActiveMeshes();
         // Can't blockMaterialDirtyMechanism because of PBR
         // this.scene.blockMaterialDirtyMechanism = true;
         // this.scene.setRenderingAutoClearDepthStencil(renderingGroupIdx, autoClear, depth, stencil);
@@ -221,9 +220,9 @@ export class System {
         //     const material = this.scene.materials[i];
         //     material.unfreeze();
         // }
-        this.dustMaterial.unfreeze();
-        this.planetMaterial.unfreeze();
-        this.ribbonMaterial.unfreeze();
+        // this.dustMaterial.unfreeze();
+        // this.planetMaterial.unfreeze();
+        // this.ribbonMaterial.unfreeze();
     }
 
     freezeMaterials() {
@@ -231,9 +230,9 @@ export class System {
         //     const material = this.scene.materials[i];
         //     material.freeze();
         // }
-        this.dustMaterial.freeze();
-        this.planetMaterial.freeze();
-        this.ribbonMaterial.freeze();
+        // this.dustMaterial.freeze();
+        // this.planetMaterial.freeze();
+        // this.ribbonMaterial.freeze();
     }
 
     light: DirectionalLight
