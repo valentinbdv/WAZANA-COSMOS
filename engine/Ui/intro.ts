@@ -1,22 +1,27 @@
 import { SystemUI } from '../System/systemUI'
 import { Animation } from '../System/animation'
-import { StarCategories } from '../Entity/star';
+import { StarCategories, StarCategory } from '../Entity/star';
 import { RealPlayer } from '../Player/realPlayer';
 import { ui_group, ui_control } from './group';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import { ui_arrow, ui_button } from './effect';
-import { ui_text } from './node';
+import { ui_text, ui_back } from './node';
 import { colormain } from './color';
 
-export class IntroUI {
+import { IEasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
+export class IntroUI {
+    
     system: SystemUI;
     animation: Animation;
     realPlayer: RealPlayer;
+    curve: IEasingFunction;
 
     constructor(system: SystemUI, realPlayer: RealPlayer) {
         this.system = system;
         this.realPlayer = realPlayer;
+        this.animation = new Animation(system.animationManager);
+        this.curve = new CircleEase();
 
         this.addNebulaChoice();
         this.addStarChoice();
@@ -53,26 +58,46 @@ export class IntroUI {
     }
 
     checkStarArrows() {
-        this.starText.writeText(StarCategories[this.starNumber].name)
-        this.realPlayer.setCategory(StarCategories[this.starNumber]);
+        let starCategory = StarCategories[this.starNumber];
+        this.starText.writeText(starCategory.name)
+        this.realPlayer.setCategory(starCategory);
         this.starArrowLeft.show();
         this.starArrowRight.show();
         if (this.starNumber == 0) this.starArrowLeft.hide();
         if (this.starNumber == StarCategories.length - 1) this.starArrowRight.hide();
-        this.planetText.setText('Planets: ' + StarCategories[this.starNumber].planets);
-        this.velocityText.setText('Velocity: ' + StarCategories[this.starNumber].velocity);
-        this.gravityText.setText('Gravity Field: ' + StarCategories[this.starNumber].gravity);
+        this.animateChange(starCategory);
+    }
+
+    animateChange(starCategory: StarCategory) {
+        this.animation.simple(20, (count, perc) => {
+            let easePerc = this.curve.ease(perc);
+            let planetPerc = Math.round(starCategory.planets * easePerc * 10) / 10;
+            let velocityPerc = Math.round(starCategory.velocity * easePerc * 10) / 10;
+            let gravityPerc = Math.round(starCategory.gravity * easePerc * 10) / 10;
+            this.planetText.setText('Planets: ' + planetPerc);
+            this.planetBar.setWidth(planetPerc * 20);
+            this.velocityText.setText('Velocity: ' + velocityPerc);
+            this.velocityBar.setWidth(velocityPerc * 50);
+            this.gravityText.setText('Gravity: ' + gravityPerc);
+            this.gravityBar.setWidth(gravityPerc * 50);
+        });
     }
 
     playerLayout: ui_group;
     planetText: ui_text;
+    planetBar: ui_back;
     velocityText: ui_text;
+    velocityBar: ui_back;
     gravityText: ui_text;
+    gravityBar: ui_back;
     addPlayerLayout() {
         this.playerLayout = new ui_control(this.system, { x: 0, y: 130 }, { width: 300, height: 100 }, { zIndex: 100 });
-        this.planetText = this.playerLayout.addText('', { x: 0, y: -30 }, { fontSize: 20, color: colormain });
-        this.velocityText = this.playerLayout.addText('', { x: 0, y: 0 }, { fontSize: 20, color: colormain });
-        this.gravityText = this.playerLayout.addText('', { x: 0, y: 30 }, { fontSize: 20, color: colormain });
+        this.planetText = this.playerLayout.addText('', { x: 0, y: -30 }, { fontSize: 20, color: colormain, float: 'left' });
+        this.planetBar = this.playerLayout.addBack({ x: 0, y: -30 }, { height: 15, width: 20, color: colormain, float: 'right' });
+        this.velocityText = this.playerLayout.addText('', { x: 0, y: 0 }, { fontSize: 20, color: colormain, float: 'left' });
+        this.velocityBar = this.playerLayout.addBack({ x: 0, y: 0 }, { height: 15, width: 20, color: colormain, float: 'right' });
+        this.gravityText = this.playerLayout.addText('', { x: 0, y: 30 }, { fontSize: 20, color: colormain, float: 'left' });
+        this.gravityBar = this.playerLayout.addBack({ x: 0, y: 30 }, { height: 15, width: 20, color: colormain, float: 'right' });
     }
 
     nebulaUI: ui_group;

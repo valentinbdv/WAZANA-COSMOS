@@ -1,16 +1,18 @@
 import { SystemUI } from './System/systemUI'
 import { Animation } from './System/animation'
 import { GravityGrid } from './System/GravityGrid';
-import { IAPlayer } from './Player/iaPlayer';
 import { StarCategories } from './Entity/star';
 import { RealPlayer } from './Player/realPlayer';
-import { BlackHole } from './Entity/blackHole';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import { IntroUI } from './Ui/intro';
 import { PlayUI } from './Ui/play';
 import { Player } from "./player/player";
 import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
+
+// Mettre des BAR pour les perf des étoiles
+// Pouvoir utiliser les flèches plutôt que la souris
+// Minimap
 
 interface State {
     players: Array<Player>;
@@ -69,7 +71,6 @@ export class GameEngine {
     }
 
     stopGame() {
-        console.log('stop');
         this.realPlayer.setSize(1);
         this.realPlayer.setCategory(this.realPlayer.category);
         this.realPlayer.setPosition(Vector2.Zero());

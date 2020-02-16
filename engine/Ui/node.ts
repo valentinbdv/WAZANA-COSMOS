@@ -505,10 +505,11 @@ export class ui_icon extends ui_text {
 
 
 export interface backstyle {
-    opacity: number;
     width: number;
     height: number;
-    color ? : string;
+    float: string;
+    color: string;
+    opacity ?: number;
 }
 
 export class ui_back extends ui_node {
@@ -518,13 +519,15 @@ export class ui_back extends ui_node {
         this._setStyle({
             background: style.color
         });
-        this.container.zIndex = 0;
+        // this.container.zIndex = 0;
         this.setSize({
             width: style.width,
             height: style.height
         });
         this.setPosition(pos);
-        this.setBackgroundOpacity(style.opacity);
+        if (style.opacity) this.setBackgroundOpacity(style.opacity);
+        if (style.float == 'right') this.container.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        else if (style.float == 'left') this.container.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
         if (!event) this._deleteEvent();
         return this;
     }
