@@ -89,9 +89,10 @@ export class onlineMap extends TileMap {
                 console.log(this.planets[planetkey]);
                 if (this.planets[planetkey]) {
                     console.log('ADD', planetkey);
-    
-                    player.addPlanet(this.planets[planetkey]);
-                    this.removePlanet(this.planets[planetkey]);
+                    let planet = this.planets[planetkey]
+                    player.addPlanet(planet);
+                    planet.attachedToStar = true;
+                    this.storagePlanet(planet);
                 }
             }
         }
@@ -101,7 +102,7 @@ export class onlineMap extends TileMap {
     checkPlanets(planets: Object) {
         for (const key in planets) {
             const planet: PlanetInterface = planets[key];
-            if (!this.planets[key]) this.createPlanet(planet);
+            if (!this.planets[key]) this.addPlanet(planet);
         }
         // for (const key in this.planets) {
         //     const planet: Planet = this.planets[key];

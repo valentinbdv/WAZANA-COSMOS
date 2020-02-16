@@ -18,28 +18,17 @@ export class StarDust extends PositionEntity {
     constructor(system: System, options: StarDustInterface) {
         super('dust', system, options);
         this.animation = new Animation(this.system.animationManager);
-        this.addDust();
-        this.show();
+        this.addMesh();
         this.curve = new CubicEase();
     }
 
     mesh: InstancedMesh;
-    addDust() {
+    addMesh() {
         this.mesh = this.system.dustMesh.createInstance(this.key + "duststar");
         this.mesh.alwaysSelectAsActiveMesh = true;
         this.mesh.doNotSyncBoundingInfo = true;
         this.setSize(0);
-        this.mesh.isVisible = true;
-    }
-
-    show() {
-        let size = 0.01 + Math.random() * 0.1;
-        this.animation.simple(50, (count, perc) => {
-            this.setSize(perc * size);
-        }, () => {
-            this.setSize(size);
-            this.oscillate();
-        });
+        this.hide();
     }
 
     oscillate() {
@@ -78,8 +67,24 @@ export class StarDust extends PositionEntity {
             let newPos = this.position.add(changePos);
             this.setPosition(newPos);
         }, () => {
-            this.mesh.dispose();
+            this.hide();
             if (callback) callback();
         });
     }
+
+    show() {
+        // this.mesh.isVisible = true;
+        let size = 0.01 + Math.random() * 0.1;
+        this.animation.simple(50, (count, perc) => {
+            this.setSize(perc * size);
+        }, () => {
+            this.setSize(size);
+            this.oscillate();
+        });
+    }
+
+    hide() {
+        this.setSize(0);
+        // this.mesh.isVisible = false;
+     }
 }

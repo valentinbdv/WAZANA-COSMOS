@@ -136,7 +136,8 @@ export class Player extends StarFighter {
     removeAllPlanets() {
         for (let i = 0; i < this.planets.length; i++) {
             const planet = this.planets[i];
-            planet.mesh.dispose();
+            planet.attachedToStar = false;
+            planet.hide();
         }
         this.planets = [];
     }
@@ -177,7 +178,9 @@ export class Player extends StarFighter {
             this.heart.scaling = new Vector3(scale * size, scale * size, scale * size);
         }, () => {
             this.accelerating = false;
-            planet.mesh.dispose();
+            planet.attachedToStar = false;
+            planet.setParent(null);
+            planet.hide();
             this.heart.scaling = new Vector3(size, size, size);
             this.realVelocity = 1;
         });

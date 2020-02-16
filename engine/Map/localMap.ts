@@ -136,7 +136,8 @@ export class LocalMap extends TileMap {
                 let dist = Vector2.Distance(planet.position, player.position);
                 if (dist < player.gravityField * 10) {
                     player.addPlanet(planet);
-                    this.removePlanet(planet);
+                    planet.attachedToStar = true;
+                    this.storagePlanet(planet);
                 }
             }
         }
@@ -148,7 +149,7 @@ export class LocalMap extends TileMap {
         let velocity = 5 / (1 + planetNumber / 2);
         let pos = this.getNewRandomPosition();
         let planetInterface: PlanetInterface = { position: pos, radius: radius, size: 1, velocity: velocity };
-        let newPlanet = this.createPlanet(planetInterface);
+        let newPlanet = this.addPlanet(planetInterface);
         return newPlanet;
     }
 

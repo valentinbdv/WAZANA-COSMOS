@@ -1,4 +1,3 @@
-
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Vector3 } from '@babylonjs/core/Maths/math'
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';

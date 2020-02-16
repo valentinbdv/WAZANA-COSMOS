@@ -38,5 +38,4 @@ export class PositionEntity {
     _setSize(size: number) {
         this.size = size;
     }
-
 }

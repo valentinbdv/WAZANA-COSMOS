@@ -19,18 +19,22 @@ export class Planet extends PositionEntity {
 
     offset = 0; // Used to determine beginning position around star
     cycle = 0; // Around its star % Math.PI
+    attachedToStar = false;
 
     showAnimation: Animation;
 
     constructor(system: System, options: PlanetInterface) {
         super('planet', system, options);
+        this.showAnimation = new Animation(this.system.animationManager);
 
         this.addMesh();
+        this.hide();
+    }
+
+    setOptions(options: PlanetInterface) {
         if (options.radius && options.velocity) this.setGeostationnaryMovement(options.radius, options.velocity);
         if (options.size) this.setSize(options.size);
         if (options.position) this.setPosition(new Vector2(options.position.x, options.position.y));
-        this.showAnimation = new Animation(this.system.animationManager);
-        this.show();
     }
 
     setGeostationnaryMovement(radius: number, velocity: number) {
@@ -49,15 +53,6 @@ export class Planet extends PositionEntity {
         this.mesh.rotation.x = Math.random() * Math.PI;
         this.mesh.rotation.y = Math.random() * Math.PI;
         this.mesh.rotation.z = Math.random() * Math.PI;
-    }
-
-    show() {
-        let size = 0.8 + Math.random() * 0.4;
-        this.showAnimation.simple(50, (count, perc) => {
-            this.mesh.scaling = new Vector3(perc * size, perc * size, perc * size);
-        }, () => {
-            this.mesh.scaling = new Vector3(size, size, size);
-        });
     }
 
     setParent(parent: TransformNode) {
@@ -83,4 +78,18 @@ export class Planet extends PositionEntity {
         this.mesh.position.y = 1;
     }
 
+    show() {
+        // this.mesh.isVisible = true;
+        let size = 0.8 + Math.random() * 0.4;
+        this.showAnimation.simple(50, (count, perc) => {
+            this.mesh.scaling = new Vector3(perc * size, perc * size, perc * size);
+        }, () => {
+            this.mesh.scaling = new Vector3(size, size, size);
+        });
+    }
+
+    hide() {
+        this.setSize(0);
+        // this.mesh.isVisible = false;
+    }
 }

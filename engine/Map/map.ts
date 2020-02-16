@@ -9,6 +9,7 @@ import { StarInterface } from '../Entity/star';
 import { IEasingFunction } from '@babylonjs/core/Animations/easing';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import remove from 'lodash/remove';
+import filter from 'lodash/filter';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -39,6 +40,9 @@ export class TileMap {
             }
             frame++;
         });
+
+        this.createAllDusts();
+        this.createAllPlanets();
     }
 
     check = false;
@@ -113,64 +117,94 @@ export class TileMap {
 
     ////////// PLANET
 
-    createPlanet(planetInterface: PlanetInterface) {
-        let planet = new Planet(this.system, planetInterface);
-        this.addPlanet(planet)
-        return planet;
+    planetNumbers = 50;
+    planetsStorage: Array<Planet> = [];
+    createAllPlanets() {
+        console.log(this.planetNumbers);
+        for (let i = 0; i < this.planetNumbers; i++) {
+            let planetInterface: PlanetInterface = { size: 1 };
+            let planet = new Planet(this.system, planetInterface);
+            this.planetsStorage.push(planet);
+        }
     }
 
     planets: Object = {};
-    addPlanet(planet: Planet) {
-        this.planets[planet.key] = planet;
+    addPlanet(planetInterface: PlanetInterface) {
+        let planetsAvailable = filter(this.planetsStorage, (p) => { return !p.attachedToStar });
+        if (planetsAvailable.length != 0) {
+            let planet = this.planetsStorage.pop();
+            planet.setOptions(planetInterface);
+            planet.show();
+            this.planets[planet.key] = planet;
+            return planet;
+        }
+        return false;
     }
 
     removePlanet(planet: Planet) {
         delete this.planets[planet.key];
     }
 
-    disposePlanet(planet: Planet) {
+    storagePlanet(planet: Planet) {
         this.removePlanet(planet);
-        planet.mesh.dispose();
+        this.planetsStorage.push(planet);
     }
 
     eraseAllPlanets() {
         for (const key in this.planets) {
-            this.disposePlanet(this.planets[key]);
+            this.storagePlanet(this.planets[key]);
         }
     }
 
     ////////// Dust
 
+    dustNumbers = 200;
+    dustsStorage: Array<StarDust> = [];
+    createAllDusts() {        
+        for (let i = 0; i < this.dustNumbers; i++) {
+            let dustInterface: StarDustInterface = { temperature: 6000, size: 1 };
+            let dust = new StarDust(this.system, dustInterface);
+            this.dustsStorage.push(dust);
+        }
+    }
+
     dusts: Array<StarDust> = [];
     addDust(size?: number) {
         let dustSize = (size) ? size : 0.01;
-        let dustInterface: StarDustInterface = { temperature: 6000, size: dustSize };
-        let dust = new StarDust(this.system, dustInterface);
-        this.dusts.push(dust);
-        return dust;
+        if (this.dustsStorage.length != 0) {
+            let dust = this.dustsStorage.pop();
+            dust.setSize(dustSize);
+            dust.show();
+            this.dusts.push(dust);
+            return dust;
+        }
+        return false;
     }
 
     addDustField(position: Vector2) {
         let dustNumber = 50;
         for (let i = 0; i < dustNumber; i++) {
             let newDust = this.addDust(0.03);
-            let pos = this.getNewRandomPositionFromCenter(position, 40);
-            newDust.setPosition(pos);
+            if (newDust) {
+                let pos = this.getNewRandomPositionFromCenter(position, 40);
+                newDust.setPosition(pos);
+            }
         }
     }
 
     removeDust(dust: StarDust) {
-        remove(this.dusts, (p) => { return dust.key == p.key });
+        let removeDust = remove(this.dusts, (p) => { return dust.key == p.key });
     }
-
-    disposeDust(dust: StarDust) {
-        this.removeDust(dust);
-        dust.mesh.dispose();
+    
+    storageDust(dust: StarDust) {
+        dust.hide();
+        this.dustsStorage.push(dust);
     }
 
     eraseAllDusts() {
         for (let i = 0; i < this.dusts.length; i++) {
-            this.disposeDust(this.dusts[i]);
+            this.removeDust(this.dusts[i]);
+            this.storageDust(this.dusts[i]);
         }
     }
 
@@ -183,14 +217,19 @@ export class TileMap {
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Vector2.Distance(dust.position, c);
-            if (dist > Math.sqrt(s) * this.sizeDustRatio * 15) this.disposeDust(dust);
+            if (dist > Math.sqrt(s) * this.sizeDustRatio * 15) {
+                this.removeDust(dust);
+                this.storageDust(dust);
+            }
         }
 
         let newDustNeeded = Math.round(s * this.dustDensity - this.dusts.length);
         for (let i = 0; i < newDustNeeded; i++) {
-            let newPlanet = this.addDust();
-            let pos = this.getNewDustRandomPosition();
-            newPlanet.setPosition(pos);
+            let newDust = this.addDust();
+            if (newDust) {
+                let pos = this.getNewDustRandomPosition();
+                newDust.setPosition(pos);
+            }
         }
     }
 
@@ -240,10 +279,18 @@ export class TileMap {
             const dust = this.dusts[i];
             let dist = Vector2.Distance(dust.position, player.position);
             if (dist < player.gravityField * 6) {
-                this.removeDust(dust);
-                player.addDust(dust);
+                this.moveDustToPlayer(player, dust);
             }
         }
+    }
+
+    moveDustToPlayer(player: Player, dust: StarDust) {
+        this.removeDust(dust);
+        dust.goToEntity(player, () => {
+            player.changeSize(dust.size / (player.size * 20));
+            player.shine();
+            this.storageDust(dust);
+        });
     }
 
     checkPlayersDust() {

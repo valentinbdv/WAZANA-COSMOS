@@ -56,13 +56,6 @@ export class StarFighter extends Star {
         this.absorbing = null;
     }
 
-    addDust(dust: StarDust) {
-        dust.goToEntity(this, () => {
-            this.changeSize(dust.size / (this.size * 20));
-            this.shine();
-        });
-    }
-
     decrease() {
         this.changeSize(-0.01);
     }

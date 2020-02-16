@@ -79,13 +79,7 @@ export class MovingEntity extends PositionEntity {
         this.movingMesh.position.y = 1;
     }
 
-    _dispose() {
-        this.movingMesh.dispose();
-    }
+    show() {}
 
-    show() {
-    }
-
-    hide() {
-    }
+    hide() {}
 }

@@ -66,6 +66,8 @@ export class GameEngine {
             else this.joinGameLocal();
         };
 
+        this.system.scene.freezeActiveMeshes();
+        
         this.playUI = new PlayUI(this.system, this.realPlayer);
     }
 
@@ -84,6 +86,10 @@ export class GameEngine {
     }
 
     startGame() {
+        this.system.scene.unfreezeActiveMeshes();
+        this.system.scene.freezeActiveMeshes();
+        let test = this.system.scene.getActiveMeshes();
+        console.log(test);
         this.introUI.hide();
         this.playUI.show();
 
