@@ -1,6 +1,6 @@
 import { Planet, PlanetInterface } from '../Entity/planet';
 import { Player, minSize } from '../player/player';
-import { TileMap } from './map';
+import { TileMap } from './tileMap';
 import { System } from '../System/system';
 import { GravityGrid } from '../System/GravityGrid';
 import { BlackHole } from '../Entity/blackHole';

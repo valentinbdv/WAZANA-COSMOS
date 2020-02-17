@@ -1,5 +1,5 @@
 import { Player, PlayerInterface } from "../player/player";
-import { TileMap } from "./map";
+import { TileMap } from "./tileMap";
 
 import * as Colyseus from "colyseus.js";
 import { Vector2 } from "@babylonjs/core/Maths/math";
