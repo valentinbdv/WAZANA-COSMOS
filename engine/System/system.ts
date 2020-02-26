@@ -1,27 +1,10 @@
 
-import { Animation, AnimationManager } from './animation';
-
-import '@babylonjs/core/Animations/animatable';
+import { AnimationManager } from './animation';
 
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { Scene } from '@babylonjs/core/scene';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
-import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
-import { Mesh } from '@babylonjs/core/Meshes/mesh';
-import { Color3, Matrix, Vector3 } from '@babylonjs/core/Maths/math';
-import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
-import '@babylonjs/core/Materials/standardMaterial';
-import { Texture } from '@babylonjs/core/Materials/Textures/texture';
-import { CubeTexture } from '@babylonjs/core/Materials/Textures/cubetexture';
-import '@babylonjs/core/Misc/dds';
-import '@babylonjs/core/Materials/Textures/Loaders/ddsTextureLoader';
-import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
-import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
-
-import dustTexture from '../../asset/circle_05.png';
-import remove from 'lodash/remove';
-import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-import { PearlMesh } from '../Entity/pearlMesh';
+import { Color3, Vector3 } from '@babylonjs/core/Maths/math';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -52,26 +35,6 @@ export class System {
     camera: ArcRotateCamera;
 
     /**
-     * BabylonJS starGlowLayer
-     */
-    starGlowLayer: GlowLayer;
-
-    /**
-     * BabylonJS starGlowLayer
-     */
-    dustGlowLayer: GlowLayer;
-
-    /**
-     * BabylonJS Skybox
-     */
-    skybox: Mesh;
-
-    /**
-     * BabylonJS Skybox Material
-     */
-    skyboxMaterial: PBRMaterial;
-
-    /**
      * Manage all the animations only for this 3D Scene
      */
     animationManager: AnimationManager;
@@ -80,8 +43,6 @@ export class System {
      * Canvas used to draw the 3D scene
      */
     canvas: HTMLCanvasElement;
-
-    dustTexture: Texture;
 
     /**
      * Creates a new System
@@ -103,18 +64,7 @@ export class System {
         this.engine.enableOfflineSupport = false;
 
         this.animationManager = new AnimationManager();
-        this.loadCheck = new Animation(this.animationManager);
         this.buildScene();
-        // Glow layer takes too much performance
-        // this.addGlow();
-        // this.addSky();
-        this.addDustMesh();
-        this.addPlanetMesh();
-        this.addRibbonMaterial();
-        // this.addLight();
-        // this.addControl();
-
-        this.dustTexture = new Texture(dustTexture, this.scene);
 
         window.addEventListener('resize', () => {
             this.engine.resize();
@@ -123,19 +73,6 @@ export class System {
 
     addControl() {
         this.camera.attachControl(this.canvas);
-    }
-
-    addGlow() {
-        this.starGlowLayer = new GlowLayer("glow", this.scene, {
-            mainTextureFixedSize: 2,
-            blurKernelSize: 32
-        });
-        this.starGlowLayer.intensity = 100;
-        // let int = 0;
-        // this.scene.registerBeforeRender(() => {
-        //     this.starGlowLayer.intensity = 100 + Math.cos(int / 20) * 10;
-        //     int++;
-        // });
     }
 
     size = 300;
@@ -156,129 +93,6 @@ export class System {
 
         this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 10, Vector3.Zero(), this.scene);
         this.camera.setTarget(Vector3.Zero());
-    }
-
-    addSky() {
-        this.skybox = MeshBuilder.CreateSphere("sbsphere", { diameter: 32 }, this.scene);
-        this.skybox.scaling = new Vector3(this.size + 20, this.size + 20, this.size + 20);
-        this.skyboxMaterial = new PBRMaterial("skyBox", this.scene);
-        this.skyboxMaterial.backFaceCulling = false;
-        this.skyboxMaterial.roughness = 0.2;
-        this.skybox.material = this.skyboxMaterial;
-        
-        // let alpha = 0;
-        // this.scene.registerBeforeRender(() => {
-        //     alpha += 0.01;
-        //     this.scene.environmentTexture.setReflectionTextureMatrix(Matrix.RotationY(alpha));
-        // });
-    }
-
-    loadCheck: Animation;
-    sceneTexture: CubeTexture;
-    setSky(design: number) {
-        let asseturl = 'https://asset.wazana.io/';
-        let mapcolor = 'mapcolor' + design.toString();
-
-        this.sceneTexture = CubeTexture.CreateFromPrefilteredData(asseturl + 'dds/' + mapcolor + '.dds', this.scene);
-        this.loadCheck.infinite(() => {
-            if (this.sceneTexture.isReady()) {
-                this.loadCheck.stop();
-                this.sceneTexture.gammaSpace = false;
-                this.scene.environmentTexture = this.sceneTexture;
-                // this.skyboxMaterial.reflectionTexture = this.sceneTexture.clone();
-                // this.skyboxMaterial.reflectionTexture.level = 0.2;
-                // this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-                this.ribbonMaterial.reflectionTexture = this.sceneTexture.clone();
-                this.ribbonMaterial.reflectionTexture.level = 0.2;
-                this.sendToSkyChangeListeners();
-            }
-        });
-    }
-
-    listeners: Array<Function> = [];
-    addSkyChangeListener(callback: Function) {
-        this.listeners.push(callback);
-    }
-
-    removeSkyChangeListener(callback: Function) {
-        remove(this.listeners, (c) => { c == callback });
-    }
-
-    sendToSkyChangeListeners() {
-        for (let i = 0; i < this.listeners.length; i++) {
-            this.listeners[i](this.sceneTexture);
-        }
-        // Freeze all material to have better performance
-        this.unFreezeMaterials();
-        setTimeout(() => {
-            this.freezeMaterials();
-        }, 100);
-    }
-
-    unFreezeMaterials() {
-        // for (let i = 0; i < this.scene.materials.length; i++) {
-        //     const material = this.scene.materials[i];
-        //     material.unfreeze();
-        // }
-        // this.dustMaterial.unfreeze();
-        // this.planetMaterial.unfreeze();
-        // this.ribbonMaterial.unfreeze();
-    }
-
-    freezeMaterials() {
-        // for (let i = 0; i < this.scene.materials.length; i++) {
-        //     const material = this.scene.materials[i];
-        //     material.freeze();
-        // }
-        // this.dustMaterial.freeze();
-        // this.planetMaterial.freeze();
-        // this.ribbonMaterial.freeze();
-    }
-
-    light: DirectionalLight
-    addLight() {
-        this.light = new DirectionalLight('light', new Vector3(1, -1, 0), this.scene);
-        this.light.diffuse = new Color3(1, 1, 1);
-        this.light.intensity = 0.5;
-    }
-
-    dustMesh: Mesh;
-    dustMaterial: StandardMaterial;
-    addDustMesh() {
-        this.dustMaterial = new StandardMaterial("dustMaterial", this.scene);
-        this.dustMaterial.maxSimultaneousLights = 0;
-        this.dustMaterial.diffuseColor = Color3.Black();
-        this.dustMaterial.specularColor = Color3.Black();
-        this.dustMaterial.emissiveColor = new Color3(1, 1, 0);
-
-        // this.mesh = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
-        // this.mesh.isBlocker = false;
-        this.dustMesh = MeshBuilder.CreateSphere("dust", { diameter: 1 }, this.scene);
-        this.dustMesh.alwaysSelectAsActiveMesh = true;
-        this.dustMesh.doNotSyncBoundingInfo = true;
-        this.dustMesh.material = this.dustMaterial; 
-        this.dustMesh.isVisible = false;
-    }
-
-    planetMesh: PearlMesh;
-    planetMaterial: PBRMaterial;
-    addPlanetMesh() {
-        this.planetMesh = new PearlMesh("planet", this.scene);
-        this.planetMesh.alwaysSelectAsActiveMesh = true;
-        this.planetMesh.doNotSyncBoundingInfo = true;
-        this.planetMaterial = new PBRMaterial("planetMaterial", this.scene);
-        // this.planetMaterial.roughness = 1;
-        // this.meshMaterial.emissiveColor = color;
-        this.planetMesh.material = this.planetMaterial;
-        this.planetMesh.isVisible = false;
-    }
-
-    ribbonMaterial: PBRMaterial;
-    addRibbonMaterial() {
-        this.ribbonMaterial = new PBRMaterial("ribbonMaterial", this.scene);
-        this.ribbonMaterial.roughness = 0.5;
-        this.ribbonMaterial.metallic = 1;
-        this.ribbonMaterial.alpha = 1;
     }
 
     /**

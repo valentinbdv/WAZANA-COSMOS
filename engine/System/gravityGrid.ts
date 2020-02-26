@@ -1,4 +1,4 @@
-import { System } from './system';
+import { SystemAsset } from './systemAsset';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Color3, Vector3, Vector2 } from '@babylonjs/core/Maths/math';
@@ -15,10 +15,10 @@ import remove from 'lodash/remove';
 
 export class GravityGrid {
 
-    system: System;
+    system: SystemAsset;
     curve: IEasingFunction;
 
-    constructor(system: System) {
+    constructor(system: SystemAsset) {
         this.system = system;
 
         this.initMap();
@@ -32,6 +32,8 @@ export class GravityGrid {
                     if (this.paths.length == 0) return;
                     this.ribbon = Mesh.CreateRibbon(null, this.paths, null, null, null, null, null, null, this.ribbon);
                     this.gridRibbon = Mesh.CreateRibbon(null, this.paths, null, null, null, null, null, null, this.gridRibbon);
+                    // this.ribbon.convertToFlatShadedMesh();
+                    // this.gridRibbon.convertToFlatShadedMesh();
                 } catch {
                     console.log('maperror');
                     console.log(this.paths);

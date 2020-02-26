@@ -2,7 +2,7 @@ import { System } from '../System/system';
 import { PositionEntity, PositionEntityInterface } from './positionEntity';
 import { Animation } from '../System/animation';
 
-import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
+import { Vector2, Vector3, Color3 } from '@babylonjs/core/Maths/math';
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
 import { IEasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 
@@ -27,6 +27,7 @@ export class StarDust extends PositionEntity {
         this.mesh = this.system.dustMesh.createInstance(this.key + "duststar");
         this.mesh.alwaysSelectAsActiveMesh = true;
         this.mesh.doNotSyncBoundingInfo = true;
+        this.mesh.material.emissiveColor = new Color3(Math.random(), Math.random(), Math.random());
         this.setSize(0);
         this.hide();
     }

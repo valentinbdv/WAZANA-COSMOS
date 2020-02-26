@@ -1,4 +1,4 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { point2D } from '../System/interface';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
@@ -12,11 +12,11 @@ export interface PositionEntityInterface {
 export class PositionEntity {
 
     key: string;
-    system: System;
+    system: SystemAsset;
 
     velocity?: number;
     
-    constructor(type:string, system: System, options: PositionEntityInterface) {
+    constructor(type:string, system: SystemAsset, options: PositionEntityInterface) {
         this.system = system;
         
         if (options.key) this.key = options.key;

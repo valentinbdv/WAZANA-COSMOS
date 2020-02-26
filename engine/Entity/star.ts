@@ -1,4 +1,4 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { Animation } from '../System/animation';
 import { MovingEntity, MovingEntityInterface } from './movingEntity';
 
@@ -78,7 +78,7 @@ export class Star extends MovingEntity {
     cycleProgress = 0;
     planets: Array< Planet > = [];
 
-    constructor(system: System, options: StarInterface) {
+    constructor(system: SystemAsset, options: StarInterface) {
         super('star', system, options);
 
         this.shineAnimation = new Animation(this.system.animationManager);
@@ -117,7 +117,7 @@ export class Star extends MovingEntity {
         temperature = Math.max(3000, temperature);
         temperature = Math.min(30000, temperature);
         this.temperature = temperature;
-        let color = this.getColorFromTemperature(temperature);
+        let color = this.system.getColorFromTemperature(temperature);
         this.color = color.toColor4();
         this.heartMaterial.emissiveColor = color;
         this.heartMaterial.diffuseColor = Color3.White();
@@ -127,18 +127,6 @@ export class Star extends MovingEntity {
         this.light.diffuse = color;
     }
 
-    // Follow this map color http://cdn.eso.org/images/screen/eso0728c.jpg
-    getColorFromTemperature(temperature: number): Color3 {
-        if (temperature < 8000) {
-            let perc = (8000 - temperature) / 5000;
-            let g = Math.min(1, 2 - perc * 2);
-            let b = Math.max(0, 1 - perc * 2);
-            return new Color3(1, g, b);
-        } else {
-            let perc = 1 - Math.pow(((temperature - 8000) / 22000), 2);
-            return new Color3(perc, perc, 0.8);
-        }
-    }
 
     heart: Mesh;
     heartMaterial: StandardMaterial;
