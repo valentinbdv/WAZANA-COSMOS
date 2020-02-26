@@ -1,4 +1,4 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { PositionEntity, PositionEntityInterface } from './positionEntity';
 import { Animation } from '../System/animation';
 
@@ -15,8 +15,8 @@ export class StarDust extends PositionEntity {
     animation: Animation;
     curve: IEasingFunction;
 
-    constructor(system: System, options: StarDustInterface) {
-        super('dust', system, options);
+    constructor(system: SystemAsset) {
+        super('dust', system);
         this.animation = new Animation(this.system.animationManager);
         this.addMesh();
         this.curve = new CubicEase();
@@ -25,9 +25,13 @@ export class StarDust extends PositionEntity {
     mesh: InstancedMesh;
     addMesh() {
         this.mesh = this.system.dustMesh.createInstance(this.key + "duststar");
+        // let random = Math.random();
+        // if (random < 0.25) this.mesh = this.system.dustMesh1.createInstance(this.key + "duststar");
+        // else if (random < 0.5) this.mesh = this.system.dustMesh2.createInstance(this.key + "duststar");
+        // else if (random < 0.75) this.mesh = this.system.dustMesh3.createInstance(this.key + "duststar");
+        // else this.mesh = this.system.dustMesh4.createInstance(this.key + "duststar");
         this.mesh.alwaysSelectAsActiveMesh = true;
         this.mesh.doNotSyncBoundingInfo = true;
-        this.mesh.material.emissiveColor = new Color3(Math.random(), Math.random(), Math.random());
         this.setSize(0);
         this.hide();
     }

@@ -1,7 +1,7 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { GravityGrid } from '../System/GravityGrid';
 import { Planet, PlanetInterface } from '../Entity/planet';
-import { StarDust, StarDustInterface } from '../Entity/starDust';
+import { StarDust } from '../Entity/starDust';
 import { Player } from '../player/player';
 import { BlackHole, BlackHoleInterface } from '../Entity/blackHole';
 import { StarInterface } from '../Entity/star';
@@ -19,11 +19,11 @@ import filter from 'lodash/filter';
 
 export class TileMap {
 
-    system: System;
+    system: SystemAsset;
     gravityGrid: GravityGrid;
     curve: IEasingFunction;
 
-    constructor(system: System, gravityGrid: GravityGrid) {
+    constructor(system: SystemAsset, gravityGrid: GravityGrid) {
         this.system = system;
         this.gravityGrid = gravityGrid;
         
@@ -162,8 +162,7 @@ export class TileMap {
     dustsStorage: Array<StarDust> = [];
     createAllDusts() {        
         for (let i = 0; i < this.dustNumbers; i++) {
-            let dustInterface: StarDustInterface = { temperature: 6000, size: 1 };
-            let dust = new StarDust(this.system, dustInterface);
+            let dust = new StarDust(this.system);
             this.dustsStorage.push(dust);
         }
     }

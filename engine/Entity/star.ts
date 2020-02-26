@@ -1,4 +1,4 @@
-import { SystemAsset } from '../System/systemAsset';
+import { SystemAsset, StarTemperatures } from '../System/systemAsset';
 import { Animation } from '../System/animation';
 import { MovingEntity, MovingEntityInterface } from './movingEntity';
 
@@ -26,28 +26,28 @@ export interface StarCategory {
 export let StarCategories: Array<StarCategory> = [
     {
         name: 'Red Dwarf',
-        temperature: 3000,
+        temperature: StarTemperatures[0],
         planets: 3,
         gravity: 1.2,
         velocity: 1
     },
     {
         name: 'Yellow Dwarf',
-        temperature: 5000,
+        temperature: StarTemperatures[1],
         planets: 4,
         gravity: 1.1,
         velocity: 1.1
     },
     {
         name: 'White Dwarf',
-        temperature: 12000,
+        temperature: StarTemperatures[2],
         planets: 5,
         gravity: 1,
         velocity: 0.9
     },
     {
         name: 'Blue Dwarf',
-        temperature: 30000,
+        temperature: StarTemperatures[3],
         planets: 6,
         gravity: 0.6,
         velocity: 1.3

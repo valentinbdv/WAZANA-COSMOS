@@ -16,17 +16,17 @@ export class PositionEntity {
 
     velocity?: number;
     
-    constructor(type:string, system: SystemAsset, options: PositionEntityInterface) {
+    constructor(type:string, system: SystemAsset, options?: PositionEntityInterface) {
         this.system = system;
         
-        if (options.key) this.key = options.key;
+        if (options && options.key) this.key = options.key;
         else this.key = type + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-        if (options.position) {
+        if (options && options.position) {
             let pos = new Vector2(options.position.x, options.position.y);
             this._setPosition(pos);
         }
-        if (options.size) this._setSize(options.size);
+        if (options && options.size) this._setSize(options.size);
     }
     
     position: Vector2;

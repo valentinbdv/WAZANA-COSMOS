@@ -27,6 +27,13 @@ import { System } from './system';
  * The system is really important as it is often sent in every other class created to manage core assets
  */
 
+export let StarTemperatures: Array<number> = [
+    3000,
+    5000,
+    12000,
+    30000,
+];
+
 export class SystemAsset extends System {
 
     /**
@@ -170,21 +177,61 @@ export class SystemAsset extends System {
     dustMesh2: Mesh;
     dustMesh3: Mesh;
     dustMesh4: Mesh;
-    dustMaterial: StandardMaterial;
     addDustMesh() {
-        this.dustMaterial = new StandardMaterial("dustMaterial", this.scene);
-        this.dustMaterial.maxSimultaneousLights = 0;
-        this.dustMaterial.diffuseColor = Color3.Black();
-        this.dustMaterial.specularColor = Color3.Black();
-        this.dustMaterial.emissiveColor = new Color3(1, 1, 0);
-
+        let dustMaterial = this.getNewDustMaterial();
+        dustMaterial.emissiveColor = new Color3(1, 1, 0);
+        this.dustMesh = this.getNewDust();
+        this.dustMesh.material = dustMaterial; 
+        // this.addDust1();
+        // this.addDust2();
+        // this.addDust3();
+        // this.addDust4();
+    }
+    
+    getNewDust(): Mesh {
         // this.mesh = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         // this.mesh.isBlocker = false;
-        this.dustMesh = MeshBuilder.CreateSphere("dust", { diameter: 1 }, this.scene);
-        this.dustMesh.alwaysSelectAsActiveMesh = true;
-        this.dustMesh.doNotSyncBoundingInfo = true;
-        this.dustMesh.material = this.dustMaterial; 
-        this.dustMesh.isVisible = false;
+        let dustMesh = MeshBuilder.CreateSphere("dust", { diameter: 1 }, this.scene);
+        dustMesh.alwaysSelectAsActiveMesh = true;
+        dustMesh.doNotSyncBoundingInfo = true;
+        dustMesh.isVisible = false;
+        return dustMesh;
+    }
+
+    getNewDustMaterial(): StandardMaterial {
+        let dustMaterial = new StandardMaterial("dustMaterial1", this.scene);
+        dustMaterial.maxSimultaneousLights = 0;
+        dustMaterial.diffuseColor = Color3.Black();
+        dustMaterial.specularColor = Color3.Black();
+        return dustMaterial;
+    }
+
+    addDust1() {
+        let dustMaterial = this.getNewDustMaterial();
+        dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[0]);
+        this.dustMesh1 = this.getNewDust();
+        this.dustMesh1.material = dustMaterial; 
+    }
+
+    addDust2() {
+        let dustMaterial = this.getNewDustMaterial();
+        dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[1]);
+        this.dustMesh2 = this.getNewDust();
+        this.dustMesh2.material = dustMaterial;
+    }
+
+    addDust3() {
+        let dustMaterial = this.getNewDustMaterial();
+        dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[2]);
+        this.dustMesh3 = this.getNewDust();
+        this.dustMesh3.material = dustMaterial;
+    }
+
+    addDust4() {
+        let dustMaterial = this.getNewDustMaterial();
+        dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[3]);
+        this.dustMesh4 = this.getNewDust();
+        this.dustMesh4.material = dustMaterial;
     }
 
     planetMesh: PearlMesh;
