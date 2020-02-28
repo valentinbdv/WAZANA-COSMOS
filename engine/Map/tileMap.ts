@@ -83,13 +83,16 @@ export class TileMap {
     eraseAllPlayers() {
         for (const key in this.players) {
             let player = this.players[key];
-            if (player != this.playerToFollow) this.disposePlayer(player);
+            if (player != this.playerToFollow) player.dispose();
         }
+        this.players = {};
     }
 
     ////////// BLACKHOLE
 
     createBlackHole(blackHoleInterface: BlackHoleInterface) {
+        console.log('blackhole');
+        
         let blackHole = new BlackHole(this.system, this.gravityGrid, blackHoleInterface);
         this.addBlackHole(blackHole)
         return blackHole;
@@ -111,8 +114,9 @@ export class TileMap {
 
     eraseAllBlackHoles() {
         for (const key in this.blackHoles) {
-            this.disposeBlackHole(this.blackHoles[key]);
+            this.blackHoles[key].movingMesh.dispose();
         }
+        this.blackHoles = {};
     }
 
     ////////// PLANET
@@ -120,7 +124,6 @@ export class TileMap {
     planetNumbers = 50;
     planetsStorage: Array<Planet> = [];
     createAllPlanets() {
-        console.log(this.planetNumbers);
         for (let i = 0; i < this.planetNumbers; i++) {
             let planetInterface: PlanetInterface = { size: 1 };
             let planet = new Planet(this.system, planetInterface);
@@ -152,8 +155,9 @@ export class TileMap {
 
     eraseAllPlanets() {
         for (const key in this.planets) {
-            this.storagePlanet(this.planets[key]);
+            this.removePlanet(this.planets[key]);
         }
+        this.planets = {};
     }
 
     ////////// Dust
@@ -202,9 +206,9 @@ export class TileMap {
 
     eraseAllDusts() {
         for (let i = 0; i < this.dusts.length; i++) {
-            this.removeDust(this.dusts[i]);
             this.storageDust(this.dusts[i]);
         }
+        this.dusts = [];
     }
 
     /////////// CHECK FUNCTIONS 

@@ -86,10 +86,7 @@ export class GameEngine {
     }
 
     startGame() {
-        this.system.scene.unfreezeActiveMeshes();
-        this.system.scene.freezeActiveMeshes();
-        let test = this.system.scene.getActiveMeshes();
-        console.log(test);
+        this.system.checkActiveMeshes();
         this.introUI.hide();
         this.playUI.show();
 

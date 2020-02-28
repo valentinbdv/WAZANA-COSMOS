@@ -107,6 +107,7 @@ export class GravityGrid {
     }
     
     setCenterAndSize(pos: Vector2, size: number) {
+        size = Math.max(size, 2);
         // Whatever the size of the player, the ribbon will get bigger and small to alway take the all screen
         let halfSize = Math.round(size * this.mapSize / 2);
         this.halfSize = Math.round(halfSize / this.mapDetail) * this.mapDetail;

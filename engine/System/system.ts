@@ -204,4 +204,9 @@ export class System {
         this.scene.blockMaterialDirtyMechanism = false;
         // this.scene.setRenderingAutoClearDepthStencil(renderingGroupIdx, autoClear, depth, stencil);
     }
+
+    checkActiveMeshes() {
+        this.scene.unfreezeActiveMeshes();
+        this.scene.freezeActiveMeshes();
+    }
 }

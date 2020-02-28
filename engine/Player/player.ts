@@ -73,6 +73,7 @@ export class Player extends StarFighter {
         for (let i = 0; i < category.planets + 1; i++) {
             this.addPlanet();
         }
+        this.system.checkActiveMeshes();
     }
 
     setVelocity(velocity: number) {
@@ -121,6 +122,7 @@ export class Player extends StarFighter {
         if (!planet) {
             let planetInterface: PlanetInterface = { radius: radius, size: 1, velocity: velocity };
             planet = new Planet(this.system, planetInterface);
+            planet.show();
         } else {
             this.animatePlanetToStar(planet, radius, velocity);
         }
@@ -189,6 +191,8 @@ export class Player extends StarFighter {
     died = false;
     onDied: Function;
     die(callback?: Function) {
+        console.log('die');
+        
         this.removeAllPlanets();
         if (this.aborber) {
             this.dive(this.aborber.position, () => {

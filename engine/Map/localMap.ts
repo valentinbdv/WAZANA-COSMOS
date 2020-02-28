@@ -164,7 +164,6 @@ export class LocalMap {
         let newIaNeeded = Math.round(this.iaNeeded - Object.keys(this.ias).length);
         for (let i = 0; i < newIaNeeded; i++) {
             setTimeout(() => {
-                console.log('createIA');
                 this.createIa();
             }, i * 1000);
         }

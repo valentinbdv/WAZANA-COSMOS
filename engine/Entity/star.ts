@@ -134,7 +134,7 @@ export class Star extends MovingEntity {
         // this.heart = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         this.heart = MeshBuilder.CreateSphere(this.key + "star", { diameter: 2.8 }, this.system.scene);
         this.heart.alwaysSelectAsActiveMesh = true;
-        this.heart.doNotSyncBoundingInfo = true;
+        // this.heart.doNotSyncBoundingInfo = true;
         this.heartMaterial = new StandardMaterial(this.key + "material", this.system.scene);
         this.heartMaterial.backFaceCulling = false;
         this.heartMaterial.maxSimultaneousLights = 0;
@@ -159,7 +159,7 @@ export class Star extends MovingEntity {
 
         this.surface = MeshBuilder.CreatePolyhedron("h", { custom: heptagonalPrism, size: 2, sideOrientation: Mesh.DOUBLESIDE }, this.system.scene);
         this.surface.alwaysSelectAsActiveMesh = true;
-        this.surface.doNotSyncBoundingInfo = true;
+        // this.surface.doNotSyncBoundingInfo = true;
         // this.surface.renderingGroupId = 1;
 
         // Cool Poly 2, 3, 
@@ -265,11 +265,14 @@ export class Star extends MovingEntity {
     dispose() {
         // Need to keep movingMesh in case this is a blackHole
         // this._dispose();
-        this.heart.dispose();
+        this.heart.isVisible = false;
+        this.surface.isVisible = false;
+        // this.heart.dispose();
         this.heartMaterial.dispose();
-        this.surface.dispose();
+        // this.surface.dispose();
         this.surfaceMaterial.dispose();
         this.light.dispose();
+        this.system.checkActiveMeshes();
     }
 
     setOpacity(opacity: number) {

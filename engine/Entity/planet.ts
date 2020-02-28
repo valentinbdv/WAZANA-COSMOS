@@ -1,4 +1,4 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 
 import { Vector3, Vector2 } from '@babylonjs/core/Maths/math';
 import { PositionEntity, PositionEntityInterface } from './positionEntity';
@@ -23,12 +23,13 @@ export class Planet extends PositionEntity {
 
     showAnimation: Animation;
 
-    constructor(system: System, options: PlanetInterface) {
+    constructor(system: SystemAsset, options: PlanetInterface) {
         super('planet', system, options);
         this.showAnimation = new Animation(this.system.animationManager);
 
         this.addMesh();
         this.hide();
+        this.setOptions(options);
     }
 
     setOptions(options: PlanetInterface) {

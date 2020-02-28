@@ -1,4 +1,4 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { Star, StarInterface } from './star';
 import { Animation } from '../System/animation';
 
@@ -6,19 +6,19 @@ import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
 import { BlackHole } from './blackHole';
-import { StarDust } from './starDust';
 
 export class StarFighter extends Star {
 
     diveAnimation: Animation;
     particleCurve: IEasingFunction;
 
-    constructor(system: System, starInterface: StarInterface) {
+    constructor(system: SystemAsset, starInterface: StarInterface) {
         super(system, starInterface);
 
         this.particleCurve = new CubicEase();
         this.diveAnimation = new Animation(system.animationManager);
         this.createParticle();
+        this.system.checkActiveMeshes();
     }
 
     target: StarFighter;
@@ -32,6 +32,7 @@ export class StarFighter extends Star {
         this.target = target;
         this.setAbsobUpdateFunction();
         this.particle.start();
+        this.system.checkActiveMeshes();
         this.absorbingInt = setInterval(() => {
             this.target.decrease();
             this.increase();
@@ -44,6 +45,7 @@ export class StarFighter extends Star {
         this.aborber = aborber;
         this.setGetAbsobUpdateFunction();
         this.particle.start();
+        this.system.checkActiveMeshes();
         this.absorbingInt = setInterval(() => {
             this.changeSize(-0.2);
         }, 500);
@@ -77,7 +79,7 @@ export class StarFighter extends Star {
         this.particle.emitRate = 50;
 
         // this.particle.particleTexture = meshesTextures.stream;
-        this.particle.emitter = this.movingMesh;
+        this.particle.emitter = this.movingMesh.position;
         this.particle.gravity = new Vector3(0, -0.5, 0);
         this.particle.minEmitBox = new Vector3(0, 0, 0); // Starting all from
         this.particle.maxEmitBox = new Vector3(0, 0, 0);
@@ -95,6 +97,10 @@ export class StarFighter extends Star {
         this.particle.blendMode = ParticleSystem.BLENDMODE_MULTIPLYADD;
 
         this.particle.renderingGroupId = 2;
+
+        this.system.scene.registerBeforeRender(() => {
+            this.particle.animate();
+        });
     }
 
     setAbsobUpdateFunction() {
@@ -123,7 +129,7 @@ export class StarFighter extends Star {
                     let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age, particle.age, particle.age, 1.0));
                     particle.color = progresscolor.add(that.target.color);
 
-                    let posprogress = that.particleCurve.ease(particle.age);
+                    let posprogress = that.particleCurve.ease(particle.age) + particle.direction.y;
                     let progressposition: Vector2 = changeposition.multiply(new Vector2(posprogress, posprogress));
                     let pos: Vector2 = that.target.position.add(progressposition);
 
@@ -221,6 +227,7 @@ export class StarFighter extends Star {
                 }, 2000);
                 this.setExplodeUpdateFunction();
                 this.particle.start();
+                this.system.checkActiveMeshes();
                 if (callback) callback();
             });
         });
@@ -239,6 +246,7 @@ export class StarFighter extends Star {
             this.movingMesh.position.z = pos.y;
             this.movingMesh.position.y = 1 - this.particleCurve.ease(perc) * 50;
         }, () => {
+            this.dispose();
             if (callback) callback();
         });
     }

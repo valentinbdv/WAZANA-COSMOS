@@ -52,7 +52,7 @@ export class RealPlayer extends Player {
         // this.cameraCatcher.start();
         // this.cameraCatcher.catch();
         this.system.scene.registerBeforeRender(() => {
-            let newSize = this.size * 50;
+            let newSize = Math.max(this.size * 50, 50);
             let change = newSize - this.system.camera.radius;
             this.system.camera.radius += change/100;
         });
