@@ -1,6 +1,6 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { GravityGrid } from '../System/GravityGrid';
-import { Player } from './player';
+import { Player, startSize } from './player';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
@@ -8,16 +8,16 @@ export class IAPlayer extends Player {
 
     ia = true;
 
-    constructor(system: System, gravityGrid: GravityGrid) {
-        super(system, gravityGrid, { temperature: 5000, size: 0.5, position: { x: 0, y: 0 }, maxPlanet: 5 });
+    constructor(system: SystemAsset, gravityGrid: GravityGrid) {
+        super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.startMovingAround();
-        this.setSize(0.5 + Math.random());
+        this.setSize(0.8 + Math.random() / 2);
     }
 
     moveInt;
     startMovingAround() {        
         this.moveInt = setInterval(() => {
-            if (this.died) return clearInterval(this.moveInt);
+            if (this.isDead) return clearInterval(this.moveInt);
             let move = new Vector2((Math.random() - 0.5), (Math.random() - 0.5));
             this.moveCatcher.catch(move);
         }, 2000);
@@ -33,5 +33,10 @@ export class IAPlayer extends Player {
         move.x += (Math.random() - 0.5) * 2;
         move.y += (Math.random() - 0.5) * 2;
         this.moveCatcher.catch(move);
+    }
+
+    dispose() {
+        clearInterval(this.moveInt);
+        this._disposePlayer();
     }
 }

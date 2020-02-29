@@ -19,6 +19,7 @@ export class MoveCatcher {
 
     stop() {
         this.catching = false;
+        this.animation.stop();
     }
 
     /**

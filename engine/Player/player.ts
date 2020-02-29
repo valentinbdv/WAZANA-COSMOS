@@ -1,4 +1,4 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { GravityGrid } from '../System/GravityGrid';
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from '../Entity/planet';
@@ -7,8 +7,11 @@ import { StarCategory, StarInterface } from '../Entity/star';
 
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
+import { BlackHole } from '../Entity/blackHole';
 
 export let minSize = 0.5; 
+export let startSize = 1;
+
 
 export interface PlayerInterface {
     key: string;
@@ -45,8 +48,9 @@ export class Player extends StarFighter {
     fixeCurve: IEasingFunction;
     particleCurve: IEasingFunction;
     ia = false;
+    dustField = true;
 
-    constructor(system: System, gravityGrid: GravityGrid, playerInterface: StarInterface) {
+    constructor(system: SystemAsset, gravityGrid: GravityGrid, playerInterface: StarInterface) {
         super(system, playerInterface);
         this.gravityGrid = gravityGrid;
         // this.secondLight.excludedMeshes.push(this.gravityGrid.ribbon);
@@ -138,7 +142,6 @@ export class Player extends StarFighter {
     removeAllPlanets() {
         for (let i = 0; i < this.planets.length; i++) {
             const planet = this.planets[i];
-            planet.attachedToStar = false;
             planet.hide();
         }
         this.planets = [];
@@ -188,28 +191,40 @@ export class Player extends StarFighter {
         });
     }
     
-    died = false;
     onDied: Function;
     die(callback?: Function) {
-        console.log('die');
-        
         this.removeAllPlanets();
-        if (this.aborber) {
+        if (this.aborber && this.aborber.prototype instanceof BlackHole) {
             this.dive(this.aborber.position, () => {
+                this.dispose();
                 if (callback) callback();
                 if (this.onDied) this.onDied();
             });
         } else {
             this.explode(() => {
+                this.dispose();
                 if (callback) callback();
-                if (this.onDied) this.onDied();
             });
         }
+        if (this.onDied) this.onDied();
         this.absorbStop();
-        this.died = true;
+        this.setMoving(false);
+        this.isDead = true;
         this.secondLight.excludedMeshes = [];
         this.secondLight.includedOnlyMeshes = [this.gravityGrid.ribbon];
-        this.moving = false;
+    }
+    
+    dispose() {
+        this._disposePlayer();
+    }
+    
+    _disposePlayer() {
+        this.removeAllPlanets();
+        this._disposeStarFighter();
+        this.accelerateAnimation.stop();
+        this.fixeAnimation.stop();
+        this.secondLight.excludedMeshes = [];
+        this.secondLight.includedOnlyMeshes = [];
         this.gravityGrid.eraseStar(this.key);
     }
 

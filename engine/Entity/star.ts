@@ -261,18 +261,21 @@ export class Star extends MovingEntity {
             if (callback) callback();
         });
     }
-
-    dispose() {
-        // Need to keep movingMesh in case this is a blackHole
-        // this._dispose();
+    
+    _disposeStar() {
         this.heart.isVisible = false;
         this.surface.isVisible = false;
         // this.heart.dispose();
         this.heartMaterial.dispose();
         // this.surface.dispose();
         this.surfaceMaterial.dispose();
+        this.light.isEnabled(false);
         this.light.dispose();
+        this.secondLight.isEnabled(false);
+        this.secondLight.dispose();
         this.system.checkActiveMeshes();
+        this.moveCatcher.stop();
+        this.shineAnimation.stop();
     }
 
     setOpacity(opacity: number) {
@@ -283,6 +286,7 @@ export class Star extends MovingEntity {
     show() {
         this.heart.isVisible = true;
         this.surface.isVisible = true;
+        this.setOpacity(1);
         this.light.intensity = 1000;
     }
 

@@ -103,7 +103,7 @@ export class IntroUI {
     }
 
     nebulaUI: ui_group;
-    nebulaNames = ['Eagle', 'Dumbbell', 'Orion', 'Trifid', 'Helix', 'Tarantula'];
+    nebulaNames = {3:'Orion', 1:'Eagle', 2:'Dumbbell', 4:'Trifid', 5:'Helix', 6:'Tarantula'};
     nebulaText: ui_text;
     nebulaNumber = 0;
     nebulaArrowLeft: ui_arrow;
@@ -166,6 +166,7 @@ export class IntroUI {
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));
         this.checkStarArrows();
+        this.nebulaNumber = this.system.skyDesign;
         this.checkNebulaArrows();
     }
 

@@ -74,15 +74,12 @@ export class GameEngine {
     }
 
     stopGame() {
-        this.realPlayer.setSize(1);
-        this.realPlayer.setCategory(this.realPlayer.category);
-        this.realPlayer.setPosition(Vector2.Zero());
-        this.realPlayer.setMoving(false);
         this.introUI.show();
         this.playUI.hide();
         this.tileMap.checkPlayerAndRessources(false);
-        this.tileMap.eraseAllEntity();
         this.localMap.eraseAllIas();
+        this.tileMap.eraseAllEntity();
+        this.realPlayer.dispose();
     }
 
     startGame() {
@@ -92,13 +89,17 @@ export class GameEngine {
 
         this.realPlayer.setMoving(true);
         this.realPlayer.removeAllPlanets();
+
+        // In order to test reset games
+        // setTimeout(() => {
+        //     this.stopGame();
+        // }, 3000);
     }
     
     joinGameLocal() {
         this.startGame();
         this.tileMap.checkPlayerAndRessources(true);
         this.tileMap.addPlayer(this.realPlayer);
-
     }
     
     joinGameServer() {

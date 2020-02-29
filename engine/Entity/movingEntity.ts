@@ -30,8 +30,8 @@ export class MovingEntity extends PositionEntity {
         this.moveCatcher = new MoveCatcher(this.system.animationManager);
         
         this.moveCatcher.addListener((pos: Vector2, step: Vector2) => {
-            step = step.multiplyInPlace(new Vector2(5, 5));
             if (this.moving) {
+                step = step.multiplyInPlace(new Vector2(5, 5));
                 this.move(step);
             }
         });

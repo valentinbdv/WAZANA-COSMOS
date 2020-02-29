@@ -105,10 +105,13 @@ export class SystemAsset extends System {
 
     loadCheck: Animation;
     sceneTexture: CubeTexture;
+    skyDesignOrder = [3, 5, 1, 2, 4, 6];
+    skyDesign = 0;
     setSky(design: number) {
         let asseturl = 'https://asset.wazana.io/';
-        let mapcolor = 'mapcolor' + design.toString();
-
+        this.skyDesign = this.skyDesignOrder[design - 1];
+        let mapcolor = 'mapcolor' + this.skyDesign.toString();
+        
         this.sceneTexture = CubeTexture.CreateFromPrefilteredData(asseturl + 'dds/' + mapcolor + '.dds', this.scene);
         this.loadCheck.infinite(() => {
             if (this.sceneTexture.isReady()) {
@@ -138,31 +141,36 @@ export class SystemAsset extends System {
         for (let i = 0; i < this.listeners.length; i++) {
             this.listeners[i](this.sceneTexture);
         }
-        // Freeze all material to have better performance
-        this.unFreezeMaterials();
-        setTimeout(() => {
-            this.freezeMaterials();
-        }, 100);
+
     }
 
-    unFreezeMaterials() {
-        // for (let i = 0; i < this.scene.materials.length; i++) {
-        //     const material = this.scene.materials[i];
-        //     material.unfreeze();
-        // }
-        // this.dustMaterial.unfreeze();
-        // this.planetMaterial.unfreeze();
-        // this.ribbonMaterial.unfreeze();
+    unfreezeMaterials() {
+        for (let i = 0; i < this.scene.materials.length; i++) {
+            const material = this.scene.materials[i];
+            material.unfreeze();
+        }
+        this.dustMaterial.unfreeze();
+        this.planetMaterial.unfreeze();
+        this.ribbonMaterial.unfreeze();
     }
 
     freezeMaterials() {
-        // for (let i = 0; i < this.scene.materials.length; i++) {
-        //     const material = this.scene.materials[i];
-        //     material.freeze();
-        // }
-        // this.dustMaterial.freeze();
-        // this.planetMaterial.freeze();
-        // this.ribbonMaterial.freeze();
+        for (let i = 0; i < this.scene.materials.length; i++) {
+            const material = this.scene.materials[i];
+            material.freeze();
+        }
+        this.dustMaterial.freeze();
+        this.planetMaterial.freeze();
+        this.ribbonMaterial.freeze();
+    }
+
+    checkMaterials() {
+        // Freeze all material to have better performance
+        this.unfreezeMaterials();
+        this.freezeMaterials();
+        // setTimeout(() => {
+        //     this.freezeMaterials();
+        // }, 100);
     }
 
     light: DirectionalLight
@@ -177,11 +185,12 @@ export class SystemAsset extends System {
     dustMesh2: Mesh;
     dustMesh3: Mesh;
     dustMesh4: Mesh;
+    dustMaterial: StandardMaterial;
     addDustMesh() {
-        let dustMaterial = this.getNewDustMaterial();
-        dustMaterial.emissiveColor = new Color3(1, 1, 0);
+        this.dustMaterial = this.getNewDustMaterial();
+        this.dustMaterial.emissiveColor = new Color3(1, 1, 0);
         this.dustMesh = this.getNewDust();
-        this.dustMesh.material = dustMaterial; 
+        this.dustMesh.material = this.dustMaterial; 
         // this.addDust1();
         // this.addDust2();
         // this.addDust3();

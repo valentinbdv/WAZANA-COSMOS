@@ -150,6 +150,7 @@ export class TileMap {
 
     storagePlanet(planet: Planet) {
         this.removePlanet(planet);
+        planet.animation.stop();
         this.planetsStorage.push(planet);
     }
 
@@ -160,7 +161,7 @@ export class TileMap {
         this.planets = {};
     }
 
-    ////////// Dust
+    ////////// DUST
 
     dustNumbers = 200;
     dustsStorage: Array<StarDust> = [];
@@ -201,6 +202,7 @@ export class TileMap {
     
     storageDust(dust: StarDust) {
         dust.hide();
+        dust.animation.stop();
         this.dustsStorage.push(dust);
     }
 
@@ -306,14 +308,16 @@ export class TileMap {
     killPlayer(player: Player) {
         this.removePlayer(player);
         player.die(() => {
-            this.addDustField(player.position);
+            if (player.dustField) this.addDustField(player.position);
         });
     }
 
     eraseAllEntity() {
-        this.eraseAllPlanets();
-        this.eraseAllBlackHoles();
+        // Erase Players before Planets so that planet are all in storage
         this.eraseAllPlayers();
+        this.eraseAllBlackHoles();
         this.eraseAllDusts();
+        this.eraseAllPlanets();
+        this.system.checkActiveMeshes();
     }
 }

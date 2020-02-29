@@ -21,11 +21,11 @@ export class Planet extends PositionEntity {
     cycle = 0; // Around its star % Math.PI
     attachedToStar = false;
 
-    showAnimation: Animation;
+    animation: Animation;
 
     constructor(system: SystemAsset, options: PlanetInterface) {
         super('planet', system, options);
-        this.showAnimation = new Animation(this.system.animationManager);
+        this.animation = new Animation(this.system.animationManager);
 
         this.addMesh();
         this.hide();
@@ -82,7 +82,7 @@ export class Planet extends PositionEntity {
     show() {
         // this.mesh.isVisible = true;
         let size = 0.8 + Math.random() * 0.4;
-        this.showAnimation.simple(50, (count, perc) => {
+        this.animation.simple(50, (count, perc) => {
             this.mesh.scaling = new Vector3(perc * size, perc * size, perc * size);
         }, () => {
             this.mesh.scaling = new Vector3(size, size, size);
@@ -90,6 +90,8 @@ export class Planet extends PositionEntity {
     }
 
     hide() {
+        this.animation.stop();
+        this.attachedToStar = false;
         this.setSize(0);
         // this.mesh.isVisible = false;
     }

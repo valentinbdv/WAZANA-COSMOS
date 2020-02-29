@@ -1,7 +1,7 @@
 import { Planet, PlanetInterface } from '../Entity/planet';
 import { Player, minSize } from '../player/player';
 import { TileMap } from './tileMap';
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { GravityGrid } from '../System/GravityGrid';
 import { BlackHole } from '../Entity/blackHole';
 
@@ -19,11 +19,11 @@ import { StarCategory, StarCategories } from '../Entity/star';
 export class LocalMap {
 
     chekIaInterval;
-    system: System;
+    system: SystemAsset;
     gravityGrid: GravityGrid;
     tileMap: TileMap
 
-    constructor(system: System, gravityGrid: GravityGrid, tileMap: TileMap) {
+    constructor(system: SystemAsset, gravityGrid: GravityGrid, tileMap: TileMap) {
         this.system = system;
         this.gravityGrid = gravityGrid;
         this.tileMap = tileMap;
@@ -40,7 +40,6 @@ export class LocalMap {
         
         this.chekIaInterval = setInterval(()=> {
             if (this.tileMap.check) this.checkIaMap();
-            // this.checkIaMap();
         }, 10000);
     }
 
@@ -114,7 +113,6 @@ export class LocalMap {
         if (testTarget) {
             let otherPlayer: Player = this.tileMap.players[testTarget]
             player.absorbTarget(otherPlayer);
-            otherPlayer.getAbsorbByTarget(player);
             let velocity = Math.pow((minDist / (player.gravityField * 20)), 1);
             otherPlayer.setRealVelocity(velocity);
             return true;
@@ -193,12 +191,6 @@ export class LocalMap {
         delete this.ias[ia.key];
     }
 
-    disposeIa(ia: IAPlayer) {
-        this.removeIa(ia);
-        ia.dispose();
-        clearInterval(ia.moveInt);
-    }
-
     getFreePosition(): Vector2 {
         let test = true;
         let distProgress = 5;
@@ -220,8 +212,9 @@ export class LocalMap {
     }
 
     eraseAllIas() {
+        clearInterval(this.chekIaInterval);
         for (const key in this.ias) {
-            this.disposeIa(this.ias[key]);
+            this.removeIa(this.ias[key]);
         }
     }
 }

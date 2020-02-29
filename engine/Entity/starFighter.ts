@@ -25,6 +25,7 @@ export class StarFighter extends Star {
     aborber: BlackHole;
     absorbing: string;
     absorbingInt;
+    isDead = false;
     absorbTarget(target: StarFighter) {
         if (this.absorbing) return;
         this.absorbStop();
@@ -36,6 +37,7 @@ export class StarFighter extends Star {
         this.absorbingInt = setInterval(() => {
             this.target.decrease();
             this.increase();
+            if (this.target.isDead) this.absorbStop();
         }, 100);
     }
 
@@ -68,7 +70,7 @@ export class StarFighter extends Star {
     }
 
     changeSize(change: number) {
-        // if (this.died) return;
+        // if (this.isDead) return;
         let newSize = Math.pow(this.size, 2) + change;
         this.setSize(newSize);
     }
@@ -108,28 +110,28 @@ export class StarFighter extends Star {
         this.particle.emitRate = 50;
         // this.particle.manualEmitCount = null;
         this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
-            Vector3.TransformNormalFromFloatsToRef(Math.random(), 0, Math.random(), worldMatrix, directionToUpdate);
+            Vector3.TransformNormalFromFloatsToRef(Math.random(), Math.random(), Math.random(), worldMatrix, directionToUpdate);
         }
         // Must keep that because we need function word on particle
         let that = this;
         this.particle.updateFunction = function(particles) {
             let changeposition: Vector2 = that.position.subtract(that.target.position);
             let changecolor: Color4 = that.color.subtract(that.target.color);
-
+            
             for (var index = 0; index < particles.length; index++) {
                 var particle = particles[index];
                 particle.age += this._scaledUpdateSpeed;
-
+                
                 if (particle.age >= particle.lifeTime) { // Recycle
                     particles.splice(index, 1);
                     this._stockParticles.push(particle);
                     index--;
                     continue;
                 } else {
-                    let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age, particle.age, particle.age, 1.0));
+                    let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age/1.5, particle.age/1.5, particle.age/1.5, 1.0));
                     particle.color = progresscolor.add(that.target.color);
 
-                    let posprogress = that.particleCurve.ease(particle.age) + particle.direction.y;
+                    let posprogress = that.particleCurve.ease(particle.age + particle.direction.y/100);
                     let progressposition: Vector2 = changeposition.multiply(new Vector2(posprogress, posprogress));
                     let pos: Vector2 = that.target.position.add(progressposition);
 
@@ -213,24 +215,30 @@ export class StarFighter extends Star {
         this._explode(callback);
     }
     _explode(callback?: Function) {
-        this.system.unFreezeMaterials();
+        this.system.checkMaterials();
         this.updateSize(50 * this.size, 80, () => {
             this.setReflectionLevel(1);
             this.updateSize(0.01, 30, () => {
-                this.system.freezeMaterials();
                 this.hide();
                 setTimeout(() => {
                     // Wait for the particle effect to end
-                    this.dispose();
-                    // Need to keep movingMesh in case this is a blackHole
-                    // this.particle.dispose();
+                    if (callback) callback();
                 }, 2000);
                 this.setExplodeUpdateFunction();
                 this.particle.start();
                 this.system.checkActiveMeshes();
-                if (callback) callback();
             });
         });
+    }
+
+    _disposeStarFighter() {
+        this._disposeStar();
+        this.particle.stop();
+        this.system.scene.unregisterBeforeRender(() => {
+            this.particle.animate();
+        });
+        this.diveAnimation.stop();
+        // this.particle.dispose();
     }
 
     diveAnimationLength = 50;
@@ -246,7 +254,6 @@ export class StarFighter extends Star {
             this.movingMesh.position.z = pos.y;
             this.movingMesh.position.y = 1 - this.particleCurve.ease(perc) * 50;
         }, () => {
-            this.dispose();
             if (callback) callback();
         });
     }

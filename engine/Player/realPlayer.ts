@@ -1,7 +1,7 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { MouseCatcher } from './mouseCatcher';
 import { GravityGrid } from '../System/GravityGrid';
-import { Player } from './player';
+import { Player, startSize } from './player';
 import { onlineMap } from "../Map/onlineMap";
 
 import hotkeys from 'hotkeys-js';
@@ -10,9 +10,10 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 export class RealPlayer extends Player {
 
     map: onlineMap;
+    dustField = false;
 
-    constructor(system: System, gravityGrid: GravityGrid, map: onlineMap) {
-        super(system, gravityGrid, { temperature: 5000, size: 0.5, position: { x: 0, y: 0 }, maxPlanet: 5 });
+    constructor(system: SystemAsset, gravityGrid: GravityGrid, map: onlineMap) {
+        super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.addMouseEvent();
         this.addZoomCatcher();
         this.system.camera.parent = this.movingMesh;
@@ -48,16 +49,21 @@ export class RealPlayer extends Player {
     }
 
     addZoomCatcher() {
-        // this.cameraCatcher = new MoveCatcher(this.system.animationManager);
-        // this.cameraCatcher.start();
-        // this.cameraCatcher.catch();
         this.system.scene.registerBeforeRender(() => {
-            let newSize = Math.max(this.size * 50, 50);
-            let change = newSize - this.system.camera.radius;
+            let newRadius = Math.max(this.size * 50, 50);
+            let change = newRadius - this.system.camera.radius;
             this.system.camera.radius += change/100;
         });
     }
 
     dispose() {
+        this.setPosition(Vector2.Zero());
+        this.setMoving(false);
+        this.setSize(startSize);
+        this.secondLight.excludedMeshes = [];
+        this.secondLight.includedOnlyMeshes = [];
+        this.setCategory(this.category);
+        this.show();
+        this.system.checkActiveMeshes();
     }
 }

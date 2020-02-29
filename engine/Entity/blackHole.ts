@@ -1,7 +1,6 @@
-import { System } from '../System/system';
+import { SystemAsset } from '../System/systemAsset';
 import { Animation } from '../System/animation';
 import { GravityGrid } from '../System/GravityGrid';
-import { MoveCatcher } from '../Player/moveCatcher';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import { MovingEntity, MovingEntityInterface } from './movingEntity';
@@ -19,7 +18,7 @@ export class BlackHole extends MovingEntity {
     life: number;
     power: number;
     velocity = 0.5;
-    constructor(system: System, gravityGrid: GravityGrid, options: BlackHoleInterface) {
+    constructor(system: SystemAsset, gravityGrid: GravityGrid, options: BlackHoleInterface) {
         super('blackhole', system, options);
         this.gravityGrid = gravityGrid;
 
@@ -33,8 +32,7 @@ export class BlackHole extends MovingEntity {
 
     moveInt;
     startMovingAround() {
-        let moveCatcher = new MoveCatcher(this.system.animationManager);
-        this.addCactcher(moveCatcher);
+        this.addCactcher();
 
         this.moveInt = setInterval(() => {
             this.moveAround();
