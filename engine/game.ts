@@ -52,7 +52,7 @@ export class GameEngine {
 
         this.realPlayer = new RealPlayer(this.system, this.gravityGrid, this.onlineMap);
         this.realPlayer.setMoving(false);
-        this.realPlayer.setCategory(StarCategories[0]);
+        this.realPlayer.setCategory(StarCategories[0], true);
         this.realPlayer.onDied = () => {
             this.stopGame();
         };
@@ -70,7 +70,7 @@ export class GameEngine {
 
         this.system.scene.freezeActiveMeshes();
         
-        this.playUI = new PlayUI(this.system, this.realPlayer);
+        this.playUI = new PlayUI(this.system, this.realPlayer, this.tileMap);
     }
 
     stopGame() {

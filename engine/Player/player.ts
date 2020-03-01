@@ -67,7 +67,7 @@ export class Player extends StarFighter {
     }
 
     category: StarCategory;
-    setCategory(category: StarCategory) {
+    setCategory(category: StarCategory, withPlanets: boolean) {
         this.category = category;
         this.setVelocity(category.velocity);
         this.setTemperature(category.temperature);
@@ -75,8 +75,10 @@ export class Player extends StarFighter {
         this.setGravity(category.gravity);
         this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField);
         this.removeAllPlanets();
-        for (let i = 0; i < category.planets + 1; i++) {
-            this.addPlanet();
+        if (withPlanets) {
+            for (let i = 0; i < category.planets + 1; i++) {
+                this.addPlanet();
+            }
         }
         this.system.checkActiveMeshes();
     }

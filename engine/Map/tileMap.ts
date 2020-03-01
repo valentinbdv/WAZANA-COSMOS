@@ -54,7 +54,6 @@ export class TileMap {
 
     createPlayer(starInterface: StarInterface) {
         let player = new Player(this.system, this.gravityGrid, starInterface);
-        // player.setCategory(starInterface);
         player.key = starInterface.key;
         this.addPlayer(player);
         return player;
@@ -261,7 +260,7 @@ export class TileMap {
     //     return dusts;
     // }
 
-    mapSize = 1000;
+    mapSize = 200;
     getNewRandomPosition(): Vector2 {
         let sign1 = (Math.random() > 0.5) ? 1 : -1;
         let sign2 = (Math.random() > 0.5) ? 1 : -1;

@@ -61,7 +61,7 @@ export class IntroUI {
     checkStarArrows() {
         let starCategory = StarCategories[this.starNumber];
         this.starText.writeText(starCategory.name)
-        this.realPlayer.setCategory(starCategory);
+        this.realPlayer.setCategory(starCategory, true);
         this.starArrowLeft.show();
         this.starArrowRight.show();
         if (this.starNumber == 0) this.starArrowLeft.hide();

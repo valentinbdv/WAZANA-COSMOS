@@ -213,6 +213,7 @@ export class Star extends MovingEntity {
         // this.secondLight.excludedMeshes.push(this.surface);
         // this.secondLight.excludedMeshes.push(this.heart);
         this.secondLight.excludedMeshes = [];
+        this.secondLight.includedOnlyMeshes.push(this.heart);
         // console.log(this.secondLight);
     }
 

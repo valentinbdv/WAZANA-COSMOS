@@ -181,7 +181,7 @@ export class LocalMap {
         let pos = this.getFreePosition();
         newIa.setPosition(pos);
         let cat = this.getRandomCategory();
-        newIa.setCategory(cat);
+        newIa.setCategory(cat, false);
         this.addIa(newIa);
     }
     

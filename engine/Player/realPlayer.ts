@@ -62,7 +62,7 @@ export class RealPlayer extends Player {
         this.setSize(startSize);
         this.secondLight.excludedMeshes = [];
         this.secondLight.includedOnlyMeshes = [];
-        this.setCategory(this.category);
+        this.setCategory(this.category, true);
         this.show();
         this.system.checkActiveMeshes();
     }
