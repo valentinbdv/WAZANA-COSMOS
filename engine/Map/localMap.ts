@@ -45,10 +45,12 @@ export class LocalMap {
 
     checkPlayersAbsorbtion() {
         for (const key in this.tileMap.players) {
-            const player = this.tileMap.players[key];
-            this.checkPlayerAbsorbtion(player);
-            this.checkPlanetMap(player);
-            if (player.size < minSize) this.playerDead(player);
+            if (this.tileMap.players.hasOwnProperty(key)) {
+                const player = this.tileMap.players[key];
+                this.checkPlayerAbsorbtion(player);
+                this.checkPlanetMap(player);
+                if (player.size < minSize) this.playerDead(player);
+            }
         }
     }
 
@@ -113,12 +115,12 @@ export class LocalMap {
         if (testTarget) {
             let otherPlayer: Player = this.tileMap.players[testTarget]
             player.absorbTarget(otherPlayer);
-            let velocity = Math.pow((minDist / (player.gravityField * 20)), 1);
-            otherPlayer.setRealVelocity(velocity);
+            otherPlayer.setAbsorber(player);
             return true;
         } else {
             player.absorbStop();
-            if (player.ia && closestTarget && minDist > player.gravityField * 10) player.goToPlayer(closestTarget);
+            if (player.target) player.target.stopBeingAbsorbed();
+            if (player.ia) player.checkAction(closestTarget);
             return false;
         }
 

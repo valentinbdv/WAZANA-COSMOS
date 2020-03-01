@@ -5,7 +5,6 @@ import { Animation } from '../System/animation';
 import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
-import { BlackHole } from './blackHole';
 
 export class StarFighter extends Star {
 
@@ -19,45 +18,6 @@ export class StarFighter extends Star {
         this.diveAnimation = new Animation(system.animationManager);
         this.createParticle();
         this.system.checkActiveMeshes();
-    }
-
-    target: StarFighter;
-    aborber: BlackHole;
-    absorbing: string;
-    absorbingInt;
-    isDead = false;
-    absorbTarget(target: StarFighter) {
-        if (this.absorbing) return;
-        this.absorbStop();
-        this.absorbing = target.key;
-        this.target = target;
-        this.setAbsobUpdateFunction();
-        this.particle.start();
-        this.system.checkActiveMeshes();
-        this.absorbingInt = setInterval(() => {
-            this.target.decrease();
-            this.increase();
-            if (this.target.isDead) this.absorbStop();
-        }, 100);
-    }
-
-    getAbsorbByTarget(aborber: BlackHole) {
-        if (this.absorbing || !this.target) return;
-        this.absorbStop();
-        this.aborber = aborber;
-        this.setGetAbsobUpdateFunction();
-        this.particle.start();
-        this.system.checkActiveMeshes();
-        this.absorbingInt = setInterval(() => {
-            this.changeSize(-0.2);
-        }, 500);
-    }
-
-    absorbStop() {
-        if (!this.absorbing || !this.target) return;
-        this.particle.stop();
-        clearInterval(this.absorbingInt);
-        this.absorbing = null;
     }
 
     decrease() {
@@ -152,7 +112,7 @@ export class StarFighter extends Star {
         // Must keep that because we need function word on particle
         let that = this;
         this.particle.updateFunction = function (particles) {
-            let changeposition: Vector2 = that.aborber.position.subtract(that.position);
+            let changeposition: Vector2 = that.absorber.position.subtract(that.position);
 
             for (var index = 0; index < particles.length; index++) {
                 var particle = particles[index];

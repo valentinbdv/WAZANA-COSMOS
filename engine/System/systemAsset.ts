@@ -109,7 +109,7 @@ export class SystemAsset extends System {
     skyDesign = 0;
     setSky(design: number) {
         let asseturl = 'https://asset.wazana.io/';
-        this.skyDesign = this.skyDesignOrder[design - 1];
+        this.skyDesign = this.skyDesignOrder[design];
         let mapcolor = 'mapcolor' + this.skyDesign.toString();
         
         this.sceneTexture = CubeTexture.CreateFromPrefilteredData(asseturl + 'dds/' + mapcolor + '.dds', this.scene);

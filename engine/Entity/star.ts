@@ -218,9 +218,11 @@ export class Star extends MovingEntity {
 
     shine() {
         if (this.shineAnimation.running) return;
-        this.shineAnimation.simple(20, (count, x) => {
-            let y = 1 - 4 * Math.pow(x - 0.5, 2);
+        this.shineAnimation.simple(20, (count, perc) => {
+            let y = 1 - 4 * Math.pow(perc - 0.5, 2);
             this.setReflectionLevel(y/2);
+            let sizeVector = new Vector3(this.size + y/10, this.size + y/10, this.size + y/10);
+            this.heart.scaling = sizeVector;
         }, () => {
             this.setReflectionLevel(0);
         });
@@ -236,8 +238,8 @@ export class Star extends MovingEntity {
         newsize = Math.sqrt(newsize);
         this._setSize(newsize);
         let sizeVector = new Vector3(newsize, newsize, newsize);
+        // this.heart.scaling = sizeVector;
         this.surface.scaling = sizeVector;
-        this.heart.scaling = sizeVector;
         this.light.intensity = 1000 * size;
         this.secondLight.intensity = 1000 * size;
         this.cycleProgress = 1 / Math.sqrt(this.size);

@@ -3,7 +3,6 @@ import { Animation } from './System/animation'
 import { GravityGrid } from './System/GravityGrid';
 import { StarCategories } from './Entity/star';
 import { RealPlayer } from './Player/realPlayer';
-import { Vector2 } from '@babylonjs/core/Maths/math';
 import { IntroUI } from './Ui/intro';
 import { PlayUI } from './Ui/play';
 import { Player } from "./player/player";
@@ -13,14 +12,15 @@ import { TileMap } from './Map/tileMap';
 
 // Pouvoir utiliser les flèches plutôt que la souris
 // Minimap
+// Fade in et clignote dust / planet
+// Gravité impacte autre étoile et de plus en plus de particle
 
 interface State {
     players: Array<Player>;
     blackHoles: Array<Player>;
     planets: Array<Player>;
 }
-// Fade in et clignote dust / planet
-// Gravité impacte autre étoile et de plus en plus de particle
+
 export interface GameInterface {
     canvas?: HTMLCanvasElement,
 }
@@ -93,7 +93,7 @@ export class GameEngine {
         // In order to test reset games
         // setTimeout(() => {
         //     this.stopGame();
-        // }, 3000);
+        // }, 5000);
     }
     
     joinGameLocal() {

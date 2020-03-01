@@ -132,8 +132,8 @@ export class IntroUI {
     }
 
     checkNebulaArrows() {
-        this.system.setSky(this.nebulaNumber + 1);
-        this.nebulaText.writeText(this.nebulaNames[this.nebulaNumber], 20);
+        this.system.setSky(this.nebulaNumber);
+        this.nebulaText.writeText(this.nebulaNames[this.system.skyDesign], 20);
         this.nebulaArrowLeft.show();
         this.nebulaArrowRight.show();
         if (this.nebulaNumber == 0) this.nebulaArrowLeft.hide();
@@ -166,7 +166,6 @@ export class IntroUI {
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));
         this.checkStarArrows();
-        this.nebulaNumber = this.system.skyDesign;
         this.checkNebulaArrows();
     }
 

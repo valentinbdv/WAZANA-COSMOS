@@ -28,6 +28,23 @@ export class IAPlayer extends Player {
     //     this._explode(callback);
     // }
 
+    checkAction(closestTarget: Player) {
+        let clumsy = Math.random() > 0.7;
+        if (this.absorber) {
+            if (!clumsy) this.avoidAbsorption();
+        } else if (closestTarget) {
+            let dist = Vector2.Distance(this.position, closestTarget.position);
+            if (dist < this.gravityField * 5 && !clumsy) this.goToPlayer(closestTarget);
+        }
+    }
+
+    avoidAbsorption() {
+        let direction = this.absorber.position.subtract(this.position);
+        let moveToavoid = this.position.add(direction);
+        this.moveCatcher.catch(moveToavoid);
+        if (Math.random() > 0.5 && this.planets.length && !this.accelerating) this.accelerate();
+    }
+
     goToPlayer(player: Player) {
         let move = player.position.subtract(this.position);
         move.x += (Math.random() - 0.5) * 2;

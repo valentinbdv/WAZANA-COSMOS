@@ -8,6 +8,7 @@ import { StarCategory, StarInterface } from '../Entity/star';
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
 import { BlackHole } from '../Entity/blackHole';
+import { MovingEntity } from '../Entity/movingEntity';
 
 export let minSize = 0.5; 
 export let startSize = 1;
@@ -86,6 +87,57 @@ export class Player extends StarFighter {
     
     setRealVelocity(realVelocity: number) {
         this.realVelocity = realVelocity;
+    }
+
+    target: Player;
+    absorbingInt;
+    isDead = false;
+    absorbTarget(target: Player) {
+        if (this.absorbing) return;
+        this.absorbStop();
+        this.absorbing = target.key;
+        this.target = target;
+        this.setAbsobUpdateFunction();
+        this.particle.start();
+        this.system.checkActiveMeshes();
+        this.absorbingInt = setInterval(() => {
+            this.target.decrease();
+            this.increase();
+            if (this.target.isDead) this.absorbStop();
+        }, 100);
+    }
+
+    absorber: MovingEntity;
+    setAbsorber(absorber: MovingEntity) {
+        this.absorber = absorber;
+        let dist = Vector2.Distance(this.position, absorber.position);
+        let velocity = Math.pow((dist / (absorber.gravityField * 20)), 1);
+        this.setRealVelocity(velocity);
+    }
+
+    getAbsorbByTarget(absorber: BlackHole) {
+        if (this.absorbing || !this.target) return;
+        this.absorbStop();
+        this.setAbsorber(absorber);
+        this.setGetAbsobUpdateFunction();
+        this.particle.start();
+        this.system.checkActiveMeshes();
+        this.absorbingInt = setInterval(() => {
+            this.changeSize(-0.2);
+        }, 500);
+    }
+
+    absorbStop() {
+        if (!this.absorbing || !this.target) return;
+        this.particle.stop();
+        clearInterval(this.absorbingInt);
+        this.absorbing = null;
+        this.absorber = null;
+    }
+
+    stopBeingAbsorbed() {
+        this.absorber = null;
+        this.setRealVelocity(1);
     }
 
     direction: Vector2 = Vector2.Zero();
@@ -194,8 +246,8 @@ export class Player extends StarFighter {
     onDied: Function;
     die(callback?: Function) {
         this.removeAllPlanets();
-        if (this.aborber && this.aborber.prototype instanceof BlackHole) {
-            this.dive(this.aborber.position, () => {
+        if (this.absorber && this.absorber.prototype instanceof BlackHole) {
+            this.dive(this.absorber.position, () => {
                 this.dispose();
                 if (callback) callback();
                 if (this.onDied) this.onDied();
