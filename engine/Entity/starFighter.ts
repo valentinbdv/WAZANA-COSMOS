@@ -62,6 +62,7 @@ export class StarFighter extends Star {
 
         this.system.scene.registerBeforeRender(() => {
             this.particle.animate();
+            if (this.system.limitFPS) this.particle.animate();
         });
     }
 

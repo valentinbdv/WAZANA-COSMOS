@@ -28,15 +28,12 @@ export class LocalMap {
         this.gravityGrid = gravityGrid;
         this.tileMap = tileMap;
 
-        let frame = 0;
-        this.system.scene.registerBeforeRender(() => {
-            if (frame > 10 && this.tileMap.check) {
+        setInterval(() => {
+            if (this.tileMap.check) {
                 this.checkPlayersAbsorbtion();
                 this.checkRessourceMap();
-                frame = 0;
             }
-            frame++;
-        });
+        }, 200);
         
         this.chekIaInterval = setInterval(()=> {
             if (this.tileMap.check) this.checkIaMap();

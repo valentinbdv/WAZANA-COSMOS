@@ -77,6 +77,7 @@ export class Star extends MovingEntity {
     // rotateProgress = 0;
     cycleProgress = 0;
     planets: Array< Planet > = [];
+    accelerating: boolean;
 
     constructor(system: SystemAsset, options: StarInterface) {
         super('star', system, options);
@@ -98,9 +99,9 @@ export class Star extends MovingEntity {
                 planet.mesh.position.x = (this.size + planet.radius) * Math.cos((planet.velocity * planet.cycle) / 100 + planet.offset);
                 planet.mesh.position.z = (this.size + planet.radius) * Math.sin((planet.velocity * planet.cycle) / 100 + planet.offset);
                 planet.mesh.rotation.y = planet.velocity * ( this.cycleProgress / 100 );
-                planet.cycle += this.cycleProgress;
+                planet.cycle += this.cycleProgress * this.system.fpsRatio;
             }
-            this.surface.rotation.y += this.cycleProgress / 200;
+            this.surface.rotation.y += this.cycleProgress * this.system.fpsRatio / 200;
         });
 
         this.curve = new BezierCurveEase(.76, .01, .51, 1.33);
@@ -218,7 +219,7 @@ export class Star extends MovingEntity {
     }
 
     shine() {
-        if (this.shineAnimation.running) return;
+        if (this.shineAnimation.running || this.accelerating) return;
         this.shineAnimation.simple(20, (count, perc) => {
             let y = 1 - 4 * Math.pow(perc - 0.5, 2);
             this.setReflectionLevel(y/2);

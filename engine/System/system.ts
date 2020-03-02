@@ -93,6 +93,12 @@ export class System {
 
         this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 10, Vector3.Zero(), this.scene);
         this.camera.setTarget(Vector3.Zero());
+
+        setInterval(() => {
+            let fps = this.engine.getFps();
+            if (fps < 50) this.setLimitFPS(true);
+            else this.setLimitFPS(false);
+        }, 1000);
     }
 
     /**
@@ -137,20 +143,37 @@ export class System {
         this.rendering = false;
         this.engine.stopRenderLoop();
     }
-
-    /**
-     * @ignore
-     */
-    frameTest = false;
+    
+    limitSwitch = true;
     startRender() {
         this.rendering = true;
         this.engine.stopRenderLoop();
-        this.engine.runRenderLoop(() => {
-            this.animationManager.runAnimations(this.engine.getFps());
-            this.scene.render();
-            // if (this.frameTest) this.scene.render();
-            // this.frameTest = !this.frameTest;
-        });
+        if (this.limitFPS) {
+            this.engine.runRenderLoop(() => {
+                this.animationManager.runAnimations(this.engine.getFps());
+                if (this.limitSwitch) this.scene.render();
+                this.limitSwitch = !this.limitSwitch;
+            });
+        } else {
+            this.engine.runRenderLoop(() => {
+                this.animationManager.runAnimations(this.engine.getFps());
+                this.scene.render();
+            });
+        }
+    }
+
+    limitFPS = false;
+    fps = 60;
+    fpsRatio = 1;
+    // Keep first value as true so that render function is called straight away
+    // Otherwise you could have a flash 
+    setLimitFPS(limitFPS: boolean) {
+        if (limitFPS == this.limitFPS) return;
+        this.limitFPS = limitFPS;
+        if (this.limitFPS) this.fps = 30;
+        else this.fps = 60;
+        this.fpsRatio = 60 / this.fps;
+        if (this.rendering) this.startRender();
     }
 
     /**

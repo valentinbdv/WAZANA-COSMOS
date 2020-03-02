@@ -31,7 +31,7 @@ export class TileMap {
         this.system.scene.registerBeforeRender(() => {
             for (const key in this.planets) {
                 const planet = this.planets[key];
-                planet.mesh.rotation.y += 0.01;
+                planet.mesh.rotation.y += 0.01 * this.system.fpsRatio;
             }
             if (frame > 10 && this.check) {
                 this.checkPlayersDust();
