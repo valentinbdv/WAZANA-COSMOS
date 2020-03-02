@@ -105,7 +105,7 @@ export class SystemAsset extends System {
 
     loadCheck: Animation;
     sceneTexture: CubeTexture;
-    skyDesignOrder = [3, 5, 1, 2, 4, 6];
+    skyDesignOrder = [5, 3, 1, 2, 4, 6];
     skyDesign = 0;
     setSky(design: number) {
         let asseturl = 'https://asset.wazana.io/';

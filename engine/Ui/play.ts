@@ -82,7 +82,7 @@ export class PlayUI {
         this.rankText.setText('Your rank :' + playerIndex + '/' + ranks.length);
         let playerSize = Math.round(Math.pow(this.realPlayer.size - minSize, 2) * 10);
         this.sizeText.setText('Your size: ' + playerSize.toString());
-        this.player1.setText('#1 ' + ranks[0].key);
+        this.player1.setText('#1  ' + ranks[0].key);
         if (ranks[1]) this.player2.setText('#2 ' + ranks[1].key);
         if (ranks[2]) this.player3.setText('#3 ' + ranks[2].key);
         if (ranks[3]) this.player4.setText('#4 ' + ranks[3].key);

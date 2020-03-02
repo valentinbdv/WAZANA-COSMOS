@@ -41,7 +41,6 @@ export class Player extends StarFighter {
     absorbing: string;
     absorbed: string;
     realVelocity: number = 1;
-    accelerating: boolean;
 
     gravityGrid: GravityGrid;
     fixeAnimation: Animation;
@@ -68,6 +67,7 @@ export class Player extends StarFighter {
 
     category: StarCategory;
     setCategory(category: StarCategory, withPlanets: boolean) {
+        if (this.category == category) return;
         this.category = category;
         this.setVelocity(category.velocity);
         this.setTemperature(category.temperature);
@@ -76,7 +76,7 @@ export class Player extends StarFighter {
         this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField);
         this.removeAllPlanets();
         if (withPlanets) {
-            for (let i = 0; i < category.planets + 1; i++) {
+            for (let i = 0; i < category.planets; i++) {
                 this.addPlanet();
             }
         }

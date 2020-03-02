@@ -59,7 +59,7 @@ export class GameEngine {
 
         this.tileMap.setPlayerToFollow(this.realPlayer);
         
-        this.system.setSky(1);
+        this.system.setSky(0);
         this.system.launchRender();
 
         this.introUI = new IntroUI(this.system, this.realPlayer);
@@ -74,7 +74,7 @@ export class GameEngine {
     }
 
     stopGame() {
-        this.introUI.show();
+        this.introUI.showAnim();
         this.playUI.hide();
         this.tileMap.checkPlayerAndRessources(false);
         this.localMap.eraseAllIas();
@@ -84,7 +84,7 @@ export class GameEngine {
 
     startGame() {
         this.system.checkActiveMeshes();
-        this.introUI.hide();
+        this.introUI.hideAnim();
         this.playUI.show();
 
         this.realPlayer.setMoving(true);

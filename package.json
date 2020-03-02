@@ -1,7 +1,6 @@
 {
-  "name": "wazana-game",
-  "description": "Strategy online game",
-  "repository": "https://gitlab.com/PichouPichou/WAZANA.git",
+  "name": "cosmos-game",
+  "description": "Cosmos fight",
   "license": "UNLICENSED",
   "scripts": {
     "clean": "rm -rf dist",
