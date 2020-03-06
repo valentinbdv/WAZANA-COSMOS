@@ -67,7 +67,7 @@ export class GravityGrid {
         this.gridMaterial.mainColor = new Color3(0.8, 1, 0.8);
         this.gridMaterial.gridRatio = this.gridSize;
         this.gridMaterial.majorUnitFrequency = this.gridSize;
-        this.gridMaterial.minorUnitVisibility = 0.1;
+        this.gridMaterial.minorUnitVisibility = 0.2;
 
         // Force opacity != 1 to have no main color on grid
         this.gridMaterial.opacity = 0.1;

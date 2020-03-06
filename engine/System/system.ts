@@ -4,7 +4,8 @@ import { AnimationManager } from './animation';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { Scene } from '@babylonjs/core/scene';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
-import { Color3, Vector3 } from '@babylonjs/core/Maths/math';
+import { Color3, Color4, Vector3 } from '@babylonjs/core/Maths/math';
+import { Camera } from '@babylonjs/core/Cameras/camera';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -71,16 +72,11 @@ export class System {
         });
     }
 
-    addControl() {
-        this.camera.attachControl(this.canvas);
-    }
-
     size = 300;
     buildScene() {
         this.scene = new Scene(this.engine);
-        // this.scene.shadowsEnabled = false;
         this.scene.ambientColor = new Color3(0.0, 0.0, 0.0);
-        // this.scene.clearColor = new Color4(0.0, 0.0, 0.0, 0.0);
+        this.scene.clearColor = new Color4(0.0, 0.0, 0.0, 0.0);
         this.scene.autoClear = false; // Color buffer
         this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
         this.scene.blockfreeActiveMeshesAndRenderingGroups = true;
@@ -90,15 +86,27 @@ export class System {
         // Can't blockMaterialDirtyMechanism because of PBR
         // this.scene.blockMaterialDirtyMechanism = true;
         // this.scene.setRenderingAutoClearDepthStencil(renderingGroupIdx, autoClear, depth, stencil);
-
-        this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 10, Vector3.Zero(), this.scene);
-        this.camera.setTarget(Vector3.Zero());
-
+        this.setCamera();
+        
         setInterval(() => {
             let fps = this.engine.getFps();
             if (fps < 50) this.setLimitFPS(true);
             else this.setLimitFPS(false);
         }, 1000);
+    }
+    
+    setCamera() {
+        this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 10, Vector3.Zero(), this.scene);
+        this.camera.setTarget(Vector3.Zero());
+        this.camera.attachControl(this.canvas);
+        this.camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
+
+        let aspect = this.scene.getEngine().getAspectRatio(this.camera);
+        let ortho = 25;
+        this.camera.orthoTop = ortho;
+        this.camera.orthoBottom = -ortho;
+        this.camera.orthoLeft = -ortho * aspect;
+        this.camera.orthoRight = ortho * aspect;
     }
 
     /**

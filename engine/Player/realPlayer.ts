@@ -53,6 +53,13 @@ export class RealPlayer extends Player {
             let newRadius = Math.max(this.size * 50, 50);
             let change = newRadius - this.system.camera.radius;
             this.system.camera.radius += change/100;
+
+            // let aspect = this.system.scene.getEngine().getAspectRatio(this.system.camera);
+            // let ortho = newRadius * 0.4;
+            // this.system.camera.orthoTop = ortho;
+            // this.system.camera.orthoBottom = -ortho;
+            // this.system.camera.orthoLeft = -ortho * aspect;
+            // this.system.camera.orthoRight = ortho * aspect;
         });
     }
 

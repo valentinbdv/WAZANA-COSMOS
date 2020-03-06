@@ -11,7 +11,6 @@ import { LocalMap } from './Map/localMap';
 import { TileMap } from './Map/tileMap';
 
 // Pouvoir utiliser les flèches plutôt que la souris
-// Minimap
 // Fade in et clignote dust / planet
 // Gravité impacte autre étoile et de plus en plus de particle
 
@@ -62,7 +61,8 @@ export class GameEngine {
         this.system.setSky(0);
         this.system.launchRender();
 
-        this.introUI = new IntroUI(this.system, this.realPlayer);
+        this.playUI = new PlayUI(this.system, this.realPlayer, this.tileMap);
+        this.introUI = new IntroUI(this.system, this.realPlayer, this.playUI);
         this.introUI.onStart = (mode: 'local' | 'online') => {
             if (mode == 'online') this.joinGameServer();
             else this.joinGameLocal();
@@ -70,12 +70,12 @@ export class GameEngine {
 
         this.system.scene.freezeActiveMeshes();
         
-        this.playUI = new PlayUI(this.system, this.realPlayer, this.tileMap);
     }
 
     stopGame() {
-        this.introUI.showAnim();
-        this.playUI.hide();
+        this.playUI.hideAnim(() => {
+            this.introUI.showAnim();
+        });
         this.tileMap.checkPlayerAndRessources(false);
         this.localMap.eraseAllIas();
         this.tileMap.eraseAllEntity();
@@ -84,8 +84,9 @@ export class GameEngine {
 
     startGame() {
         this.system.checkActiveMeshes();
-        this.introUI.hideAnim();
-        this.playUI.show();
+        this.introUI.hideAnim(() => {
+            this.playUI.showAnim();
+        });
 
         this.realPlayer.setMoving(true);
         this.realPlayer.removeAllPlanets();
