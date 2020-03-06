@@ -106,10 +106,20 @@ export class SystemAsset extends System {
     loadCheck: Animation;
     sceneTexture: CubeTexture;
     skyDesignOrder = [5, 3, 1, 2, 4, 6];
+    skyColor: Color3;
+    skyColors = {
+        5: new Color3(21 / 255, 16 / 255, 52 / 255), 
+        3: new Color3(22 / 255, 18 / 255, 31 / 255), 
+        1: new Color3(8 / 255, 30 / 255, 30 / 255), 
+        2: new Color3(27 / 255, 35 / 255, 24 / 255), 
+        4: new Color3(47 / 255, 37 / 255, 18 / 255), 
+        6: new Color3(39 / 255, 28 / 255, 41 / 255)
+    };
     skyDesign = 0;
     setSky(design: number) {
         let asseturl = 'https://asset.wazana.io/';
         this.skyDesign = this.skyDesignOrder[design];
+        this.skyColor = this.skyColors[this.skyDesign];
         let mapcolor = 'mapcolor' + this.skyDesign.toString();
         
         this.sceneTexture = CubeTexture.CreateFromPrefilteredData(asseturl + 'dds/' + mapcolor + '.dds', this.scene);

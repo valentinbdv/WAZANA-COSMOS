@@ -10,9 +10,15 @@ export class ui_group extends ui {
     textnodes: Array<ui_text> = [];
     stylenodes: Array < ui_anim > = [];
 
-    constructor(system: SystemUI) {
+    constructor(system: SystemUI, container?: Control) {
         super(system);
-        this.createContainer(system.advancedTexture);
+        if (container) {
+            this.texture = system.advancedTexture;
+            this.container = container;
+            this.texture.addControl(this.container);
+        } else {
+            this.createContainer(system.advancedTexture);
+        }
     }
 
     addText(text: string, pos: position, style: style) {
@@ -217,9 +223,9 @@ export class ui_group extends ui {
 
 export class ui_panel extends ui_group {
 
-    constructor(system: SystemUI, scpos: screenposition, size: size) {
-        super(system);
-        this.container = new StackPanel('');
+    constructor(system: SystemUI, scpos: screenposition, size: size, container?: Control) {
+        super(system, container);
+        if (!container) this.container = new StackPanel('');
         system.advancedTexture.addControl(this.container);
         this.setScreenPosition(scpos);
 
@@ -230,8 +236,8 @@ export class ui_panel extends ui_group {
 
 export class ui_control extends ui_group {
 
-    constructor(system: SystemUI, scpos: position, size: size, style ? : style) {
-        super(system);
+    constructor(system: SystemUI, scpos: position, size: size, style?: style, container?: Control) {
+        super(system, container);
         this.createContainer(system.advancedTexture);
         // this.container = new Rectangle("");
         // advancedTexture.addControl(this.container);

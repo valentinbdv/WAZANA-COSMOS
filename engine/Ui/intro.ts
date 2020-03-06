@@ -7,6 +7,7 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 import { ui_arrow, ui_button } from './effect';
 import { ui_text, ui_back } from './node';
 import { colormain } from './color';
+import { MinimapUI } from './minimap';
 
 import { IEasingFunction, EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
@@ -16,11 +17,13 @@ export class IntroUI {
     showAnimation: Animation;
     categoryAnimation: Animation;
     realPlayer: RealPlayer;
+    minimap: MinimapUI;
     curve: IEasingFunction;
 
-    constructor(system: SystemUI, realPlayer: RealPlayer) {
+    constructor(system: SystemUI, realPlayer: RealPlayer, minimap: MinimapUI) {
         this.system = system;
         this.realPlayer = realPlayer;
+        this.minimap = minimap;
         this.showAnimation = new Animation(system.animationManager);
         this.categoryAnimation = new Animation(system.animationManager);
         this.curve = new CircleEase();
@@ -36,18 +39,18 @@ export class IntroUI {
         }, 2000);
     }
 
-    starUI: ui_group;
+    starLayout: ui_group;
     starNumber = 0;
     starText: ui_text;
     starTitle: ui_text;
     starArrowLeft: ui_arrow;
     starArrowRight: ui_arrow;
     addStarChoice() {
-        this.starUI = new ui_control(this.system, {x: 0, y: 0}, { width: 300, height: 200 }, { zIndex: 100 });
-        this.starTitle = this.starUI.addText('Select your Sun', { x: 0, y: -60 }, { fontSize: 25, color: colormain });
-        this.starText = this.starUI.addText(StarCategories[0].name, { x: 0, y: 60 }, { fontSize: 25, color: colormain });
-        this.starArrowRight = this.starUI.addArrow({ x: 100, y: 0 }, { orientation: 'right' });
-        this.starArrowLeft = this.starUI.addArrow({ x: -100, y: 0 }, { orientation: 'left' });
+        this.starLayout = new ui_control(this.system, {x: 0, y: 0}, { width: 300, height: 200 }, { zIndex: 100 });
+        this.starTitle = this.starLayout.addText('Select your Sun', { x: 0, y: -60 }, { fontSize: 25, color: colormain });
+        this.starText = this.starLayout.addText(StarCategories[0].name, { x: 0, y: 60 }, { fontSize: 25, color: colormain });
+        this.starArrowRight = this.starLayout.addArrow({ x: 100, y: 0 }, { orientation: 'right' });
+        this.starArrowLeft = this.starLayout.addArrow({ x: -100, y: 0 }, { orientation: 'left' });
         this.starArrowRight.setColor(colormain);
         this.starArrowLeft.setColor(colormain);
 
@@ -109,7 +112,7 @@ export class IntroUI {
         this.gravityBar = this.playerLayout.addBack({ x: 0, y: 30 }, { height: 15, width: 20, color: colormain, float: 'right' });
     }
 
-    nebulaUI: ui_group;
+    nebulaLayout: ui_group;
     nebulaNames = {3:'Orion', 1:'Eagle', 2:'Dumbbell', 4:'Trifid', 5:'Helix', 6:'Tarantula'};
     nebulaText: ui_text;
     nebulaNumber = 0;
@@ -117,12 +120,12 @@ export class IntroUI {
     nebulaArrowRight: ui_arrow;
     nebulaTop = -150;
     addNebulaChoice() {
-        this.nebulaUI = new ui_control(this.system, { x: 0, y: this.nebulaTop }, { width: 300, height: 200 }, { zIndex: 100 });
-        // this.nebulaUI.setScreenPosition({ left: 0, bottom: 0 });
-        let title = this.nebulaUI.addText('Select Nebula', { x: 0, y: -60 }, { fontSize: 25, color: colormain });
-        this.nebulaText = this.nebulaUI.addText('Eagle', { x: 0, y: 0 }, { fontSize: 25, color: colormain });
-        this.nebulaArrowRight = this.nebulaUI.addArrow({ x: 100, y: 0 }, { orientation: 'right' });
-        this.nebulaArrowLeft = this.nebulaUI.addArrow({ x: -100, y: 0 }, { orientation: 'left' });
+        this.nebulaLayout = new ui_control(this.system, { x: 0, y: this.nebulaTop }, { width: 300, height: 200 }, { zIndex: 100 });
+        // this.nebulaLayout.setScreenPosition({ left: 0, bottom: 0 });
+        let title = this.nebulaLayout.addText('Select Nebula', { x: 0, y: -60 }, { fontSize: 25, color: colormain });
+        this.nebulaText = this.nebulaLayout.addText('Eagle', { x: 0, y: 0 }, { fontSize: 25, color: colormain });
+        this.nebulaArrowRight = this.nebulaLayout.addArrow({ x: 100, y: 0 }, { orientation: 'right' });
+        this.nebulaArrowLeft = this.nebulaLayout.addArrow({ x: -100, y: 0 }, { orientation: 'left' });
         this.nebulaArrowRight.setColor(colormain);
         this.nebulaArrowLeft.setColor(colormain);
 
@@ -141,6 +144,7 @@ export class IntroUI {
 
     checkNebulaArrows() {
         this.system.setSky(this.nebulaNumber);
+        this.minimap.setBackGroundColor(this.system.skyColor);
         this.nebulaText.writeText(this.nebulaNames[this.system.skyDesign], 20);
         this.nebulaArrowLeft.show();
         this.nebulaArrowRight.show();
@@ -165,14 +169,15 @@ export class IntroUI {
         this.startLocal._setStyle({ zIndex: 100 });
     }
 
-    showAnim() {
+    showAnim(callback?: Function) {
         this.showAnimation.simple(50, (count, perc) => {
             this.setLayerChangeAnim(1 - perc);
         }, () => {
+            if (callback) callback();
             this.setLayerChangeAnim(0);
         });
-        this.starUI.showAll();
-        this.nebulaUI.showAll();
+        this.starLayout.showAll();
+        this.nebulaLayout.showAll();
         this.playerLayout.showAll();
         this.startOnline.hide();
         this.startLocal.show();
@@ -184,8 +189,8 @@ export class IntroUI {
 
     show() {
         this.setLayerChangeAnim(0);
-        this.starUI.showAll();
-        this.nebulaUI.showAll();
+        this.starLayout.showAll();
+        this.nebulaLayout.showAll();
         this.playerLayout.showAll();
         this.startOnline.hide();
         this.startLocal.show();
@@ -195,18 +200,19 @@ export class IntroUI {
         this.checkNebulaArrows();
     }
 
-    hideAnim() {
+    hideAnim(callback?: Function) {
         this.starTitle.hide();
         this.startLocal.hide();
         this.showAnimation.simple(50, (count, perc) => {
             this.setLayerChangeAnim(perc);
         }, () => {
             this.setLayerChangeAnim(1);
-            this.starUI.hideAll();
-            this.nebulaUI.hideAll();
+            this.starLayout.hideAll();
+            this.nebulaLayout.hideAll();
             this.playerLayout.hideAll();
             this.startOnline.hide();
             this.startLocal.hide();
+            if (callback) callback();
         });
     }
 
@@ -214,8 +220,8 @@ export class IntroUI {
         this.starTitle.hide();
         this.startLocal.hide();
         this.setLayerChangeAnim(1);
-        this.starUI.hideAll();
-        this.nebulaUI.hideAll();
+        this.starLayout.hideAll();
+        this.nebulaLayout.hideAll();
         this.playerLayout.hideAll();
         this.startOnline.hide();
         this.startLocal.hide();
@@ -225,11 +231,11 @@ export class IntroUI {
         let opacity = 1 - perc;
         
         let easePerc = this.curve.ease(perc);
-        this.starUI.setOpacity(opacity);
-        this.starUI.setPosition({ x: 0, y: easePerc * 50 });
+        this.starLayout.setOpacity(opacity);
+        this.starLayout.setPosition({ x: 0, y: easePerc * 50 });
 
-        this.nebulaUI.setOpacity(opacity);
-        this.nebulaUI.setPosition({ x: 0, y: this.nebulaTop - easePerc * 50 });
+        this.nebulaLayout.setOpacity(opacity);
+        this.nebulaLayout.setPosition({ x: 0, y: this.nebulaTop - easePerc * 50 });
 
         this.playerLayout.setOpacity(opacity);
         this.playerLayout.setPosition({ x: 0, y: this.playerTop + easePerc * 50 });

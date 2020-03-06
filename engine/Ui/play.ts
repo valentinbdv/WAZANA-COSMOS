@@ -1,67 +1,62 @@
 import { SystemUI } from '../System/systemUI'
 import { Animation } from '../System/animation'
-import { StarCategories } from '../Entity/star';
 import { minSize, Player } from '../Player/player';
 import { RealPlayer } from '../Player/realPlayer';
 import { ui_group, ui_control, ui_panel } from './group';
 import { ui_text } from './node';
 import { colormain } from './color';
 import { TileMap } from '../Map/tileMap';
+import { MinimapUI } from './minimap';
 
 import orderBy from 'lodash/orderBy';
+import { IEasingFunction, EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
-export class PlayUI {
+export class PlayUI extends MinimapUI {
 
     system: SystemUI;
     animation: Animation;
     realPlayer: RealPlayer;
     tileMap: TileMap;
     fontSize = 18;
+    showAnimation: Animation;
+    curve: IEasingFunction;
 
     constructor(system: SystemUI, realPlayer: RealPlayer, tileMap: TileMap) {
+        super(system, realPlayer, tileMap);
         this.system = system;
         this.realPlayer = realPlayer;
         this.tileMap = tileMap;
+        this.showAnimation = new Animation(system.animationManager);
+        this.curve = new CircleEase();
 
         this.addPlayerStat();
         this.addPlayerList();
-        // this.addPlayerLayout();
         this.hide();
     }
 
-
-    statUI: ui_panel;
+    statLayout: ui_panel;
     sizeText: ui_text;
     rankText: ui_text;
     addPlayerStat() {
-        this.statUI = new ui_panel(this.system, { left: 10, bottom: 10 }, { width: 200, height: 50 });
-        this.sizeText = this.statUI.addText('Your size: 2', { x: 0, y: 0 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
-        this.rankText = this.statUI.addText('Rank: 5/100', { x: 0, y: 30 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
+        this.statLayout = new ui_panel(this.system, { left: this.screenMargin, bottom: this.screenMargin }, { width: 200, height: 50 });
+        this.sizeText = this.statLayout.addText('Your size: 2', { x: 0, y: 0 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
+        this.rankText = this.statLayout.addText('Rank: 5/100', { x: 0, y: 30 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
     }
 
-    listUI: ui_group;
+    listLayout: ui_group;
     player1: ui_text;
     player2: ui_text;
     player3: ui_text;
     player4: ui_text;
     player5: ui_text;
     addPlayerList() {
-        this.listUI = new ui_panel(this.system, {top: 10, right: 10}, { width: 200, height: 200 });
-        let title = this.listUI.addText('Winners', { x: 0, y: -100 }, { fontSize: this.fontSize, color: colormain });
-        this.player1 = this.listUI.addText('', { x: 0, y: 60 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
-        this.player2 = this.listUI.addText('', { x: 0, y: 80 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
-        this.player3 = this.listUI.addText('', { x: 0, y: 100 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
-        this.player4 = this.listUI.addText('', { x: 0, y: 120 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
-        this.player5 = this.listUI.addText('', { x: 0, y: 140 }, { fontSize: this.fontSize, color: colormain, float:'left' });
-    }
-
-    playerLayout: ui_group;
-    planetText: ui_text;
-    velocityText: ui_text;
-    addPlayerLayout() {
-        this.playerLayout = new ui_control(this.system, { x: 0, y: 120 }, { width: 300, height: 100 });
-        this.planetText = this.playerLayout.addText('', { x: 0, y: -15 }, { fontSize: this.fontSize, color: colormain });
-        this.velocityText = this.playerLayout.addText('', { x: 0, y: 15 }, { fontSize: this.fontSize, color: colormain });
+        this.listLayout = new ui_panel(this.system, {top: this.screenMargin, right: this.screenMargin}, { width: 200, height: 200 });
+        let title = this.listLayout.addText('Winners', { x: 0, y: -100 }, { fontSize: this.fontSize, color: colormain });
+        this.player1 = this.listLayout.addText('', { x: 0, y: 60 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
+        this.player2 = this.listLayout.addText('', { x: 0, y: 80 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
+        this.player3 = this.listLayout.addText('', { x: 0, y: 100 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
+        this.player4 = this.listLayout.addText('', { x: 0, y: 120 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
+        this.player5 = this.listLayout.addText('', { x: 0, y: 140 }, { fontSize: this.fontSize, color: colormain, float:'left' });
     }
 
     getRanks(): Array<Player> {
@@ -91,18 +86,65 @@ export class PlayUI {
 
     checkInterval;
     show() {
-        this.listUI.show();
-        this.statUI.show();
-        // this.playerLayout.show();
+        this.listLayout.show();
+        this.statLayout.show();
+        this.minimapLayout.show();
+        this.setRealPlayerIcon();
         this.checkInterval = setInterval(() => {
             this.checkRanks();
-        }, 200);
+            this.checkMap();
+        }, 50);
+    }
+
+
+    hideAnim(callback?: Function) {
+        // Need to clearnterval first to prevent bug
+        if (this.checkInterval) clearInterval(this.checkInterval);
+        this.setLayerChangeAnim(0);
+        this.showAnimation.simple(50, (count, perc) => {
+            this.setLayerChangeAnim(perc);
+        }, () => {
+            this.setLayerChangeAnim(1);
+            this.minimapLayout.hideAll();
+            this.statLayout.hideAll();
+            this.listLayout.hideAll();
+            this.hide();
+            if (callback) callback();
+        });
     }
 
     hide() {
         if (this.checkInterval) clearInterval(this.checkInterval);
-        this.listUI.hide();
-        this.statUI.hide();
-        // this.playerLayout.hide();
+        this.listLayout.hide();
+        this.statLayout.hide();
+        this.minimapLayout.hide();
     }
+
+    showAnim(callback?: Function) {
+        this.setLayerChangeAnim(1);
+        this.show();
+        this.showAnimation.simple(50, (count, perc) => {
+            this.setLayerChangeAnim(1 - perc);
+        }, () => {
+            if (callback) callback();
+            this.setLayerChangeAnim(0);
+        });
+        this.minimapLayout.showAll();
+        this.statLayout.showAll();
+        this.listLayout.showAll();
+    }
+
+    setLayerChangeAnim(perc) {
+        let opacity = 1 - perc;
+        let easePerc = this.curve.ease(perc);
+        this.minimapLayout.setOpacity(opacity);
+        this.minimapLayout.setScreenPosition({ right: easePerc * 100 + this.screenMargin, bottom: this.screenMargin });
+
+        this.statLayout.setOpacity(opacity);
+        this.statLayout.setScreenPosition({ left: easePerc * 100 + this.screenMargin, bottom: this.screenMargin });
+
+        this.listLayout.setOpacity(opacity);
+        this.listLayout.setScreenPosition({ right: easePerc * 100 + this.screenMargin, top: this.screenMargin });
+    }
+
 }
