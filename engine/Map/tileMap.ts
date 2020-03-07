@@ -7,6 +7,7 @@ import { BlackHole, BlackHoleInterface } from '../Entity/blackHole';
 import { StarInterface } from '../Entity/star';
 
 import { IEasingFunction } from '@babylonjs/core/Animations/easing';
+import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import remove from 'lodash/remove';
 import filter from 'lodash/filter';
@@ -36,6 +37,7 @@ export class TileMap {
             if (frame > 10 && this.check) {
                 this.checkPlayersDust();
                 this.checkDustMap();
+                this.checkUpperDustMap();
                 frame = 0;
             }
             frame++;
@@ -43,6 +45,7 @@ export class TileMap {
 
         this.createAllDusts();
         this.createAllPlanets();
+        this.createAllUpperDusts();
     }
 
     check = false;
@@ -212,6 +215,23 @@ export class TileMap {
         this.dusts = [];
     }
 
+    ////////// UPPER DUST
+
+    upperDustNumbers = 200;
+    upperDusts: Array<InstancedMesh> = [];
+    upDist = 100;
+    createAllUpperDusts() {
+        for (let i = 0; i < this.upperDustNumbers; i++) {
+            let upperDust = this.system.upperDustMesh.createInstance('');
+            upperDust.alwaysSelectAsActiveMesh = true;
+            upperDust.doNotSyncBoundingInfo = true;
+            upperDust.position.x = (Math.random() - 0.5) * this.upDist;
+            upperDust.position.z = (Math.random() - 0.5) * this.upDist;
+            upperDust.position.y = (Math.random() - 0.5) * 20 + 20;
+            this.upperDusts.push(upperDust);
+        }
+    }
+
     /////////// CHECK FUNCTIONS 
     dustDensity = 100;
     sizeDustRatio = 5;
@@ -234,6 +254,19 @@ export class TileMap {
                 let pos = this.getNewDustRandomPosition();
                 newDust.setPosition(pos);
             }
+        }
+    }
+
+    checkUpperDustMap() {
+        let c = this.playerToFollow.position;
+        let checkDist = this.upDist/2;
+        for (let i = 0; i < this.upperDusts.length; i++) {
+            const upperDust = this.upperDusts[i];
+            let p = upperDust.position;
+            if (p.x > c.x + checkDist) p.x -= checkDist * 2;
+            if (p.x < c.x - checkDist) p.x += checkDist * 2;
+            if (p.z > c.y + checkDist) p.z -= checkDist * 2;
+            if (p.z < c.y - checkDist) p.z += checkDist * 2;
         }
     }
 

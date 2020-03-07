@@ -68,6 +68,7 @@ export class SystemAsset extends System {
         // this.addGlow();
         // this.addSky();
         this.addDustMesh();
+        this.addUpperDustMesh();
         this.addPlanetMesh();
         this.addRibbonMaterial();
         // this.addLight();
@@ -132,7 +133,7 @@ export class SystemAsset extends System {
                 // this.skyboxMaterial.reflectionTexture.level = 0.2;
                 // this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
                 this.ribbonMaterial.reflectionTexture = this.sceneTexture.clone();
-                this.ribbonMaterial.reflectionTexture.level = 0.2;
+                this.ribbonMaterial.reflectionTexture.level = 0.1;
                 this.sendToSkyChangeListeners();
             }
         });
@@ -191,11 +192,11 @@ export class SystemAsset extends System {
     }
 
     dustMesh: Mesh;
+    dustMaterial: StandardMaterial;
     dustMesh1: Mesh;
     dustMesh2: Mesh;
     dustMesh3: Mesh;
     dustMesh4: Mesh;
-    dustMaterial: StandardMaterial;
     addDustMesh() {
         this.dustMaterial = this.getNewDustMaterial();
         this.dustMaterial.emissiveColor = new Color3(1, 1, 0);
@@ -205,6 +206,16 @@ export class SystemAsset extends System {
         // this.addDust2();
         // this.addDust3();
         // this.addDust4();
+    }
+
+    upperDustMesh: Mesh;
+    upperDustMaterial: StandardMaterial;
+    addUpperDustMesh() {
+        this.upperDustMaterial = this.getNewDustMaterial();
+        this.upperDustMaterial.emissiveColor = new Color3(1, 1, 1);
+        this.upperDustMesh = this.getNewDust();
+        this.upperDustMesh.material = this.upperDustMaterial;
+        this.upperDustMesh.scaling = new Vector3(0.08, 0.08, 0.08);
     }
     
     getNewDust(): Mesh {

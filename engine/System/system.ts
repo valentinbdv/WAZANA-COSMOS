@@ -61,6 +61,7 @@ export class System {
         // let engineOption = { limitDeviceRatio: this.maxScaling, preserveDrawingBuffer: true, stencil: true };
         let engineOption = {  };
         this.engine = new Engine(this.canvas, true, engineOption, false);
+        // this.engine.setHardwareScalingLevel(0.5);
         // NOTE to avoid request for manifest files because it can block loading on safari
         this.engine.enableOfflineSupport = false;
 
@@ -97,16 +98,17 @@ export class System {
     
     setCamera() {
         this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 10, Vector3.Zero(), this.scene);
+        this.camera.minZ = 0;
         this.camera.setTarget(Vector3.Zero());
         this.camera.attachControl(this.canvas);
-        this.camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
-
-        let aspect = this.scene.getEngine().getAspectRatio(this.camera);
-        let ortho = 25;
-        this.camera.orthoTop = ortho;
-        this.camera.orthoBottom = -ortho;
-        this.camera.orthoLeft = -ortho * aspect;
-        this.camera.orthoRight = ortho * aspect;
+        
+        // this.camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
+        // let aspect = this.scene.getEngine().getAspectRatio(this.camera);
+        // let ortho = 25;
+        // this.camera.orthoTop = ortho;
+        // this.camera.orthoBottom = -ortho;
+        // this.camera.orthoLeft = -ortho * aspect;
+        // this.camera.orthoRight = ortho * aspect;
     }
 
     /**

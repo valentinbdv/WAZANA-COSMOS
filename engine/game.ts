@@ -69,7 +69,6 @@ export class GameEngine {
         };
 
         this.system.scene.freezeActiveMeshes();
-        
     }
 
     stopGame() {
