@@ -217,7 +217,7 @@ export class TileMap {
 
     ////////// UPPER DUST
 
-    upperDustNumbers = 200;
+    upperDustNumbers = 50;
     upperDusts: Array<InstancedMesh> = [];
     upDist = 100;
     createAllUpperDusts() {
@@ -227,7 +227,7 @@ export class TileMap {
             upperDust.doNotSyncBoundingInfo = true;
             upperDust.position.x = (Math.random() - 0.5) * this.upDist;
             upperDust.position.z = (Math.random() - 0.5) * this.upDist;
-            upperDust.position.y = (Math.random() - 0.5) * 20 + 20;
+            upperDust.position.y = (Math.random() - 0.5) * 15 + 25;
             this.upperDusts.push(upperDust);
         }
     }

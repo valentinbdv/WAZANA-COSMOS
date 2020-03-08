@@ -1,23 +1,23 @@
-
-import { Animation } from './animation';
-
 import '@babylonjs/core/Animations/animatable';
+import '@babylonjs/core/Materials/standardMaterial';
+import '@babylonjs/core/Misc/dds';
+import '@babylonjs/core/Materials/Textures/Loaders/ddsTextureLoader';
 
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Color3, Matrix, Vector3 } from '@babylonjs/core/Maths/math';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
-import '@babylonjs/core/Materials/standardMaterial';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { CubeTexture } from '@babylonjs/core/Materials/Textures/cubetexture';
-import '@babylonjs/core/Misc/dds';
-import '@babylonjs/core/Materials/Textures/Loaders/ddsTextureLoader';
 import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
-
-import dustTexture from '../../asset/circle_05.png';
-import remove from 'lodash/remove';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
+
+import absorbTexture from '../../asset/star_08.png';
+import explodeTexture from '../../asset/smoke_04.png';
+import remove from 'lodash/remove';
+
+import { Animation } from './animation';
 import { PearlMesh } from '../Entity/pearlMesh';
 import { System } from './system';
 
@@ -56,7 +56,8 @@ export class SystemAsset extends System {
      */
     skyboxMaterial: PBRMaterial;
 
-    dustTexture: Texture;
+    absorbTexture: Texture;
+    explodeTexture: Texture;
 
     /**
      * Creates a new System
@@ -72,7 +73,8 @@ export class SystemAsset extends System {
         this.addPlanetMesh();
         this.addRibbonMaterial();
         // this.addLight();
-        this.dustTexture = new Texture(dustTexture, this.scene);
+        this.absorbTexture = new Texture(absorbTexture, this.scene);
+        this.explodeTexture = new Texture(explodeTexture, this.scene);
         this.loadCheck = new Animation(this.animationManager);
     }
 
@@ -130,7 +132,7 @@ export class SystemAsset extends System {
                 this.sceneTexture.gammaSpace = false;
                 this.scene.environmentTexture = this.sceneTexture;
                 // this.skyboxMaterial.reflectionTexture = this.sceneTexture.clone();
-                // this.skyboxMaterial.reflectionTexture.level = 0.2;
+                // this.skyboxMaterial.reflectionTexture.level = 0.1;
                 // this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
                 this.ribbonMaterial.reflectionTexture = this.sceneTexture.clone();
                 this.ribbonMaterial.reflectionTexture.level = 0.1;
@@ -215,7 +217,7 @@ export class SystemAsset extends System {
         this.upperDustMaterial.emissiveColor = new Color3(1, 1, 1);
         this.upperDustMesh = this.getNewDust();
         this.upperDustMesh.material = this.upperDustMaterial;
-        this.upperDustMesh.scaling = new Vector3(0.08, 0.08, 0.08);
+        this.upperDustMesh.scaling = new Vector3(0.06, 0.06, 0.06);
     }
     
     getNewDust(): Mesh {
@@ -280,7 +282,7 @@ export class SystemAsset extends System {
     ribbonMaterial: PBRMaterial;
     addRibbonMaterial() {
         this.ribbonMaterial = new PBRMaterial("ribbonMaterial", this.scene);
-        this.ribbonMaterial.roughness = 0.5;
+        this.ribbonMaterial.roughness = 0.3;
         this.ribbonMaterial.metallic = 1;
         this.ribbonMaterial.alpha = 1;
     }

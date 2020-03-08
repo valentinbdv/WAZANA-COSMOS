@@ -5,11 +5,15 @@ import { Animation } from '../System/animation';
 import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
 import { IEasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
+import { MovingEntity } from './movingEntity';
 
 export class StarFighter extends Star {
 
     diveAnimation: Animation;
     particleCurve: IEasingFunction;
+    target: StarFighter;
+    absorber: MovingEntity;
+    isDead = false;
 
     constructor(system: SystemAsset, starInterface: StarInterface) {
         super(system, starInterface);
@@ -33,6 +37,8 @@ export class StarFighter extends Star {
         // if (this.isDead) return;
         let newSize = Math.pow(this.size, 2) + change;
         this.setSize(newSize);
+        let sizeVector = new Vector3(this.size, this.size, this.size);
+        this.heart.scaling = sizeVector;
     }
 
     particle: ParticleSystem;
@@ -47,15 +53,15 @@ export class StarFighter extends Star {
         this.particle.maxEmitBox = new Vector3(0, 0, 0);
         this.particle.minLifeTime = 1;
         this.particle.maxLifeTime = 1;
-        this.particle.minSize = 0.5;
-        this.particle.maxSize = 0.5;
+        this.particle.minSize = 1;
+        this.particle.maxSize = 1;
 
         this.particle.limitVelocityDamping = 0.9;
 
         // Start rotation
         this.particle.minInitialRotation = -Math.PI / 2;
         this.particle.maxInitialRotation = Math.PI / 2;
-        this.particle.particleTexture = this.system.dustTexture;
+        this.particle.particleTexture = this.system.absorbTexture;
         this.particle.blendMode = ParticleSystem.BLENDMODE_MULTIPLYADD;
 
         this.particle.renderingGroupId = 2;
@@ -69,6 +75,9 @@ export class StarFighter extends Star {
     setAbsobUpdateFunction() {
         // Use direction to initialize random value
         this.particle.emitRate = 50;
+        this.particle.minSize = 0.8;
+        this.particle.maxSize = 0.8;
+        this.particle.particleTexture = this.system.absorbTexture;
         // this.particle.manualEmitCount = null;
         this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
             Vector3.TransformNormalFromFloatsToRef(Math.random(), Math.random(), Math.random(), worldMatrix, directionToUpdate);
@@ -89,7 +98,7 @@ export class StarFighter extends Star {
                     index--;
                     continue;
                 } else {
-                    let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age/1.5, particle.age/1.5, particle.age/1.5, 1.0));
+                    let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age / 1.5, particle.age / 1.5, particle.age / 1.5, 1.0));
                     particle.color = progresscolor.add(that.target.color);
 
                     let posprogress = that.particleCurve.ease(particle.age + particle.direction.y/100);
@@ -106,6 +115,7 @@ export class StarFighter extends Star {
     setGetAbsobUpdateFunction() {
         // Use direction to initialize random value
         this.particle.emitRate = 50;
+        this.particle.particleTexture = this.system.absorbTexture;
         // this.particle.manualEmitCount = null;
         this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
             Vector3.TransformNormalFromFloatsToRef(Math.random(), 0, Math.random(), worldMatrix, directionToUpdate);
@@ -142,6 +152,9 @@ export class StarFighter extends Star {
         // Use direction to initialize random value
         this.particle.emitRate = null;
         this.particle.manualEmitCount = 100;
+        this.particle.minSize = 2;
+        this.particle.maxSize = 2;
+        // this.particle.particleTexture = this.system.explodeTexture;
         this.particle.startPositionFunction = (worldMatrix: Matrix, startPosition: Vector3) => {
             Vector3.TransformNormalFromFloatsToRef(0, 0, 0, worldMatrix, startPosition);
         }
@@ -162,7 +175,7 @@ export class StarFighter extends Star {
                     index--;
                     continue;
                 } else {
-                    particle.color = new Color4(that.color.r, that.color.g, that.color.b, 1 - particle.age);
+                    particle.color = new Color4(that.color.r, that.color.g, that.color.b, 1 - Math.pow(particle.age, 1/2));
 
                     particle.position.x = that.position.x + Math.cos(particle.direction.x) * particle.age * 20;
                     particle.position.z = that.position.y + Math.sin(particle.direction.x) * particle.age * 20;
@@ -177,7 +190,7 @@ export class StarFighter extends Star {
     }
     _explode(callback?: Function) {
         this.system.checkMaterials();
-        this.updateSize(50 * this.size, 80, () => {
+        this.updateSize(100 * this.size, 80, () => {
             this.setReflectionLevel(1);
             this.updateSize(0.01, 30, () => {
                 this.hide();

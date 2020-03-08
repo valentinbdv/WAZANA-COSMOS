@@ -91,9 +91,7 @@ export class Player extends StarFighter {
         this.realVelocity = realVelocity;
     }
 
-    target: Player;
     absorbingInt;
-    isDead = false;
     absorbTarget(target: Player) {
         if (this.absorbing) return;
         this.absorbStop();
@@ -109,7 +107,6 @@ export class Player extends StarFighter {
         }, 100);
     }
 
-    absorber: MovingEntity;
     setAbsorber(absorber: MovingEntity) {
         this.absorber = absorber;
         let dist = Vector2.Distance(this.position, absorber.position);
@@ -154,7 +151,7 @@ export class Player extends StarFighter {
     move(step: Vector2) {
         if (step.y == 0) return;
         // step = Vector2.Maximize(step.multiplyInPlace(new Vector2(5, 5)), new Vector2(0.0001, 0.0001));
-        let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 30);
+        let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 50);
         let ratio = Math.abs(step.x / step.y);
         let maxX = Math.sqrt((Math.pow(max, 2) * ratio) / (ratio + 1));
         let maxY = Math.sqrt(Math.pow(max, 2) / (ratio + 1));
@@ -220,7 +217,7 @@ export class Player extends StarFighter {
         });
     }
 
-    launchAnimationLength = 50;
+    launchAnimationLength = 80;
     accelerate() {
         let planet = this.planets.pop();
         if (!planet || !this.moving) return;
