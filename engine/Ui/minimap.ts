@@ -8,6 +8,7 @@ import { colormain } from './color';
 import { TileMap } from '../Map/tileMap';
 
 import { Ellipse } from '@babylonjs/gui/2D/controls/ellipse';
+import { Line } from '@babylonjs/gui/2D/controls/line';
 import { Color4 } from '@babylonjs/core/Maths/math';
 
 export class MinimapUI {
@@ -24,6 +25,7 @@ export class MinimapUI {
         this.tileMap = tileMap;
 
         this.addContainer();
+        // this.addGridLines();
     }
 
     minimapLayout: ui_panel;
@@ -40,10 +42,26 @@ export class MinimapUI {
         this.minimapLayout = new ui_panel(this.system, { right: this.screenMargin, bottom: this.screenMargin }, { width: 200, height: 200 }, this.limit);
     }
 
-    addGridLine() {
-        for (let i = 0; i < 10; i++) {
-            
+    hLines: Array<Line> = [];
+    vLines: Array<Line> = [];
+    addGridLines() {
+        for (let i = 0; i < 1; i++) {
+            let line = this.getLine();
+            console.log(line);
+            this.hLines.push(line);
         }
+    }
+    
+    getLine(): Line {
+        let line = new Line();
+        line.lineWidth = 5;
+        line.x1 = -10;
+        line.y1 = 10;
+        line.x2 = 10;
+        line.y2 = -10;
+        line.color = 'rgba(255, 255, 255, 1)';
+        this.limit.addControl(line);
+        return line;
     }
 
     setBackGroundColor(color: Color4) {
@@ -100,7 +118,7 @@ export class MinimapUI {
         let pl = this.realPlayer;
         this.playersIcons[pl.key] = new ui_node(this.system);
         this.playersIcons[pl.key].container = this.createPlayerIcon(pl.color);
-        this.playersIcons[pl.key].container.width = (this.iconSize + 2) + 'px';
-        this.playersIcons[pl.key].container.height = (this.iconSize + 2) + 'px';
+        this.playersIcons[pl.key].container.width = (this.iconSize + 3) + 'px';
+        this.playersIcons[pl.key].container.height = (this.iconSize + 3) + 'px';
     }
 }
