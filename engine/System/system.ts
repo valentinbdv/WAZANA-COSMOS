@@ -100,7 +100,7 @@ export class System {
         this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 10, Vector3.Zero(), this.scene);
         this.camera.minZ = 0;
         this.camera.setTarget(Vector3.Zero());
-        this.camera.attachControl(this.canvas);
+        // this.camera.attachControl(this.canvas);
         
         // this.camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
         // let aspect = this.scene.getEngine().getAspectRatio(this.camera);

@@ -10,7 +10,6 @@ import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
 import { TileMap } from './Map/tileMap';
 
-// Pouvoir utiliser les flèches plutôt que la souris
 // Fade in et clignote dust / planet
 // Gravité impacte autre étoile et de plus en plus de particle
 

@@ -15,6 +15,7 @@ export class RealPlayer extends Player {
     constructor(system: SystemAsset, gravityGrid: GravityGrid, map: onlineMap) {
         super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.addMouseEvent();
+        this.addKeyEvent();
         this.addZoomCatcher();
         this.system.camera.parent = this.movingMesh;
         this.map = map;
@@ -26,19 +27,6 @@ export class RealPlayer extends Player {
         window.addEventListener('click', () => {
             if (this.moving) this.accelerate();
         });
-    }
-
-    addMouseEvent() {
-        let mouseCatcher = new MouseCatcher();
-
-        mouseCatcher.addListener((pos: Vector2, step: Vector2) => {
-            if (!this.moving) return;
-            if (!this.map.started) {
-                this.moveCatcher.catch(pos);
-            } else {
-                this.map.send({ destination: pos });
-            }
-        });
 
         setInterval(() => {
             if (this.moving) {
@@ -46,6 +34,49 @@ export class RealPlayer extends Player {
                 if (this.map.started) this.map.send({ position: this.position });
             }
         }, 500);
+    }
+
+    addMouseEvent() {
+        let mouseCatcher = new MouseCatcher();
+
+        mouseCatcher.addListener((pos: Vector2, step: Vector2) => {
+            this.sendMove(this.keyDirection);
+        });
+    }
+
+    keyDirection = new Vector2(0, 0);
+    keyMove = 10;
+    addKeyEvent() {
+        window.addEventListener("keydown", (evt) => {
+            if (evt.keyCode == 37) { // Left Arrow
+                this.keyDirection.y = -this.keyMove;
+            } else if (evt.keyCode == 38) { // Up Arrow
+                this.keyDirection.x = -this.keyMove;
+            } else if (evt.keyCode == 39) { // Right Arrow
+                this.keyDirection.y = this.keyMove;
+            } else if (evt.keyCode == 40) { // Down Arrow
+                this.keyDirection.x = this.keyMove;
+            }
+            this.sendMove(this.keyDirection);
+        });
+
+        window.addEventListener("keyup", (evt) => {
+            if (evt.keyCode == 37 || evt.keyCode == 39) { // Left Arrow
+                this.keyDirection.y = 0;
+            } else if (evt.keyCode == 38 || evt.keyCode == 40) { // Up Arrow
+                this.keyDirection.x = 0;
+            } 
+            this.sendMove(this.keyDirection);
+        });
+    }
+
+    sendMove(pos: Vector2) {
+        if (!this.moving) return;
+        if (!this.map.started) {
+            this.moveCatcher.catch(pos);
+        } else {
+            this.map.send({ destination: pos });
+        }
     }
 
     addZoomCatcher() {

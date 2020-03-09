@@ -100,6 +100,7 @@ export class StarFighter extends Star {
                 } else {
                     let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age / 1.5, particle.age / 1.5, particle.age / 1.5, 1.0));
                     particle.color = progresscolor.add(that.target.color);
+                    particle.color.a = Math.min(particle.age, Math.pow(1 - particle.age, 1/2)) * 2;
 
                     let posprogress = that.particleCurve.ease(particle.age + particle.direction.y/100);
                     let progressposition: Vector2 = changeposition.multiply(new Vector2(posprogress, posprogress));

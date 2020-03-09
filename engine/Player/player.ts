@@ -149,7 +149,7 @@ export class Player extends StarFighter {
     // }
     starVelocity: 0.03;
     move(step: Vector2) {
-        if (step.y == 0) return;
+        if (step.y == 0) step.y = 0.001;
         // step = Vector2.Maximize(step.multiplyInPlace(new Vector2(5, 5)), new Vector2(0.0001, 0.0001));
         let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 50);
         let ratio = Math.abs(step.x / step.y);
