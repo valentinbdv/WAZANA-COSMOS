@@ -2,14 +2,14 @@ import { SystemUI } from '../System/systemUI'
 import { Animation } from '../System/animation'
 import { minSize, Player } from '../Player/player';
 import { RealPlayer } from '../Player/realPlayer';
-import { ui_group, ui_control, ui_panel } from './group';
+import { ui_group, ui_panel } from './group';
 import { ui_text } from './node';
 import { colormain } from './color';
 import { TileMap } from '../Map/tileMap';
 import { MinimapUI } from './minimap';
 
 import orderBy from 'lodash/orderBy';
-import { IEasingFunction, EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
+import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
 export class PlayUI extends MinimapUI {
 
@@ -19,7 +19,7 @@ export class PlayUI extends MinimapUI {
     tileMap: TileMap;
     fontSize = 18;
     showAnimation: Animation;
-    curve: IEasingFunction;
+    curve: EasingFunction;
 
     constructor(system: SystemUI, realPlayer: RealPlayer, tileMap: TileMap) {
         super(system, realPlayer, tileMap);

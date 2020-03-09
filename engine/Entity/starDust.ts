@@ -4,7 +4,7 @@ import { Animation } from '../System/animation';
 
 import { Vector2, Vector3, Color3 } from '@babylonjs/core/Maths/math';
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
-import { IEasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
+import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 
 export interface StarDustInterface extends PositionEntityInterface {
     temperature: number,
@@ -13,7 +13,7 @@ export interface StarDustInterface extends PositionEntityInterface {
 export class StarDust extends PositionEntity {
 
     animation: Animation;
-    curve: IEasingFunction;
+    curve: EasingFunction;
 
     constructor(system: SystemAsset) {
         super('dust', system);

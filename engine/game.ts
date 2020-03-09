@@ -9,6 +9,7 @@ import { Player } from "./player/player";
 import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
 import { TileMap } from './Map/tileMap';
+import { BlackHole } from './Entity/blackHole';
 
 // Fade in et clignote dust / planet
 // Gravité impacte autre étoile et de plus en plus de particle
@@ -89,10 +90,12 @@ export class GameEngine {
         this.realPlayer.setMoving(true);
         this.realPlayer.removeAllPlanets();
 
-        // In order to test reset games
-        // setTimeout(() => {
-        //     this.stopGame();
-        // }, 5000);
+        // In order to test
+        setTimeout(() => {
+            // this.stopGame();
+            let blackHole = new BlackHole(this.system, this.gravityGrid, {position: {x:0, y:0}});
+        }, 5000);
+        
     }
     
     joinGameLocal() {

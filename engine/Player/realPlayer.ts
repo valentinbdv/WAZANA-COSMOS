@@ -40,7 +40,7 @@ export class RealPlayer extends Player {
         let mouseCatcher = new MouseCatcher();
 
         mouseCatcher.addListener((pos: Vector2, step: Vector2) => {
-            this.sendMove(this.keyDirection);
+            this.sendMove(pos);
         });
     }
 

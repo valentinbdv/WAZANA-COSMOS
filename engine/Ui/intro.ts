@@ -9,7 +9,7 @@ import { ui_text, ui_back } from './node';
 import { colormain } from './color';
 import { MinimapUI } from './minimap';
 
-import { IEasingFunction, EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
+import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
 export class IntroUI {
     
@@ -18,7 +18,7 @@ export class IntroUI {
     categoryAnimation: Animation;
     realPlayer: RealPlayer;
     minimap: MinimapUI;
-    curve: IEasingFunction;
+    curve: EasingFunction;
 
     constructor(system: SystemUI, realPlayer: RealPlayer, minimap: MinimapUI) {
         this.system = system;

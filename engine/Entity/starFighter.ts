@@ -3,14 +3,14 @@ import { Star, StarInterface } from './star';
 import { Animation } from '../System/animation';
 
 import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
-import { IEasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
+import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
 import { MovingEntity } from './movingEntity';
 
 export class StarFighter extends Star {
 
     diveAnimation: Animation;
-    particleCurve: IEasingFunction;
+    particleCurve: EasingFunction;
     target: StarFighter;
     absorber: MovingEntity;
     isDead = false;

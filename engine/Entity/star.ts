@@ -8,7 +8,7 @@ import { MeshBuilder } from '@babylonjs/core/Meshes/MeshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/Mesh';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
-import { IEasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/easing';
+import { EasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/easing';
 import { CubeTexture } from '@babylonjs/core/Materials/Textures/cubeTexture';
 import { Planet } from './planet';
 
@@ -66,7 +66,7 @@ export interface StarInterface extends MovingEntityInterface {
 export class Star extends MovingEntity {
 
     shineAnimation: Animation;
-    curve: IEasingFunction;
+    curve: EasingFunction;
 
     texture: string;
     number: number;

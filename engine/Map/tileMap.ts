@@ -6,7 +6,7 @@ import { Player } from '../player/player';
 import { BlackHole, BlackHoleInterface } from '../Entity/blackHole';
 import { StarInterface } from '../Entity/star';
 
-import { IEasingFunction } from '@babylonjs/core/Animations/easing';
+import { EasingFunction } from '@babylonjs/core/Animations/easing';
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import remove from 'lodash/remove';
@@ -22,7 +22,7 @@ export class TileMap {
 
     system: SystemAsset;
     gravityGrid: GravityGrid;
-    curve: IEasingFunction;
+    curve: EasingFunction;
 
     constructor(system: SystemAsset, gravityGrid: GravityGrid) {
         this.system = system;

@@ -6,7 +6,7 @@ import { StarFighter } from '../Entity/starFighter';
 import { StarCategory, StarInterface } from '../Entity/star';
 
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
-import { IEasingFunction, CubicEase, EasingFunction } from '@babylonjs/core/Animations/easing';
+import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { BlackHole } from '../Entity/blackHole';
 import { MovingEntity } from '../Entity/movingEntity';
 
@@ -45,8 +45,8 @@ export class Player extends StarFighter {
     gravityGrid: GravityGrid;
     fixeAnimation: Animation;
     accelerateAnimation: Animation;
-    fixeCurve: IEasingFunction;
-    particleCurve: IEasingFunction;
+    fixeCurve: EasingFunction;
+    particleCurve: EasingFunction;
     ia = false;
     dustField = true;
 
@@ -276,7 +276,7 @@ export class Player extends StarFighter {
         this.fixeAnimation.stop();
         this.secondLight.excludedMeshes = [];
         this.secondLight.includedOnlyMeshes = [];
-        this.gravityGrid.eraseStar(this.key);
+        this.gravityGrid.eraseMass(this.key);
     }
 
     // For IA
