@@ -58,8 +58,8 @@ export class LocalMap {
         // Check if not absorbed by hole
         let isBlackHole = find(this.tileMap.blackHoles, (b: BlackHole) => { return b.key == player.absorbed })
         if (!isBlackHole) {
-            // if (Math.random() > 0.5 && Object.keys(this.blackHoles).length < 10) this.createHole(player);
-            // this.createHole(player.position.clone());
+            // if (Math.random() > 0.5 && Object.keys(this.blackHoles).length < 10) this.createBlackHole(player);
+            // this.createBlackHole(player.position.clone());
         }
     }
 
@@ -74,7 +74,7 @@ export class LocalMap {
         for (const key in this.tileMap.blackHoles) {
             const blackHole: BlackHole = this.tileMap.blackHoles[key];
             let dist = Vector2.Distance(blackHole.position, player.position);
-            if (dist < blackHole.gravityField * 30) {
+            if (dist < (blackHole.gravityField * 10)) {
                 if (minDist > dist) {
                     minDist = dist;
                     blackHoleTest = blackHole.key;
@@ -83,11 +83,11 @@ export class LocalMap {
         }
 
         if (blackHoleTest) {
-            let blackHole = this.tileMap.blackHoles[blackHoleTest]
-            player.getAbsorbByTarget(blackHole);
-            let velocity = Math.pow((minDist / (blackHole.gravityField * 20)), 2);
-            player.setRealVelocity(velocity);
+            let blackHole: BlackHole = this.tileMap.blackHoles[blackHoleTest]
+            player.absorbByBlackHole(blackHole);
             return true;
+        } else {
+            if (player.blackHoleAbsorber) player.absorbStop();
         }
         return false;
     }
@@ -116,7 +116,6 @@ export class LocalMap {
             return true;
         } else {
             player.absorbStop();
-            if (player.target) player.target.stopBeingAbsorbed();
             if (player.ia) player.checkAction(closestTarget);
             return false;
         }

@@ -6,6 +6,7 @@ import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
 import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
 import { MovingEntity } from './movingEntity';
+import { BlackHoleDepth } from './blackHole';
 
 export class StarFighter extends Star {
 
@@ -113,9 +114,11 @@ export class StarFighter extends Star {
         }
     }
 
-    setGetAbsobUpdateFunction() {
+    setGetAbsobByBlackHoleFunction() {
         // Use direction to initialize random value
         this.particle.emitRate = 50;
+        this.particle.minSize = 0.5;
+        this.particle.maxSize = 0.5;
         this.particle.particleTexture = this.system.absorbTexture;
         // this.particle.manualEmitCount = null;
         this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
@@ -136,14 +139,15 @@ export class StarFighter extends Star {
                     index--;
                     continue;
                 } else {
-                    particle.color = new Color4(that.color.r, that.color.g, that.color.b, 1 - particle.age);
+                    particle.color = new Color4(that.color.r, that.color.g, that.color.b, 1);
+                    particle.color.a = Math.min(particle.age, Math.pow(1 - particle.age, 1 / 2)) * 50;
 
                     let progressposition: Vector2 = changeposition.multiply(new Vector2(particle.age, particle.age));
                     let pos: Vector2 = that.position.add(progressposition);
 
                     particle.position.x = pos.x + 2 * (particle.direction.x - 0.5) * (1 - particle.age);
                     particle.position.z = pos.y + 2 * (particle.direction.z - 0.5) * (1 - particle.age);
-                    particle.position.y = 1 - that.particleCurve.ease(particle.age) * 50;
+                    particle.position.y = -that.particleCurve.ease(particle.age/1.1) * BlackHoleDepth;
                 }
             }
         }
@@ -218,17 +222,17 @@ export class StarFighter extends Star {
 
     diveAnimationLength = 50;
     dive(position: Vector2, callback?: Function) {
-        this.particle.stop();
         let changeposition: Vector2 = position.subtract(this.position);
-        
         this.diveAnimation.simple(this.diveAnimationLength, (count, perc) => {
+            let easePerc = this.particleCurve.ease(perc);
             let progressposition: Vector2 = changeposition.multiply(new Vector2(perc, perc));
             let pos: Vector2 = this.position.add(progressposition);
 
             this.movingMesh.position.x = pos.x;
             this.movingMesh.position.z = pos.y;
-            this.movingMesh.position.y = 1 - this.particleCurve.ease(perc) * 50;
+            this.movingMesh.position.y = - easePerc * BlackHoleDepth;
         }, () => {
+            this.hide();
             if (callback) callback();
         });
     }

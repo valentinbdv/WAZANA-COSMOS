@@ -5,7 +5,7 @@ import { Player, startSize } from './player';
 import { onlineMap } from "../Map/onlineMap";
 
 import hotkeys from 'hotkeys-js';
-import { Vector2 } from '@babylonjs/core/Maths/math';
+import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
 
 export class RealPlayer extends Player {
 
@@ -17,7 +17,7 @@ export class RealPlayer extends Player {
         this.addMouseEvent();
         this.addKeyEvent();
         this.addZoomCatcher();
-        this.system.camera.parent = this.movingMesh;
+        this.fixeCamera(true);
         this.map = map;
 
         hotkeys('space', (event, param) => {
@@ -48,25 +48,27 @@ export class RealPlayer extends Player {
     keyMove = 10;
     addKeyEvent() {
         window.addEventListener("keydown", (evt) => {
-            if (evt.keyCode == 37) { // Left Arrow
+            let key = evt.keyCode;
+            if (key == 37) { // Left Arrow
                 this.keyDirection.y = -this.keyMove;
-            } else if (evt.keyCode == 38) { // Up Arrow
+            } else if (key == 38) { // Up Arrow
                 this.keyDirection.x = -this.keyMove;
-            } else if (evt.keyCode == 39) { // Right Arrow
+            } else if (key == 39) { // Right Arrow
                 this.keyDirection.y = this.keyMove;
-            } else if (evt.keyCode == 40) { // Down Arrow
+            } else if (key == 40) { // Down Arrow
                 this.keyDirection.x = this.keyMove;
             }
-            this.sendMove(this.keyDirection);
+            if (key == 37 || key == 38 || key == 39 || key == 40) this.sendMove(this.keyDirection);
         });
 
         window.addEventListener("keyup", (evt) => {
-            if (evt.keyCode == 37 || evt.keyCode == 39) { // Left Arrow
+            let key = evt.keyCode;
+            if (key == 37 || key == 39) { // Left Arrow
                 this.keyDirection.y = 0;
-            } else if (evt.keyCode == 38 || evt.keyCode == 40) { // Up Arrow
+            } else if (key == 38 || key == 40) { // Up Arrow
                 this.keyDirection.x = 0;
             } 
-            this.sendMove(this.keyDirection);
+            if (key == 37 || key == 38 || key == 39 || key == 40) this.sendMove(this.keyDirection);
         });
     }
 
@@ -81,27 +83,54 @@ export class RealPlayer extends Player {
 
     addZoomCatcher() {
         this.system.scene.registerBeforeRender(() => {
-            let newRadius = Math.max(this.size * 50, 50);
-            let change = newRadius - this.system.camera.radius;
-            this.system.camera.radius += change/100;
-
-            // let aspect = this.system.scene.getEngine().getAspectRatio(this.system.camera);
-            // let ortho = newRadius * 0.4;
-            // this.system.camera.orthoTop = ortho;
-            // this.system.camera.orthoBottom = -ortho;
-            // this.system.camera.orthoLeft = -ortho * aspect;
-            // this.system.camera.orthoRight = ortho * aspect;
+            if (!this.isDead) {
+                let newRadius = Math.max(this.size * 50, 50);
+                // newRadius = Math.min(newRadius, 2);
+                let change = newRadius - this.system.camera.radius;
+                this.system.camera.radius += change/100;
+                
+                // let aspect = this.system.scene.getEngine().getAspectRatio(this.system.camera);
+                // let ortho = newRadius * 0.4;
+                // this.system.camera.orthoTop = ortho;
+                // this.system.camera.orthoBottom = -ortho;
+                // this.system.camera.orthoLeft = -ortho * aspect;
+                // this.system.camera.orthoRight = ortho * aspect;
+            }
         });
     }
 
-    dispose() {
-        this.setPosition(Vector2.Zero());
-        this.setMoving(false);
+    fixeCamera(fixe: boolean) {
+        if (fixe) {
+            this.system.camera.setPosition(Vector3.Zero());
+            this.system.camera.setTarget(Vector3.Zero());
+            this.system.camera.alpha = 0;
+            this.system.camera.beta = Math.PI / 6;
+            this.system.camera.radius = 10;
+            this.system.camera.parent = this.movingMesh;
+        } else {
+            this.system.camera.parent = null;
+            let cameraPos = this.system.camera.getFrontPosition(0.01);
+            let absolutPos = this.movingMesh.absolutePosition.add(cameraPos);
+            this.system.camera.setPosition(absolutPos);
+            this.system.camera.setTarget(this.movingMesh.absolutePosition.clone());
+        }
+    }
+
+    restart() {
+        this.fixeCamera(true);
         this.setSize(startSize);
-        this.secondLight.excludedMeshes = [];
-        this.secondLight.includedOnlyMeshes = [];
         this.setCategory(this.category, true);
-        this.show();
+        this.setPosition(Vector2.Zero());
         this.system.checkActiveMeshes();
+        this.movingMesh.position.y = 0;
+        this.isDead = false;
+        this.show();
+        this.shine();
+    }
+
+    dispose() {
+        this.setMoving(false);
+        this.secondLight.excludedMeshes = [];
+        // this.secondLight.includedOnlyMeshes = [];
     }
 }

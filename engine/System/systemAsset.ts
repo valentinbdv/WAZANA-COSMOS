@@ -119,7 +119,7 @@ export class SystemAsset extends System {
         6: new Color3(39 / 255, 28 / 255, 41 / 255)
     };
     skyDesign = 0;
-    setSky(design: number) {
+    setSky(design: number, callback?: Function) {
         let asseturl = 'https://asset.wazana.io/';
         this.skyDesign = this.skyDesignOrder[design];
         this.skyColor = this.skyColors[this.skyDesign];
@@ -137,6 +137,7 @@ export class SystemAsset extends System {
                 this.ribbonMaterial.reflectionTexture = this.sceneTexture.clone();
                 this.ribbonMaterial.reflectionTexture.level = 0.1;
                 this.sendToSkyChangeListeners();
+                if (callback) callback();
             }
         });
     }
@@ -154,24 +155,23 @@ export class SystemAsset extends System {
         for (let i = 0; i < this.listeners.length; i++) {
             this.listeners[i](this.sceneTexture);
         }
-
     }
 
     unfreezeMaterials() {
-        for (let i = 0; i < this.scene.materials.length; i++) {
-            const material = this.scene.materials[i];
-            material.unfreeze();
-        }
+        // for (let i = 0; i < this.scene.materials.length; i++) {
+        //     const material = this.scene.materials[i];
+        //     material.unfreeze();
+        // }
         this.dustMaterial.unfreeze();
         this.planetMaterial.unfreeze();
         this.ribbonMaterial.unfreeze();
     }
 
     freezeMaterials() {
-        for (let i = 0; i < this.scene.materials.length; i++) {
-            const material = this.scene.materials[i];
-            material.freeze();
-        }
+        // for (let i = 0; i < this.scene.materials.length; i++) {
+        //     const material = this.scene.materials[i];
+        //     material.freeze();
+        // }
         this.dustMaterial.freeze();
         this.planetMaterial.freeze();
         this.ribbonMaterial.freeze();

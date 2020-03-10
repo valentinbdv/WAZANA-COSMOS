@@ -92,10 +92,8 @@ export class TileMap {
 
     ////////// BLACKHOLE
 
-    createBlackHole(blackHoleInterface: BlackHoleInterface) {
-        console.log('blackhole');
-        
-        let blackHole = new BlackHole(this.system, this.gravityGrid, blackHoleInterface);
+    createBlackHole(position: Vector2) {
+        let blackHole = new BlackHole(this.system, this.gravityGrid, position);
         this.addBlackHole(blackHole)
         return blackHole;
     }
@@ -116,7 +114,7 @@ export class TileMap {
 
     eraseAllBlackHoles() {
         for (const key in this.blackHoles) {
-            this.blackHoles[key].movingMesh.dispose();
+            this.blackHoles[key].dispose();
         }
         this.blackHoles = {};
     }

@@ -49,6 +49,7 @@ export class Player extends StarFighter {
     particleCurve: EasingFunction;
     ia = false;
     dustField = true;
+    target: Player;
 
     constructor(system: SystemAsset, gravityGrid: GravityGrid, playerInterface: StarInterface) {
         super(system, playerInterface);
@@ -114,28 +115,27 @@ export class Player extends StarFighter {
         this.setRealVelocity(velocity);
     }
 
-    getAbsorbByTarget(absorber: BlackHole) {
-        if (this.absorbing || !this.target) return;
+    blackHoleAbsorber: BlackHole;
+    absorbByBlackHole(absorber: BlackHole) {
+        if (this.blackHoleAbsorber) return;
         this.absorbStop();
+        this.blackHoleAbsorber = absorber;
+        this.absorbing = absorber.key;
         this.setAbsorber(absorber);
-        this.setGetAbsobUpdateFunction();
+        this.setGetAbsobByBlackHoleFunction();
         this.particle.start();
         this.system.checkActiveMeshes();
         this.absorbingInt = setInterval(() => {
-            this.changeSize(-0.2);
-        }, 500);
+            this.changeSize(-0.02);
+        }, 100);
     }
 
     absorbStop() {
-        if (!this.absorbing || !this.target) return;
+        if (!this.absorbing && !this.target) return;
         this.particle.stop();
         clearInterval(this.absorbingInt);
         this.absorbing = null;
-        this.absorber = null;
-    }
-
-    stopBeingAbsorbed() {
-        this.absorber = null;
+        this.blackHoleAbsorber = null;
         this.setRealVelocity(1);
     }
 
@@ -245,11 +245,10 @@ export class Player extends StarFighter {
     onDied: Function;
     die(callback?: Function) {
         this.removeAllPlanets();
-        if (this.absorber && this.absorber.prototype instanceof BlackHole) {
+        if (this.absorber && this.absorber instanceof BlackHole) {
             this.dive(this.absorber.position, () => {
                 this.dispose();
                 if (callback) callback();
-                if (this.onDied) this.onDied();
             });
         } else {
             this.explode(() => {
@@ -261,8 +260,8 @@ export class Player extends StarFighter {
         this.absorbStop();
         this.setMoving(false);
         this.isDead = true;
-        this.secondLight.excludedMeshes = [];
-        this.secondLight.includedOnlyMeshes = [this.gravityGrid.ribbon];
+        // this.secondLight.excludedMeshes = [];
+        // this.secondLight.includedOnlyMeshes = [this.gravityGrid.ribbon];
     }
     
     dispose() {
@@ -275,7 +274,7 @@ export class Player extends StarFighter {
         this.accelerateAnimation.stop();
         this.fixeAnimation.stop();
         this.secondLight.excludedMeshes = [];
-        this.secondLight.includedOnlyMeshes = [];
+        // this.secondLight.includedOnlyMeshes = [];
         this.gravityGrid.eraseMass(this.key);
     }
 

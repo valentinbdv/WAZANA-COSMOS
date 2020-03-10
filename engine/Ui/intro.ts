@@ -34,9 +34,6 @@ export class IntroUI {
         this.addStartButton();
 
         this.hide();
-        setTimeout(() => {
-            this.showAnim();
-        }, 2000);
     }
 
     starLayout: ui_group;
