@@ -62,7 +62,7 @@ export class StarFighter extends Star {
         // Start rotation
         this.particle.minInitialRotation = -Math.PI / 2;
         this.particle.maxInitialRotation = Math.PI / 2;
-        this.particle.particleTexture = this.system.absorbTexture;
+        this.particle.particleTexture = this.system.sparkleTexture;
         this.particle.blendMode = ParticleSystem.BLENDMODE_MULTIPLYADD;
 
         this.particle.renderingGroupId = 2;
@@ -78,7 +78,7 @@ export class StarFighter extends Star {
         this.particle.emitRate = 50;
         this.particle.minSize = 0.8;
         this.particle.maxSize = 0.8;
-        this.particle.particleTexture = this.system.absorbTexture;
+        this.particle.particleTexture = this.system.circleTexture;
         // this.particle.manualEmitCount = null;
         this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
             Vector3.TransformNormalFromFloatsToRef(Math.random(), Math.random(), Math.random(), worldMatrix, directionToUpdate);
@@ -119,7 +119,7 @@ export class StarFighter extends Star {
         this.particle.emitRate = 50;
         this.particle.minSize = 0.5;
         this.particle.maxSize = 0.5;
-        this.particle.particleTexture = this.system.absorbTexture;
+        this.particle.particleTexture = this.system.circleTexture;
         // this.particle.manualEmitCount = null;
         this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
             Vector3.TransformNormalFromFloatsToRef(Math.random(), 0, Math.random(), worldMatrix, directionToUpdate);
@@ -159,7 +159,7 @@ export class StarFighter extends Star {
         this.particle.manualEmitCount = 100;
         this.particle.minSize = 2;
         this.particle.maxSize = 2;
-        // this.particle.particleTexture = this.system.explodeTexture;
+        this.particle.particleTexture = this.system.sparkleTexture;
         this.particle.startPositionFunction = (worldMatrix: Matrix, startPosition: Vector3) => {
             Vector3.TransformNormalFromFloatsToRef(0, 0, 0, worldMatrix, startPosition);
         }

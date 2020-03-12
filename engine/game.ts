@@ -15,6 +15,15 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 // Gravité impacte autre étoile et de plus en plus de particle
 // Replace dds by env
 // Improve dive function to reproduce planet attraction effect
+// Minimap plus grande
+// Faire étoile filante plutôt que point blanc
+// Champs de gravité plus puissant
+// Plus d'adversaire
+// Voir passage à la taille suivante pour donner envie de manger des poussières et les autres
+// Tableau de récap à la fin
+// Text playUI plus gros
+// Flèche infini dans l'intro UI
+
 
 interface State {
     players: Array<Player>;

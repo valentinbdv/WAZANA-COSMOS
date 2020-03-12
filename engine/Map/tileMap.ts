@@ -226,8 +226,22 @@ export class TileMap {
             upperDust.position.x = (Math.random() - 0.5) * this.upDist;
             upperDust.position.z = (Math.random() - 0.5) * this.upDist;
             upperDust.position.y = (Math.random() - 0.5) * 15 + 25;
+            // upperDust.startPosition = upperDust.position.clone();
             this.upperDusts.push(upperDust);
         }
+
+        // Tried to make shooting stars
+        // let j = 0;
+        // this.system.scene.registerBeforeRender(() => {
+        //     for (let i = 0; i < this.upperDusts.length; i++) {
+        //         let upperDust = this.upperDusts[i];
+        //         upperDust.position.x = upperDust.startPosition.x + j * 1;
+        //         upperDust.position.z = upperDust.startPosition.z + j * 1;
+        //     }
+        //     j++;
+        //     if (j == 100) {console.log(0);
+        //      j = 0;}
+        // });
     }
 
     /////////// CHECK FUNCTIONS 

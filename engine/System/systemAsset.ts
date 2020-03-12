@@ -13,8 +13,9 @@ import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 
-import absorbTexture from '../../asset/star_08.png';
-import explodeTexture from '../../asset/smoke_04.png';
+import sparkleTexture from '../../asset/star_08.png';
+import smokeTexture from '../../asset/smoke_04.png';
+import circleTexture from '../../asset/circle_05.png';
 import remove from 'lodash/remove';
 
 import { Animation } from './animation';
@@ -56,8 +57,9 @@ export class SystemAsset extends System {
      */
     skyboxMaterial: PBRMaterial;
 
-    absorbTexture: Texture;
-    explodeTexture: Texture;
+    sparkleTexture: Texture;
+    smokeTexture: Texture;
+    circleTexture: Texture;
 
     /**
      * Creates a new System
@@ -73,8 +75,9 @@ export class SystemAsset extends System {
         this.addPlanetMesh();
         this.addRibbonMaterial();
         // this.addLight();
-        this.absorbTexture = new Texture(absorbTexture, this.scene);
-        this.explodeTexture = new Texture(explodeTexture, this.scene);
+        this.sparkleTexture = new Texture(sparkleTexture, this.scene);
+        this.smokeTexture = new Texture(smokeTexture, this.scene);
+        this.circleTexture = new Texture(circleTexture, this.scene);
         this.loadCheck = new Animation(this.animationManager);
     }
 
