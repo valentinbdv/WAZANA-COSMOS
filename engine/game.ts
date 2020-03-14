@@ -17,7 +17,9 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 // Fade in et clignote dust / planet
 // Tableau de récap à la fin
 // Etoile diminue toute seul si ne fais rien du à la combustion
-// Gérer drag and drop sur mobile
+// Keep inertia when stop moving, with keyboard for instance
+// Gérer clique pour accélérer sur mobile
+// Restart bug
 
 interface State {
     players: Array<Player>;

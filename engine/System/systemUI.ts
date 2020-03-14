@@ -24,5 +24,20 @@ export class SystemUI extends SystemAsset {
 
         this.advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this.scene);
         this.scene.hoverCursor = "pointer";
+
+
+        if (this.checkPlatform()) this.advancedTexture.scale(1.3);
+    }
+
+    isOnMobile = false;
+    checkPlatform() {
+        let isMobile = navigator.userAgent.toLowerCase().match(/mobile/i),
+            isTablet = navigator.userAgent.toLowerCase().match(/tablet/i),
+            isAndroid = navigator.userAgent.toLowerCase().match(/android/i),
+            isiPhone = navigator.userAgent.toLowerCase().match(/iphone/i),
+            isiPad = navigator.userAgent.toLowerCase().match(/ipad/i);
+        if (isMobile || isTablet || isAndroid || isiPhone || isiPad) this.isOnMobile = true;
+        else this.isOnMobile = false;
+        return this.isOnMobile;
     }
 }

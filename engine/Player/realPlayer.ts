@@ -1,5 +1,6 @@
 import { SystemAsset } from '../System/systemAsset';
 import { MouseCatcher } from './mouseCatcher';
+import { TouchCatcher } from './touchCatcher';
 import { GravityGrid } from '../System/GravityGrid';
 import { Player, startSize } from './player';
 import { onlineMap } from "../Map/onlineMap";
@@ -41,6 +42,11 @@ export class RealPlayer extends Player {
         let mouseCatcher = new MouseCatcher();
 
         mouseCatcher.addListener((pos: Vector2, step: Vector2) => {
+            this.sendMove(pos);
+        });
+
+        let touchCatcher = new TouchCatcher(window);
+        touchCatcher.addListener((pos: Vector2) => {
             this.sendMove(pos);
         });
     }

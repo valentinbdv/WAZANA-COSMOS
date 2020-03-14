@@ -55,8 +55,6 @@ export class MouseCatcher {
                 let pos = new Vector2(angles.y, angles.x);
 
                 pos.divideInPlace(this.divideVector);
-                let posMax = Vector2.Minimize(pos, this.deviceMaxVector);
-                let posMin = Vector2.Maximize(posMax, this.deviceMinVector);
                 this.sendToListener(pos);
             }
         }
