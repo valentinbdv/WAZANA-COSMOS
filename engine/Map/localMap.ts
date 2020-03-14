@@ -1,5 +1,5 @@
 import { Planet, PlanetInterface } from '../Entity/planet';
-import { Player, minSize } from '../player/player';
+import { Player, minSize, gravityRatio } from '../player/player';
 import { TileMap } from './tileMap';
 import { SystemAsset } from '../System/systemAsset';
 import { GravityGrid } from '../System/GravityGrid';
@@ -37,7 +37,7 @@ export class LocalMap {
         
         this.chekIaInterval = setInterval(()=> {
             if (this.tileMap.check) this.checkIaMap();
-        }, 10000);
+        }, 2000);
     }
 
     checkPlayersAbsorbtion() {
@@ -58,7 +58,7 @@ export class LocalMap {
         // Check if not absorbed by hole
         let isBlackHole = find(this.tileMap.blackHoles, (b: BlackHole) => { return b.key == player.absorbed })
         if (!isBlackHole) {
-            // if (Math.random() > 0.5 && Object.keys(this.blackHoles).length < 10) this.createBlackHole(player);
+            // if (Math.random() > 0.5 && Object.keys(this.blackHoles).length < gravityRatio) this.createBlackHole(player);
             // this.createBlackHole(player.position.clone());
         }
     }
@@ -74,7 +74,7 @@ export class LocalMap {
         for (const key in this.tileMap.blackHoles) {
             const blackHole: BlackHole = this.tileMap.blackHoles[key];
             let dist = Vector2.Distance(blackHole.position, player.position);
-            if (dist < (blackHole.gravityField * 10)) {
+            if (dist < (blackHole.gravityField * gravityRatio)) {
                 if (minDist > dist) {
                     minDist = dist;
                     blackHoleTest = blackHole.key;
@@ -102,7 +102,7 @@ export class LocalMap {
             if (minDist > dist && otherplayer.key != player.key && player.gravityField > otherplayer.gravityField) {
                 minDist = dist;
                 closestTarget = otherplayer;
-                if (dist < (player.gravityField * 10)) {
+                if (dist < (player.gravityField * gravityRatio)) {
                     testTarget = otherplayer.key;
                 }
             }
@@ -135,7 +135,7 @@ export class LocalMap {
             for (const key in this.tileMap.planets) {
                 const planet: Planet = this.tileMap.planets[key];
                 let dist = Vector2.Distance(planet.position, player.position);
-                if (dist < player.gravityField * 10) {
+                if (dist < player.gravityField * gravityRatio) {
                     player.addPlanet(planet);
                     planet.attachedToStar = true;
                     this.tileMap.storagePlanet(planet);
@@ -154,14 +154,14 @@ export class LocalMap {
         return newPlanet;
     }
 
-    iaNeeded = 5;
+    iaNeeded = 10;
     ias: Object = {};
     checkIaMap() {
         let newIaNeeded = Math.round(this.iaNeeded - Object.keys(this.ias).length);
         for (let i = 0; i < newIaNeeded; i++) {
             setTimeout(() => {
                 this.createIa();
-            }, i * 1000);
+            }, i * 100);
         }
     }
 

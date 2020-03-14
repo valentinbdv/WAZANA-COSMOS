@@ -245,6 +245,7 @@ export class TileMap {
     }
 
     /////////// CHECK FUNCTIONS 
+
     dustDensity = 100;
     sizeDustRatio = 5;
     checkDustMap() {
@@ -336,7 +337,7 @@ export class TileMap {
     moveDustToPlayer(player: Player, dust: StarDust) {
         this.removeDust(dust);
         dust.goToEntity(player, () => {
-            player.changeSize(dust.size / (player.size * 20));
+            player.changeSize(0.002 / (player.size));
             player.shine();
             this.storageDust(dust);
         });

@@ -52,26 +52,22 @@ export class IntroUI {
         this.starArrowLeft.setColor(colormain);
 
         this.starArrowRight.on('click', () => {
-            if (this.starNumber == StarCategories.length - 1) return;
             this.starNumber++;
-            this.checkStarArrows();
+            if (this.starNumber == StarCategories.length) this.starNumber = 0;
+            this.checkStarCategory();
         });
 
         this.starArrowLeft.on('click', () => {
-            if (this.starNumber == 0) return;
+            if (this.starNumber == 0) this.starNumber = StarCategories.length;
             this.starNumber--;
-            this.checkStarArrows();
+            this.checkStarCategory();
         });
     }
 
-    checkStarArrows() {
+    checkStarCategory() {
         let starCategory = StarCategories[this.starNumber];
         this.starText.writeText(starCategory.name)
         this.realPlayer.setCategory(starCategory, true);
-        this.starArrowLeft.show();
-        this.starArrowRight.show();
-        if (this.starNumber == 0) this.starArrowLeft.hide();
-        if (this.starNumber == StarCategories.length - 1) this.starArrowRight.hide();
         this.animateChange(starCategory);
     }
 
@@ -100,7 +96,7 @@ export class IntroUI {
     gravityText: ui_text;
     gravityBar: ui_back;
     addPlayerLayout() {
-        this.playerLayout = new ui_control(this.system, { x: 0, y: this.playerTop }, { width: 300, height: 100 }, { zIndex: 100 });
+        this.playerLayout = new ui_control(this.system, { x: 0, y: this.playerTop }, { width: 250, height: 100 }, { zIndex: 100 });
         this.planetText = this.playerLayout.addText('', { x: 0, y: -30 }, { fontSize: 20, color: colormain, float: 'left' });
         this.planetBar = this.playerLayout.addBack({ x: 0, y: -30 }, { height: 15, width: 20, color: colormain, float: 'right' });
         this.velocityText = this.playerLayout.addText('', { x: 0, y: 0 }, { fontSize: 20, color: colormain, float: 'left' });
@@ -127,26 +123,22 @@ export class IntroUI {
         this.nebulaArrowLeft.setColor(colormain);
 
         this.nebulaArrowRight.on('click', () => {
-            if (this.nebulaNumber == 5) return;
             this.nebulaNumber++;
-            this.checkNebulaArrows();
+            if (this.nebulaNumber == 6) this.nebulaNumber = 0;
+            this.checkNebula();
         });
 
         this.nebulaArrowLeft.on('click', () => {
-            if (this.nebulaNumber == 0) return;
+            if (this.nebulaNumber == 0) this.nebulaNumber = 6;
             this.nebulaNumber--;
-            this.checkNebulaArrows();
+            this.checkNebula();
         });
     }
 
-    checkNebulaArrows() {
+    checkNebula() {
         this.system.setSky(this.nebulaNumber);
         this.minimap.setBackGroundColor(this.system.skyColor);
         this.nebulaText.writeText(this.nebulaNames[this.system.skyDesign], 20);
-        this.nebulaArrowLeft.show();
-        this.nebulaArrowRight.show();
-        if (this.nebulaNumber == 0) this.nebulaArrowLeft.hide();
-        if (this.nebulaNumber == 5) this.nebulaArrowRight.hide();
     }
 
     startOnline: ui_button;
@@ -180,8 +172,8 @@ export class IntroUI {
         this.startLocal.show();
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));
-        this.checkNebulaArrows();
-        this.checkStarArrows();
+        this.checkNebula();
+        this.checkStarCategory();
     }
 
     show() {
@@ -193,8 +185,8 @@ export class IntroUI {
         this.startLocal.show();
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));
-        this.checkStarArrows();
-        this.checkNebulaArrows();
+        this.checkStarCategory();
+        this.checkNebula();
     }
 
     hideAnim(callback?: Function) {

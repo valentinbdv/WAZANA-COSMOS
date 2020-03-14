@@ -76,8 +76,8 @@ export class StarFighter extends Star {
     setAbsobUpdateFunction() {
         // Use direction to initialize random value
         this.particle.emitRate = 50;
-        this.particle.minSize = 0.8;
-        this.particle.maxSize = 0.8;
+        this.particle.minSize = 0.5;
+        this.particle.maxSize = 0.5;
         this.particle.particleTexture = this.system.circleTexture;
         // this.particle.manualEmitCount = null;
         this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {

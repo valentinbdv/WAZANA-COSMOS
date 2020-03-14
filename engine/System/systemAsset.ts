@@ -1,7 +1,6 @@
 import '@babylonjs/core/Animations/animatable';
 import '@babylonjs/core/Materials/standardMaterial';
-import '@babylonjs/core/Misc/dds';
-import '@babylonjs/core/Materials/Textures/Loaders/ddsTextureLoader';
+import '@babylonjs/core/Materials/Textures/Loaders/envTextureLoader';
 
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
@@ -18,7 +17,6 @@ import smokeTexture from '../../asset/smoke_04.png';
 import circleTexture from '../../asset/circle_05.png';
 import remove from 'lodash/remove';
 
-import { Animation } from './animation';
 import { PearlMesh } from '../Entity/pearlMesh';
 import { System } from './system';
 
@@ -78,7 +76,6 @@ export class SystemAsset extends System {
         this.sparkleTexture = new Texture(sparkleTexture, this.scene);
         this.smokeTexture = new Texture(smokeTexture, this.scene);
         this.circleTexture = new Texture(circleTexture, this.scene);
-        this.loadCheck = new Animation(this.animationManager);
     }
 
     addGlow() {
@@ -109,7 +106,6 @@ export class SystemAsset extends System {
         // });
     }
 
-    loadCheck: Animation;
     sceneTexture: CubeTexture;
     skyDesignOrder = [5, 3, 1, 2, 4, 6];
     skyColor: Color3;
@@ -128,20 +124,16 @@ export class SystemAsset extends System {
         this.skyColor = this.skyColors[this.skyDesign];
         let mapcolor = 'mapcolor' + this.skyDesign.toString();
         
-        this.sceneTexture = CubeTexture.CreateFromPrefilteredData(asseturl + 'dds/' + mapcolor + '.dds', this.scene);
-        this.loadCheck.infinite(() => {
-            if (this.sceneTexture.isReady()) {
-                this.loadCheck.stop();
-                this.sceneTexture.gammaSpace = false;
-                this.scene.environmentTexture = this.sceneTexture;
-                // this.skyboxMaterial.reflectionTexture = this.sceneTexture.clone();
-                // this.skyboxMaterial.reflectionTexture.level = 0.1;
-                // this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-                this.ribbonMaterial.reflectionTexture = this.sceneTexture.clone();
-                this.ribbonMaterial.reflectionTexture.level = 0.1;
-                this.sendToSkyChangeListeners();
-                if (callback) callback();
-            }
+        this.sceneTexture = new CubeTexture(asseturl + 'env/' + mapcolor + '.env', this.scene, null, false, null, () => {
+            // this.sceneTexture.gammaSpace = false;
+            this.scene.environmentTexture = this.sceneTexture;
+            // this.skyboxMaterial.reflectionTexture = this.sceneTexture.clone();
+            // this.skyboxMaterial.reflectionTexture.level = 0.1;
+            // this.skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+            this.ribbonMaterial.reflectionTexture = this.sceneTexture.clone();
+            this.ribbonMaterial.reflectionTexture.level = 0.1;
+            this.sendToSkyChangeListeners();
+            if (callback) callback();
         });
     }
 

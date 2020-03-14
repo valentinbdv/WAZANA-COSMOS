@@ -12,7 +12,7 @@ import { MovingEntity } from '../Entity/movingEntity';
 
 export let minSize = 0.5; 
 export let startSize = 1;
-
+export let gravityRatio = 10;
 
 export interface PlayerInterface {
     key: string;
@@ -111,7 +111,7 @@ export class Player extends StarFighter {
     setAbsorber(absorber: MovingEntity) {
         this.absorber = absorber;
         let dist = Vector2.Distance(this.position, absorber.position);
-        let velocity = Math.pow((dist / (absorber.gravityField * 20)), 1);
+        let velocity = Math.min(Math.pow(dist / (absorber.gravityField * gravityRatio), 2), 0.8);
         this.setRealVelocity(velocity);
     }
 

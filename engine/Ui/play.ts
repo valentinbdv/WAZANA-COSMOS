@@ -3,7 +3,7 @@ import { Animation } from '../System/animation'
 import { minSize, Player } from '../Player/player';
 import { RealPlayer } from '../Player/realPlayer';
 import { ui_group, ui_panel } from './group';
-import { ui_text } from './node';
+import { ui_text, ui_bar, ui_back } from './node';
 import { colormain } from './color';
 import { TileMap } from '../Map/tileMap';
 import { MinimapUI } from './minimap';
@@ -17,8 +17,10 @@ export class PlayUI extends MinimapUI {
     animation: Animation;
     realPlayer: RealPlayer;
     tileMap: TileMap;
-    fontSize = 18;
+    fontSize = 20;
     showAnimation: Animation;
+    shineAnimation: Animation;
+    progressWidthAnimation: Animation;
     curve: EasingFunction;
 
     constructor(system: SystemUI, realPlayer: RealPlayer, tileMap: TileMap) {
@@ -27,6 +29,8 @@ export class PlayUI extends MinimapUI {
         this.realPlayer = realPlayer;
         this.tileMap = tileMap;
         this.showAnimation = new Animation(system.animationManager);
+        this.shineAnimation = new Animation(system.animationManager);
+        this.progressWidthAnimation = new Animation(system.animationManager);
         this.curve = new CircleEase();
 
         this.addPlayerStat();
@@ -37,10 +41,13 @@ export class PlayUI extends MinimapUI {
     statLayout: ui_panel;
     sizeText: ui_text;
     rankText: ui_text;
+    sizePorgress: ui_back;
     addPlayerStat() {
-        this.statLayout = new ui_panel(this.system, { left: this.screenMargin, bottom: this.screenMargin }, { width: 200, height: 50 });
-        this.sizeText = this.statLayout.addText('Your size: 2', { x: 0, y: 0 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
-        this.rankText = this.statLayout.addText('Rank: 5/100', { x: 0, y: 30 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
+        this.statLayout = new ui_panel(this.system, { left: this.screenMargin, bottom: this.screenMargin }, { width: 150, height: 70 });
+        this.sizePorgress = this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: 100, height: 15, float: 'left' });
+        this.sizeText = this.statLayout.addText('Your size: 2', { x: 0, y: 0 }, { fontSize: this.fontSize, color: colormain, background: colormain, float: 'left' });
+        this.sizeText.setBackgroundOpacity(0);
+        this.rankText = this.statLayout.addText('Rank: 5/100', { x: 0, y: -30 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
     }
 
     listLayout: ui_group;
@@ -50,7 +57,7 @@ export class PlayUI extends MinimapUI {
     player4: ui_text;
     player5: ui_text;
     addPlayerList() {
-        this.listLayout = new ui_panel(this.system, {top: this.screenMargin, right: this.screenMargin}, { width: 200, height: 200 });
+        this.listLayout = new ui_panel(this.system, {top: this.screenMargin, right: this.screenMargin}, { width: 250, height: 200 });
         let title = this.listLayout.addText('Winners', { x: 0, y: -100 }, { fontSize: this.fontSize, color: colormain });
         this.player1 = this.listLayout.addText('', { x: 0, y: 60 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
         this.player2 = this.listLayout.addText('', { x: 0, y: 80 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
@@ -75,13 +82,50 @@ export class PlayUI extends MinimapUI {
         let ranks = this.getRanks();
         let playerIndex = ranks.indexOf(this.realPlayer) + 1;
         this.rankText.setText('Your rank :' + playerIndex + '/' + ranks.length);
-        let playerSize = Math.round(Math.pow(this.realPlayer.size - minSize, 2) * 10);
-        this.sizeText.setText('Your size: ' + playerSize.toString());
         this.player1.setText('#1  ' + ranks[0].key);
         if (ranks[1]) this.player2.setText('#2 ' + ranks[1].key);
         if (ranks[2]) this.player3.setText('#3 ' + ranks[2].key);
         if (ranks[3]) this.player4.setText('#4 ' + ranks[3].key);
         if (ranks[4]) this.player5.setText('#5 ' + ranks[4].key);
+    }
+
+    currentWidth = 0;
+    currentSize = 0;
+    checkPlayerSize() {
+        let plSize = this.realPlayer.size;
+        let sizeAdjusted = Math.max((plSize - minSize) * 10, 0);
+        let playerSize = Math.floor(sizeAdjusted);
+        this.sizeText.setText('Your size: ' + (playerSize + 1).toString());
+        let width = Math.round((sizeAdjusted - playerSize) * 150);
+        if (width != this.currentWidth) { 
+            this.animateProgressWidth(width);
+            this.currentWidth = width;
+        }
+        if (playerSize != this.currentSize) {
+            this.shinePlayerSize();
+            this.currentSize = playerSize;
+        }
+    }
+    
+    progressWidth = 0;
+    animateProgressWidth(width) {
+        let startWidth = this.progressWidth;
+        let change = width - this.progressWidth;
+        this.progressWidthAnimation.simple(50, (count, perc) => {
+            let easePerc = this.curve.ease(perc);
+            this.progressWidth = startWidth + change * easePerc;
+            this.sizePorgress.setWidth(this.progressWidth);
+        });
+    }
+
+    shinePlayerSize() {
+        this.shineAnimation.simple(50, (count, perc) => {
+            let easePerc = this.curve.ease(perc);
+            let opacity = Math.min(easePerc, 1 - easePerc) * 2;
+            this.sizeText.setBackgroundOpacity(opacity);
+        }, () => {
+            this.sizeText.setBackgroundOpacity(0);
+        });
     }
 
     checkInterval;
@@ -92,8 +136,9 @@ export class PlayUI extends MinimapUI {
         this.setRealPlayerIcon();
         this.checkInterval = setInterval(() => {
             this.checkRanks();
+            this.checkPlayerSize();
             this.checkMap();
-        }, 50);
+        }, 500);
     }
 
 

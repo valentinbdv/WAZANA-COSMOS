@@ -79,7 +79,7 @@ export class MinimapUI {
         return plIcon;
     }
 
-    mR = 1;
+    mR = 0.4;
     getIconPosition(player: Player) {
         let rP = this.realPlayer.position;
         let pos = { y: (player.position.x - rP.x) * this.mR, x: (player.position.y - rP.y) * this.mR };
