@@ -103,6 +103,7 @@ export class PlayUI extends MinimapUI {
         }
         if (playerSize != this.currentSize) {
             this.shinePlayerSize();
+            this.animateProgressWidth(width);
             this.currentSize = playerSize;
         }
     }
@@ -111,9 +112,8 @@ export class PlayUI extends MinimapUI {
     animateProgressWidth(width) {
         let startWidth = this.progressWidth;
         let change = width - this.progressWidth;
-        this.progressWidthAnimation.simple(50, (count, perc) => {
-            let easePerc = this.curve.ease(perc);
-            this.progressWidth = startWidth + change * easePerc;
+        this.progressWidthAnimation.simple(5, (count, perc) => {
+            this.progressWidth = startWidth + change * perc;
             this.sizePorgress.setWidth(this.progressWidth);
         });
     }
@@ -138,9 +138,8 @@ export class PlayUI extends MinimapUI {
             this.checkRanks();
             this.checkPlayerSize();
             this.checkMap();
-        }, 500);
+        }, 100);
     }
-
 
     hideAnim(callback?: Function) {
         // Need to clearnterval first to prevent bug

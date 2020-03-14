@@ -31,6 +31,7 @@ export class RealPlayer extends Player {
         setInterval(() => {
             if (this.moving) {
                 this.gravityGrid.setCenterAndSize(this.position, this.size);
+                this.system.setCenter(this.position);
                 if (this.map.started) this.map.send({ position: this.position });
             }
         }, 500);

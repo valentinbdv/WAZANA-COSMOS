@@ -2,7 +2,7 @@ import { SystemAsset, StarTemperatures } from '../System/systemAsset';
 import { Animation } from '../System/animation';
 import { MovingEntity, MovingEntityInterface } from './movingEntity';
 
-import { Vector3, Color3, Color4 } from '@babylonjs/core/Maths/math';
+import { Vector3, Color3, Color4, Vector2 } from '@babylonjs/core/Maths/math';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { MeshBuilder } from '@babylonjs/core/Meshes/MeshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/Mesh';
@@ -134,7 +134,8 @@ export class Star extends MovingEntity {
     addHeart() {
         // this.heart = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         this.heart = MeshBuilder.CreateSphere(this.key + "star", { diameter: 2.8 }, this.system.scene);
-        this.heart.alwaysSelectAsActiveMesh = true;
+        // Not always active as we check if star in frustrum for opti
+        // this.heart.alwaysSelectAsActiveMesh = true;
         // this.heart.doNotSyncBoundingInfo = true;
         this.heartMaterial = new StandardMaterial(this.key + "material", this.system.scene);
         this.heartMaterial.backFaceCulling = false;
@@ -159,7 +160,8 @@ export class Star extends MovingEntity {
         };
 
         this.surface = MeshBuilder.CreatePolyhedron("h", { custom: heptagonalPrism, size: 2, sideOrientation: Mesh.DOUBLESIDE }, this.system.scene);
-        this.surface.alwaysSelectAsActiveMesh = true;
+        // Not always active as we check if star in frustrum for opti
+        // this.surface.alwaysSelectAsActiveMesh = true;
         // this.surface.doNotSyncBoundingInfo = true;
         // this.surface.renderingGroupId = 1;
 

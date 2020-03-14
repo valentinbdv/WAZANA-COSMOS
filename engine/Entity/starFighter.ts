@@ -22,7 +22,6 @@ export class StarFighter extends Star {
         this.particleCurve = new CubicEase();
         this.diveAnimation = new Animation(system.animationManager);
         this.createParticle();
-        this.system.checkActiveMeshes();
     }
 
     decrease() {
@@ -112,6 +111,8 @@ export class StarFighter extends Star {
                 }
             } 
         }
+        
+        if (this.isStarVisible()) this.particle.start();
     }
 
     setGetAbsobByBlackHoleFunction() {
@@ -151,6 +152,8 @@ export class StarFighter extends Star {
                 }
             }
         }
+
+        if (this.isStarVisible()) this.particle.start();
     }
 
     setExplodeUpdateFunction() {
@@ -188,6 +191,8 @@ export class StarFighter extends Star {
                 }
             }
         }
+
+        if (this.isStarVisible()) this.particle.start();
     }
 
     explode(callback?: Function) {
@@ -204,7 +209,6 @@ export class StarFighter extends Star {
                     if (callback) callback();
                 }, 2000);
                 this.setExplodeUpdateFunction();
-                this.particle.start();
                 this.system.checkActiveMeshes();
             });
         });
@@ -235,5 +239,11 @@ export class StarFighter extends Star {
             this.hide();
             if (callback) callback();
         });
+    }
+
+
+    isStarVisible(): boolean {
+        let dist = Vector2.Distance(this.position, this.system.center);
+        return (dist < 20)? true : false;
     }
 }

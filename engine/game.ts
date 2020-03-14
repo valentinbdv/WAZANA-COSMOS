@@ -11,13 +11,13 @@ import { LocalMap } from './Map/localMap';
 import { TileMap } from './Map/tileMap';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
-// Fade in et clignote dust / planet
 // Improve dive function to reproduce planet attraction effect
+// Trou noir attaque uniquement les leaders
 // Faire étoile filante plutôt que point blanc
-// Plus d'adversaire
+// Fade in et clignote dust / planet
 // Tableau de récap à la fin
 // Etoile diminue toute seul si ne fais rien du à la combustion
-// Trou noir attaque uniquement les leaders
+// Gérer drag and drop sur mobile
 
 interface State {
     players: Array<Player>;

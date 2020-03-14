@@ -63,7 +63,7 @@ export class Player extends StarFighter {
         this.fixeCurve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
 
         this.particleCurve = new CubicEase();
-        this.createParticle();
+        this.system.checkActiveMeshes();
     }
 
     category: StarCategory;
@@ -99,7 +99,6 @@ export class Player extends StarFighter {
         this.absorbing = target.key;
         this.target = target;
         this.setAbsobUpdateFunction();
-        this.particle.start();
         this.system.checkActiveMeshes();
         this.absorbingInt = setInterval(() => {
             this.target.decrease();
@@ -123,7 +122,6 @@ export class Player extends StarFighter {
         this.absorbing = absorber.key;
         this.setAbsorber(absorber);
         this.setGetAbsobByBlackHoleFunction();
-        this.particle.start();
         this.system.checkActiveMeshes();
         this.absorbingInt = setInterval(() => {
             this.changeSize(-0.02);

@@ -4,7 +4,7 @@ import { AnimationManager } from './animation';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { Scene } from '@babylonjs/core/scene';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
-import { Color3, Color4, Vector3 } from '@babylonjs/core/Maths/math';
+import { Color3, Color4, Vector3, Vector2 } from '@babylonjs/core/Maths/math';
 import { Camera } from '@babylonjs/core/Cameras/camera';
 
 /**
@@ -93,6 +93,7 @@ export class System {
             let fps = this.engine.getFps();
             if (fps < 50) this.setLimitFPS(true);
             else this.setLimitFPS(false);
+            this.checkActiveMeshes();
         }, 1000);
     }
     
@@ -109,6 +110,11 @@ export class System {
         // this.camera.orthoBottom = -ortho;
         // this.camera.orthoLeft = -ortho * aspect;
         // this.camera.orthoRight = ortho * aspect;
+    }
+
+    center = Vector2.Zero();
+    setCenter(center: Vector2) {
+        this.center = center;
     }
 
     /**
