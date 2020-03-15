@@ -15,6 +15,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import sparkleTexture from '../../asset/star_08.png';
 import smokeTexture from '../../asset/smoke_04.png';
 import circleTexture from '../../asset/circle_05.png';
+import offlineEnvTexture from '../../asset/ENV/mapcolor5.env';
 import remove from 'lodash/remove';
 
 import { PearlMesh } from '../Entity/pearlMesh';
@@ -120,11 +121,13 @@ export class SystemAsset extends System {
     skyDesign = 0;
     setSky(design: number, callback?: Function) {
         let asseturl = 'https://asset.wazana.io/';
+        // let envUrl = asseturl + 'env/' + mapcolor + '.env';
+        let envUrl = offlineEnvTexture;
         this.skyDesign = this.skyDesignOrder[design];
         this.skyColor = this.skyColors[this.skyDesign];
         let mapcolor = 'mapcolor' + this.skyDesign.toString();
         
-        this.sceneTexture = new CubeTexture(asseturl + 'env/' + mapcolor + '.env', this.scene, null, false, null, () => {
+        this.sceneTexture = new CubeTexture(envUrl, this.scene, null, false, null, () => {
             // this.sceneTexture.gammaSpace = false;
             this.scene.environmentTexture = this.sceneTexture;
             // this.skyboxMaterial.reflectionTexture = this.sceneTexture.clone();
