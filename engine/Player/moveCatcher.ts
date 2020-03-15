@@ -3,14 +3,18 @@ import { Animation, AnimationManager } from '../System/animation';
 
 import remove from 'lodash/remove';
 import { Vector2 } from '@babylonjs/core/Maths/math';
+import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
 export class MoveCatcher {
 
     catching = true;
     animation: Animation;
+    curve: EasingFunction;
 
     constructor(animationManager: AnimationManager) {
         this.animation = new Animation(animationManager, 10);
+        this.curve = new CircleEase();
+        this.curve.setEasingMode(EasingFunction.EASINGMODE_EASEOUT);
     }
 
     start() {
@@ -52,14 +56,26 @@ export class MoveCatcher {
     positionReal = new Vector2(0, 0);
     positionCatch = new Vector2(0, 0);
     catch(position: Vector2) {
-        this.positionReal = position;
+        if (position.x == 0 && position.y == 0) return this.inertiaStop();
+        this.positionReal = position.clone();
         this.animation.infinite(() => {
-            // let gapposition = this.positionReal.subtract(this.positionCatch);
-            let gapposition = this.positionReal;
-            this.step = gapposition.clone();
+            this.step = this.positionReal.clone();
             this.step.multiplyInPlace(this.speedVector);
             this.positionCatch.addInPlace(this.step);
-            if (Math.abs(gapposition.x) < this.accuracy && Math.abs(gapposition.y) < this.accuracy) this.animation.running = false;
+            for (let i = 0; i < this.listeners.length; i++) {
+                // Clone to make sure there is not something which can alter real positionCatch
+                this.listeners[i](this.positionCatch.clone(), this.step.clone());
+            }
+        });
+    }
+
+    inertiaStop() {
+        this.animation.simple(40, (count, perc) => {
+            this.step = this.positionReal.clone();
+            let easePerc = (1 - this.curve.ease(perc)) / 10;
+            let vectorPerc = new Vector2(easePerc, easePerc)
+            this.step.multiplyInPlace(this.speedVector).multiplyInPlace(vectorPerc);
+            this.positionCatch.addInPlace(this.step).multiplyInPlace(vectorPerc);
             for (let i = 0; i < this.listeners.length; i++) {
                 // Clone to make sure there is not something which can alter real positionCatch
                 this.listeners[i](this.positionCatch.clone(), this.step.clone());
