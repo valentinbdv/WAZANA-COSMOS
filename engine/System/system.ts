@@ -61,7 +61,6 @@ export class System {
         // let engineOption = { limitDeviceRatio: this.maxScaling, preserveDrawingBuffer: true, stencil: true };
         let engineOption = {  };
         this.engine = new Engine(this.canvas, true, engineOption, false);
-        // this.engine.setHardwareScalingLevel(0.5);
         // NOTE to avoid request for manifest files because it can block loading on safari
         this.engine.enableOfflineSupport = false;
 
