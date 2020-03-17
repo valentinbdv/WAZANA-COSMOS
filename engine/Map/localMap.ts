@@ -131,14 +131,18 @@ export class LocalMap {
     }
 
     checkPlanetMap(player: Player) {
+        // add planet while accelerating create bug with planet
+        if (player.accelerating) return;
         if (Object.keys(player.planets).length < player.maxPlanet) {
             for (const key in this.tileMap.planets) {
                 const planet: Planet = this.tileMap.planets[key];
-                let dist = Vector2.Distance(planet.position, player.position);
-                if (dist < player.gravityField * gravityRatio) {
-                    player.addPlanet(planet);
-                    planet.attachedToStar = true;
-                    this.tileMap.storagePlanet(planet);
+                // New check of attachedToStar because in the loop it can change
+                if (!planet.attachedToStar) {
+                    let dist = Vector2.Distance(planet.position, player.position);
+                    if (dist < player.gravityField * gravityRatio) {
+                        this.tileMap.setPlanetWithStar(planet);
+                        player.addPlanet(planet);
+                    }
                 }
             }
         }

@@ -3,7 +3,7 @@ import { GravityGrid } from '../System/GravityGrid';
 import { Planet, PlanetInterface } from '../Entity/planet';
 import { StarDust } from '../Entity/starDust';
 import { Player } from '../player/player';
-import { BlackHole, BlackHoleInterface } from '../Entity/blackHole';
+import { BlackHole } from '../Entity/blackHole';
 import { StarInterface } from '../Entity/star';
 
 import { EasingFunction } from '@babylonjs/core/Animations/easing';
@@ -135,7 +135,8 @@ export class TileMap {
     addPlanet(planetInterface: PlanetInterface) {
         let planetsAvailable = filter(this.planetsStorage, (p) => { return !p.attachedToStar });
         if (planetsAvailable.length != 0) {
-            let planet = this.planetsStorage.pop();
+            let planet = planetsAvailable.pop();
+            remove(this.planetsStorage, (p) => { return p.key == planet.key });
             planet.setOptions(planetInterface);
             planet.show();
             this.planets[planet.key] = planet;
@@ -152,6 +153,11 @@ export class TileMap {
         this.removePlanet(planet);
         planet.animation.stop();
         this.planetsStorage.push(planet);
+    }
+
+    setPlanetWithStar(planet: Planet) {
+        this.storagePlanet(planet);
+        planet.attachedToStar = true;
     }
 
     eraseAllPlanets() {

@@ -217,8 +217,9 @@ export class Player extends StarFighter {
 
     launchAnimationLength = 80;
     accelerate() {
+        if (!this.moving || this.accelerating) return;
         let planet = this.planets.pop();
-        if (!planet || !this.moving) return;
+        if (!planet) return;
         this.accelerating = true;
         let size = this.size;
         this.accelerateAnimation.simple(this.launchAnimationLength, (count, perc) => {
@@ -267,9 +268,9 @@ export class Player extends StarFighter {
     }
     
     _disposePlayer() {
+        this.accelerateAnimation.stop();
         this.removeAllPlanets();
         this._disposeStarFighter();
-        this.accelerateAnimation.stop();
         this.fixeAnimation.stop();
         this.secondLight.excludedMeshes = [];
         // this.secondLight.includedOnlyMeshes = [];

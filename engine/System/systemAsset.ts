@@ -120,12 +120,13 @@ export class SystemAsset extends System {
     };
     skyDesign = 0;
     setSky(design: number, callback?: Function) {
-        let asseturl = 'https://asset.wazana.io/';
-        // let envUrl = asseturl + 'env/' + mapcolor + '.env';
-        let envUrl = offlineEnvTexture;
         this.skyDesign = this.skyDesignOrder[design];
         this.skyColor = this.skyColors[this.skyDesign];
         let mapcolor = 'mapcolor' + this.skyDesign.toString();
+        
+        let asseturl = 'https://asset.wazana.io/';
+        let envUrl = asseturl + 'env/' + mapcolor + '.env';
+        // let envUrl = offlineEnvTexture;
         
         this.sceneTexture = new CubeTexture(envUrl, this.scene, null, false, null, () => {
             // this.sceneTexture.gammaSpace = false;
