@@ -1,4 +1,4 @@
-import { SystemAsset } from '../System/systemAsset';
+import { SystemUI } from '../System/systemUI';
 import { MouseCatcher } from './mouseCatcher';
 import { TouchCatcher } from './touchCatcher';
 import { GravityGrid } from '../System/GravityGrid';
@@ -12,8 +12,9 @@ export class RealPlayer extends Player {
 
     map: onlineMap;
     dustField = false;
+    system: SystemUI;
 
-    constructor(system: SystemAsset, gravityGrid: GravityGrid, map: onlineMap) {
+    constructor(system: SystemUI, gravityGrid: GravityGrid, map: onlineMap) {
         super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.addMouseEvent();
         this.addKeyEvent();
@@ -39,16 +40,17 @@ export class RealPlayer extends Player {
     }
 
     addMouseEvent() {
-        let mouseCatcher = new MouseCatcher();
-
-        mouseCatcher.addListener((pos: Vector2, step: Vector2) => {
-            this.sendMove(pos);
-        });
-
-        let touchCatcher = new TouchCatcher(window);
-        touchCatcher.addListener((pos: Vector2) => {
-            this.sendMove(pos);
-        });
+        if (this.system.checkPlatform()) {
+            let touchCatcher = new TouchCatcher(window);
+            touchCatcher.addListener((pos: Vector2) => {
+                this.sendMove(pos);
+            });
+        } else {
+            let mouseCatcher = new MouseCatcher();
+            mouseCatcher.addListener((pos: Vector2, step: Vector2) => {
+                this.sendMove(pos);
+            });
+        }
     }
 
     keyDirection = new Vector2(0, 0);

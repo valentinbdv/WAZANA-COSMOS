@@ -62,25 +62,27 @@ export class MoveCatcher {
             this.step = this.positionReal.clone();
             this.step.multiplyInPlace(this.speedVector);
             this.positionCatch.addInPlace(this.step);
-            for (let i = 0; i < this.listeners.length; i++) {
-                // Clone to make sure there is not something which can alter real positionCatch
-                this.listeners[i](this.positionCatch.clone(), this.step.clone());
-            }
+            this.sendToListener();
         });
     }
-
+    
+    inertiaLength = 50;
     inertiaStop() {
-        this.animation.simple(40, (count, perc) => {
+        this.animation.simple(this.inertiaLength, (count, perc) => {
             this.step = this.positionReal.clone();
             let easePerc = (1 - this.curve.ease(perc)) / 10;
             let vectorPerc = new Vector2(easePerc, easePerc)
             this.step.multiplyInPlace(this.speedVector).multiplyInPlace(vectorPerc);
             this.positionCatch.addInPlace(this.step).multiplyInPlace(vectorPerc);
-            for (let i = 0; i < this.listeners.length; i++) {
-                // Clone to make sure there is not something which can alter real positionCatch
-                this.listeners[i](this.positionCatch.clone(), this.step.clone());
-            }
+            this.sendToListener();
         });
+    }
+
+    sendToListener() {
+        for (let i = 0; i < this.listeners.length; i++) {
+            // Clone to make sure there is not something which can alter real positionCatch
+            this.listeners[i](this.positionCatch.clone(), this.step.clone());
+        }
     }
 
     listeners: Array<Function> = [];

@@ -35,7 +35,7 @@ export class TouchCatcher {
     /**
      * The position of drag start when on smartphone
      */
-    touchStart = Vector2.Zero();
+    touchStart = null;
 
     /**
      * The gap of drag between start and current touch when on smartphone
@@ -50,23 +50,29 @@ export class TouchCatcher {
     _setTouchEvent() {
         let count = 0;
         this._container.addEventListener("touchstart", (evt) => {
+            // We prevent second touch to allow click acceleration
+            if (this.touchStart) return;
+            this.touchStart = Vector2.Zero();
             this.touchStart.x = evt.changedTouches[0].clientX;
             this.touchStart.y = evt.changedTouches[0].clientY;
             count = 0;
         });
         // Need test
         this._container.addEventListener("touchend", (evt) => {
-            this.touchStart = Vector2.Zero();
+            // We prevent second touch to allow click acceleration
+            if (evt.changedTouches.length > 1) return;
+            this.touchStart = null;
             this.touchGap = Vector2.Zero();
             this.sendToListener(this.touchGap, evt);
         });
         this._container.addEventListener("touchmove", (evt) => {
-            if (this.touchStart) {
+            // We prevent second touch to allow click acceleration
+            count++;
+            if (this.touchStart && count > 2) {
                 let x = evt.changedTouches[0].clientX;
                 let y = evt.changedTouches[0].clientY;
                 this.touchGap.y = (x - this.touchStart.x) * this.touchRatio;
                 this.touchGap.x = (y - this.touchStart.y) * this.touchRatio;
-                count++;
                 // if (count == 50) {
                 //     this.touchStart.x = x;
                 //     this.touchStart.y = y;

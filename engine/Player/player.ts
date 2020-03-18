@@ -153,8 +153,15 @@ export class Player extends StarFighter {
         let ratio = Math.abs(step.x / step.y);
         let maxX = Math.sqrt((Math.pow(max, 2) * ratio) / (ratio + 1));
         let maxY = Math.sqrt(Math.pow(max, 2) / (ratio + 1));
-        let x = Math.sign(step.x) * Math.min(Math.abs(step.x) * this.velocity, maxX);
-        let y = Math.sign(step.y) * Math.min(Math.abs(step.y) * this.velocity, maxY);
+        let x, y;
+        if (this.accelerating) {
+            x = Math.sign(step.x) * maxX;
+            y = Math.sign(step.y) * maxY;
+        } else {
+            x = Math.sign(step.x) * Math.min(Math.abs(step.x) * this.velocity, maxX);
+            y = Math.sign(step.y) * Math.min(Math.abs(step.y) * this.velocity, maxY);
+
+        }
         this.direction = new Vector2(x, y);
         let pos = this.position.add(this.direction);
         this.setPosition(pos);

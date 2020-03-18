@@ -14,11 +14,10 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 // Improve dive function to reproduce planet attraction effect
 // Trou noir attaque uniquement les leaders
 // Faire étoile filante plutôt que point blanc
-// Fade in et clignote dust / planet
 // Tableau de récap à la fin
 // Etoile diminue toute seul si ne fais rien du à la combustion
-// Gérer clique pour accélérer sur mobile
 // Restart bug
+// acceleration envoie dans la mauvaise direction sur mobile
 
 interface State {
     players: Array<Player>;
@@ -112,6 +111,7 @@ export class GameEngine {
     }
 
     gameStart() {
+        this.system.checkMobile();
         this.system.checkActiveMeshes();
         this.introUI.hideAnim(() => {
             this.playUI.showAnim();
