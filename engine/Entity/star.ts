@@ -83,10 +83,6 @@ export class Star extends MovingEntity {
         super('star', system, options);
 
         this.shineAnimation = new Animation(this.system.animationManager);
-        this.addHeart();
-        this.addSurface();
-        this.addLight();
-        this.addSecondLight();
 
         let p = options.position;
         this.movingMesh.position = new Vector3(p.x, 0, p.y);
@@ -124,7 +120,6 @@ export class Star extends MovingEntity {
         this.heartMaterial.diffuseColor = Color3.White();
         this.surfaceMaterial.reflectivityColor = color;
         // this.surfaceMaterial.albedoColor = color;
-        this.secondLight.diffuse = color;
         this.light.diffuse = color;
     }
 
@@ -207,19 +202,6 @@ export class Star extends MovingEntity {
         // console.log(this.light);
     }
 
-    secondLight: PointLight
-    addSecondLight() {
-        this.secondLight = new PointLight('secondLight', new Vector3(0, 0, 0), this.system.scene);
-        this.secondLight.radius = 1;
-        this.secondLight.shadowEnabled = false;
-        this.secondLight.parent = this.movingMesh;
-        // this.secondLight.excludedMeshes.push(this.surface);
-        // this.secondLight.excludedMeshes.push(this.heart);
-        this.secondLight.excludedMeshes = [];
-        this.secondLight.includedOnlyMeshes.push(this.heart);
-        // console.log(this.secondLight);
-    }
-
     shine() {
         if (this.shineAnimation.running || this.accelerating) return;
         this.shineAnimation.simple(20, (count, perc) => {
@@ -245,7 +227,6 @@ export class Star extends MovingEntity {
         // this.heart.scaling = sizeVector;
         this.surface.scaling = sizeVector;
         this.light.intensity = 1000 * size;
-        this.secondLight.intensity = 1000 * size;
         this.cycleProgress = 1 / Math.sqrt(this.size);
     }
 
@@ -277,8 +258,6 @@ export class Star extends MovingEntity {
         this.surfaceMaterial.dispose();
         this.light.isEnabled(false);
         this.light.dispose();
-        this.secondLight.isEnabled(false);
-        this.secondLight.dispose();
         this.system.checkActiveMeshes();
         this.moveCatcher.stop();
         this.shineAnimation.stop();

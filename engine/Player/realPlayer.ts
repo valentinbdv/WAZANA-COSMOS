@@ -139,7 +139,5 @@ export class RealPlayer extends Player {
 
     dispose() {
         this.setMoving(false);
-        this.secondLight.excludedMeshes = [];
-        // this.secondLight.includedOnlyMeshes = [];
     }
 }

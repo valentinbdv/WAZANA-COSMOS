@@ -54,7 +54,6 @@ export class Player extends StarFighter {
     constructor(system: SystemAsset, gravityGrid: GravityGrid, playerInterface: StarInterface) {
         super(system, playerInterface);
         this.gravityGrid = gravityGrid;
-        // this.secondLight.excludedMeshes.push(this.gravityGrid.ribbon);
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.fixeAnimation = new Animation(this.system.animationManager);
         this.accelerateAnimation = new Animation(this.system.animationManager);
@@ -186,7 +185,6 @@ export class Player extends StarFighter {
         } else {
             this.animatePlanetToStar(planet, radius, velocity);
         }
-        this.secondLight.includedOnlyMeshes.push(planet.mesh);
         this.fixePlanet(planet);
     }
 
@@ -266,8 +264,6 @@ export class Player extends StarFighter {
         this.absorbStop();
         this.setMoving(false);
         this.isDead = true;
-        // this.secondLight.excludedMeshes = [];
-        // this.secondLight.includedOnlyMeshes = [this.gravityGrid.ribbon];
     }
     
     dispose() {
@@ -279,8 +275,6 @@ export class Player extends StarFighter {
         this.removeAllPlanets();
         this._disposeStarFighter();
         this.fixeAnimation.stop();
-        this.secondLight.excludedMeshes = [];
-        // this.secondLight.includedOnlyMeshes = [];
         this.gravityGrid.eraseMass(this.key);
     }
 
