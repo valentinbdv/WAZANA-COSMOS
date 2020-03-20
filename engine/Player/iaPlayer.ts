@@ -10,8 +10,8 @@ export class IAPlayer extends Player {
 
     constructor(system: SystemAsset, gravityGrid: GravityGrid) {
         super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
+        this.setSize(0.8 + Math.random());
         this.startMovingAround();
-        this.setSize(0.8 + Math.random() / 2);
     }
 
     moveInt;
@@ -22,11 +22,6 @@ export class IAPlayer extends Player {
             this.moveCatcher.catch(move);
         }, 2000);
     }
-
-    // explode(callback: Function) {
-    //     clearInterval(this.moveInt);
-    //     this._explode(callback);
-    // }
 
     checkAction(closestTarget: Player) {
         let clumsy = Math.random() > 0.7;
@@ -56,4 +51,17 @@ export class IAPlayer extends Player {
         clearInterval(this.moveInt);
         this._disposePlayer();
     }
+
+    isStarVisible = false;
+    showIA() {
+        if (this.isStarVisible) return;
+        this.show();
+        this.startMovingAround();
+    }
+
+    hideIA() {
+        if (!this.isStarVisible) return;
+        this.hide();
+    }
+
 }

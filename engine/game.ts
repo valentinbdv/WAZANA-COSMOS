@@ -17,7 +17,9 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 // Tableau de récap à la fin
 // Etoile diminue toute seul si ne fais rien du à la combustion
 // Restart bug
-// acceleration envoie dans la mauvaise direction sur mobile
+// acceleration stop mouvement sur mobile
+// Ia plus offensive et plus concentrée au centre de la MAP
+// Mieux différencier les taille
 
 interface State {
     players: Array<Player>;
@@ -57,7 +59,6 @@ export class GameEngine {
 
         this.realPlayer = new RealPlayer(this.system, this.gravityGrid, this.onlineMap);
         this.realPlayer.setMoving(false);
-        this.realPlayer.hide();
         this.realPlayer.onDied = () => {
             this.gameOver();
         };

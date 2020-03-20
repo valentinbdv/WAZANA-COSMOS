@@ -11,7 +11,7 @@ import { BlackHole } from '../Entity/blackHole';
 import { MovingEntity } from '../Entity/movingEntity';
 
 export let minSize = 0.5; 
-export let startSize = 1;
+export let startSize = 0.5;
 export let gravityRatio = 10;
 
 export interface PlayerInterface {
@@ -62,7 +62,6 @@ export class Player extends StarFighter {
         this.fixeCurve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
 
         this.particleCurve = new CubicEase();
-        this.system.checkActiveMeshes();
     }
 
     category: StarCategory;
@@ -222,9 +221,10 @@ export class Player extends StarFighter {
 
     launchAnimationLength = 80;
     accelerate() {
-        if (!this.moving || this.accelerating) return;
+        if (!this.moving || this.accelerating || !this.isStarVisible) return;
         let planet = this.planets.pop();
         if (!planet) return;
+
         this.accelerating = true;
         let size = this.size;
         this.accelerateAnimation.simple(this.launchAnimationLength, (count, perc) => {

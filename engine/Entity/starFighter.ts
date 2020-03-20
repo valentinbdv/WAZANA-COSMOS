@@ -37,6 +37,7 @@ export class StarFighter extends Star {
         // if (this.isDead) return;
         let newSize = Math.pow(this.size, 2) + change;
         this.setSize(newSize);
+        if (!this.isStarVisible) return;
         let sizeVector = new Vector3(this.size, this.size, this.size);
         this.heart.scaling = sizeVector;
     }
@@ -46,7 +47,6 @@ export class StarFighter extends Star {
         this.particle = new ParticleSystem("particle", 50, this.system.scene);
         this.particle.emitRate = 50;
 
-        // this.particle.particleTexture = meshesTextures.stream;
         this.particle.emitter = this.movingMesh.position;
         this.particle.gravity = new Vector3(0, -0.5, 0);
         this.particle.minEmitBox = new Vector3(0, 0, 0); // Starting all from
@@ -112,7 +112,7 @@ export class StarFighter extends Star {
             } 
         }
         
-        if (this.isStarVisible()) this.particle.start();
+        if (this.isStarOnScreen()) this.particle.start();
     }
 
     setGetAbsobByBlackHoleFunction() {
@@ -153,7 +153,7 @@ export class StarFighter extends Star {
             }
         }
 
-        if (this.isStarVisible()) this.particle.start();
+        if (this.isStarOnScreen()) this.particle.start();
     }
 
     setExplodeUpdateFunction() {
@@ -192,7 +192,7 @@ export class StarFighter extends Star {
             }
         }
 
-        if (this.isStarVisible()) this.particle.start();
+        if (this.isStarOnScreen()) this.particle.start();
     }
 
     explode(callback?: Function) {
@@ -239,11 +239,5 @@ export class StarFighter extends Star {
             this.hide();
             if (callback) callback();
         });
-    }
-
-
-    isStarVisible(): boolean {
-        let dist = Vector2.Distance(this.position, this.system.center);
-        return (dist < 20)? true : false;
     }
 }

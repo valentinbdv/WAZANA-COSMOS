@@ -92,7 +92,7 @@ export class System {
             let fps = this.engine.getFps();
             if (fps < 50) this.setLimitFPS(true);
             else this.setLimitFPS(false);
-            this.checkActiveMeshes();
+            // this.checkActiveMeshes();
         }, 1000);
     }
     

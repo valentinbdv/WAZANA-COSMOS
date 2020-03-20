@@ -69,6 +69,7 @@ export class SystemAsset extends System {
         // Glow layer takes too much performance
         // this.addGlow();
         // this.addSky();
+        // this.addStarMesh();
         this.addDustMesh();
         this.addUpperDustMesh();
         this.addPlanetMesh();
@@ -203,11 +204,14 @@ export class SystemAsset extends System {
         this.dustMaterial.emissiveColor = new Color3(1, 1, 0);
         this.dustMesh = this.getNewDust();
         this.dustMesh.material = this.dustMaterial; 
-        // this.addDust1();
-        // this.addDust2();
-        // this.addDust3();
-        // this.addDust4();
     }
+
+    // addStarMesh() {
+    //     this.addStar1();
+    //     this.addStar2();
+    //     this.addStar3();
+    //     this.addStar4();
+    // }
 
     upperDustMesh: Mesh;
     upperDustMaterial: StandardMaterial;
@@ -237,33 +241,33 @@ export class SystemAsset extends System {
         return dustMaterial;
     }
 
-    addDust1() {
-        let dustMaterial = this.getNewDustMaterial();
-        dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[0]);
-        this.dustMesh1 = this.getNewDust();
-        this.dustMesh1.material = dustMaterial; 
-    }
+    // addStar1() {
+    //     let dustMaterial = this.getNewDustMaterial();
+    //     dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[0]);
+    //     this.dustMesh1 = this.getNewDust();
+    //     this.dustMesh1.material = dustMaterial; 
+    // }
 
-    addDust2() {
-        let dustMaterial = this.getNewDustMaterial();
-        dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[1]);
-        this.dustMesh2 = this.getNewDust();
-        this.dustMesh2.material = dustMaterial;
-    }
+    // addStar2() {
+    //     let dustMaterial = this.getNewDustMaterial();
+    //     dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[1]);
+    //     this.dustMesh2 = this.getNewDust();
+    //     this.dustMesh2.material = dustMaterial;
+    // }
 
-    addDust3() {
-        let dustMaterial = this.getNewDustMaterial();
-        dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[2]);
-        this.dustMesh3 = this.getNewDust();
-        this.dustMesh3.material = dustMaterial;
-    }
+    // addStar3() {
+    //     let dustMaterial = this.getNewDustMaterial();
+    //     dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[2]);
+    //     this.dustMesh3 = this.getNewDust();
+    //     this.dustMesh3.material = dustMaterial;
+    // }
 
-    addDust4() {
-        let dustMaterial = this.getNewDustMaterial();
-        dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[3]);
-        this.dustMesh4 = this.getNewDust();
-        this.dustMesh4.material = dustMaterial;
-    }
+    // addStar4() {
+    //     let dustMaterial = this.getNewDustMaterial();
+    //     dustMaterial.emissiveColor = this.getColorFromTemperature(StarTemperatures[3]);
+    //     this.dustMesh4 = this.getNewDust();
+    //     this.dustMesh4.material = dustMaterial;
+    // }
 
     planetMesh: PearlMesh;
     planetMaterial: PBRMaterial;

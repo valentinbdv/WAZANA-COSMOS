@@ -93,7 +93,7 @@ export class RealPlayer extends Player {
     addZoomCatcher() {
         this.system.scene.registerBeforeRender(() => {
             if (!this.isDead) {
-                let newRadius = Math.max(this.size * 50, 50);
+                let newRadius = Math.max(this.size * 70, 50);
                 // newRadius = Math.min(newRadius, 2);
                 let change = newRadius - this.system.camera.radius;
                 this.system.camera.radius += change/100;

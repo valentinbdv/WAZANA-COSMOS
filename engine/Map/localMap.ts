@@ -158,7 +158,7 @@ export class LocalMap {
         return newPlanet;
     }
 
-    iaNeeded = 10;
+    iaNeeded = 50;
     ias: Object = {};
     checkIaMap() {
         let newIaNeeded = Math.round(this.iaNeeded - Object.keys(this.ias).length);
@@ -166,6 +166,17 @@ export class LocalMap {
             setTimeout(() => {
                 this.createIa();
             }, i * 100);
+        }
+
+        let c = this.tileMap.playerToFollow.position;
+        for (const key in this.ias) {
+            const ia:IAPlayer = this.ias[key];
+            let p = ia.position;
+            if (ia.isStarOnScreen()) {
+                ia.showIA();
+            } else {
+                ia.hideIA();
+            }
         }
     }
 
