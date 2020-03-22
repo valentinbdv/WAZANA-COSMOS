@@ -95,7 +95,7 @@ export class GravityGrid {
     }
 
     mapDetail = 20;
-    mapSize = 150;
+    mapSize = 100;
     halfSize: number;
     halfDetail: number;
     step:number;

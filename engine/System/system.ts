@@ -88,11 +88,12 @@ export class System {
         // this.scene.setRenderingAutoClearDepthStencil(renderingGroupIdx, autoClear, depth, stencil);
         this.setCamera();
         
-        setInterval(() => {
-            let fps = this.engine.getFps();
-            if (fps < 50) this.setLimitFPS(true);
-            else this.setLimitFPS(false);
-        }, 1000);
+        this.setLimitFPS(true);
+        // setInterval(() => {
+        //     let fps = this.engine.getFps();
+        //     if (fps < 50) this.setLimitFPS(true);
+        //     else this.setLimitFPS(false);
+        // }, 1000);
     }
     
     setCamera() {

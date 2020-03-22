@@ -20,6 +20,7 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 // acceleration stop mouvement sur mobile
 // Ia plus offensive et plus concentrée au centre de la MAP
 // Mieux différencier les taille
+// Create particle in show/hide to avoid creating 100 particleSystem
 
 interface State {
     players: Array<Player>;
@@ -64,7 +65,8 @@ export class GameEngine {
         };
         
         this.tileMap.setPlayerToFollow(this.realPlayer);
-        
+        this.tileMap.addPlayer(this.realPlayer);
+
         
         this.playUI = new PlayUI(this.system, this.realPlayer, this.tileMap);
         this.introUI = new IntroUI(this.system, this.realPlayer, this.playUI);
@@ -78,7 +80,6 @@ export class GameEngine {
         this.system.launchRender();
         this.system.setSky(0, () => {
             this.realPlayer.setCategory(StarCategories[0], true);
-            this.realPlayer.show();
             this.gameStartAnim(() => {
                 this.introUI.showAnim();
             });
@@ -88,6 +89,7 @@ export class GameEngine {
     gameOver() {
         this.realPlayer.fixeCamera(false);
         this.playUI.hideAnim();
+        this.tileMap.addPlayer(this.realPlayer);
         this.gameOverAnim(() => {
             this.localMap.eraseAllIas();
             this.tileMap.eraseAllEntity();

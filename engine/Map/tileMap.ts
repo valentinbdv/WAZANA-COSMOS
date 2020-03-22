@@ -30,10 +30,8 @@ export class TileMap {
         
         let frame = 0;
         this.system.scene.registerBeforeRender(() => {
-            for (const key in this.planets) {
-                const planet = this.planets[key];
-                planet.mesh.rotation.y += 0.01 * this.system.fpsRatio;
-            }
+            this.checkPlanetsCycle();
+            this.checkPlayersCycle();
             if (frame > 10 && this.check) {
                 this.checkPlayersDust();
                 this.checkDustMap();
@@ -356,6 +354,20 @@ export class TileMap {
         }
     }
 
+    checkPlanetsCycle() {
+        for (const key in this.planets) {
+            const planet = this.planets[key];
+            planet.mesh.rotation.y += 0.01 * this.system.fpsRatio;
+        }
+    }
+
+    checkPlayersCycle() {
+        for (const key in this.players) {
+            const player: Player = this.players[key];
+            if (player.isStarVisible) player.starCycle();
+        }
+    }
+
     killPlayer(player: Player) {
         this.removePlayer(player);
         player.die(() => {
@@ -370,5 +382,6 @@ export class TileMap {
         this.eraseAllDusts();
         this.eraseAllPlanets();
         this.system.checkActiveMeshes();
+        this.addPlayer(this.playerToFollow);
     }
 }

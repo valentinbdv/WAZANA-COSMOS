@@ -108,12 +108,7 @@ export class Star extends MovingEntity {
         this.addHeart();
         this.addSurface();
         this.addLight();
-        this.system.scene.registerBeforeRender(() => {
-            this.starCycle();
-        });
         this.setSize(this.size);
-        this.setTemperature(this.temperature);
-        this.system.checkActiveMeshes();
     }
 
     maxPlanet: number;
@@ -271,11 +266,7 @@ export class Star extends MovingEntity {
         this.surfaceMaterial.dispose();
         this.light.isEnabled(false);
         this.light.dispose();
-        this.moveCatcher.stop();
-        this.shineAnimation.stop();
-        this.system.scene.unregisterBeforeRender(() => {
-            this.starCycle();
-        });
+        this.system.checkActiveMeshes();
     }
 
     setOpacity(opacity: number) {
