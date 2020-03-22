@@ -1,4 +1,4 @@
-import { SystemAsset } from '../System/systemAsset';
+import { MeshSystem } from '../System/meshSystem';
 import { PositionEntity, PositionEntityInterface } from './positionEntity';
 import { MoveCatcher } from '../Player/moveCatcher';
 
@@ -15,7 +15,7 @@ export class MovingEntity extends PositionEntity {
     moveCatcher: MoveCatcher;
     moving = true;
 
-    constructor(type:string, system: SystemAsset, options: MovingEntityInterface) {
+    constructor(type:string, system: MeshSystem, options: MovingEntityInterface) {
         super(type, system, options);
 
         this.addCactcher();

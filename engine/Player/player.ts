@@ -1,4 +1,4 @@
-import { SystemAsset } from '../System/systemAsset';
+import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
 import { Animation } from '../System/animation';
 import { Planet, PlanetInterface } from '../Entity/planet';
@@ -51,7 +51,7 @@ export class Player extends StarFighter {
     dustField = true;
     target: Player;
 
-    constructor(system: SystemAsset, gravityGrid: GravityGrid, playerInterface: StarInterface) {
+    constructor(system: MeshSystem, gravityGrid: GravityGrid, playerInterface: StarInterface) {
         super(system, playerInterface);
         this.gravityGrid = gravityGrid;
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);

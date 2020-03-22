@@ -1,4 +1,4 @@
-import { SystemAsset } from '../System/systemAsset';
+import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
 import { Planet, PlanetInterface } from '../Entity/planet';
 import { StarDust } from '../Entity/starDust';
@@ -20,11 +20,11 @@ import filter from 'lodash/filter';
 
 export class TileMap {
 
-    system: SystemAsset;
+    system: MeshSystem;
     gravityGrid: GravityGrid;
     curve: EasingFunction;
 
-    constructor(system: SystemAsset, gravityGrid: GravityGrid) {
+    constructor(system: MeshSystem, gravityGrid: GravityGrid) {
         this.system = system;
         this.gravityGrid = gravityGrid;
         

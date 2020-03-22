@@ -1,4 +1,4 @@
-import { SystemAsset, StarTemperatures } from '../System/systemAsset';
+import { MeshSystem, StarTemperatures } from '../System/meshSystem';
 import { Animation } from '../System/animation';
 import { MovingEntity, MovingEntityInterface } from './movingEntity';
 
@@ -79,7 +79,7 @@ export class Star extends MovingEntity {
     planets: Array< Planet > = [];
     accelerating = false;
 
-    constructor(system: SystemAsset, options: StarInterface) {
+    constructor(system: MeshSystem, options: StarInterface) {
         super('star', system, options);
 
         this.shineAnimation = new Animation(this.system.animationManager);

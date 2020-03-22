@@ -1,7 +1,7 @@
 import { Planet, PlanetInterface } from '../Entity/planet';
 import { Player, minSize, gravityRatio } from '../player/player';
 import { TileMap } from './tileMap';
-import { SystemAsset } from '../System/systemAsset';
+import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
 import { BlackHole } from '../Entity/blackHole';
 
@@ -19,11 +19,11 @@ import { StarCategory, StarCategories } from '../Entity/star';
 export class LocalMap {
 
     chekIaInterval;
-    system: SystemAsset;
+    system: MeshSystem;
     gravityGrid: GravityGrid;
     tileMap: TileMap
 
-    constructor(system: SystemAsset, gravityGrid: GravityGrid, tileMap: TileMap) {
+    constructor(system: MeshSystem, gravityGrid: GravityGrid, tileMap: TileMap) {
         this.system = system;
         this.gravityGrid = gravityGrid;
         this.tileMap = tileMap;

@@ -1,4 +1,4 @@
-import { SystemAsset } from '../System/systemAsset';
+import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
 import { Player, startSize } from './player';
 
@@ -8,7 +8,7 @@ export class IAPlayer extends Player {
 
     ia = true;
 
-    constructor(system: SystemAsset, gravityGrid: GravityGrid) {
+    constructor(system: MeshSystem, gravityGrid: GravityGrid) {
         super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.setSize(0.8 + Math.random());
         this.startMovingAround();

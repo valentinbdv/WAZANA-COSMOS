@@ -1,4 +1,4 @@
-import { SystemAsset } from '../System/systemAsset';
+import { MeshSystem } from '../System/meshSystem';
 import { PositionEntity, PositionEntityInterface } from './positionEntity';
 import { Animation } from '../System/animation';
 
@@ -15,7 +15,7 @@ export class StarDust extends PositionEntity {
     animation: Animation;
     curve: EasingFunction;
 
-    constructor(system: SystemAsset) {
+    constructor(system: MeshSystem) {
         super('dust', system);
         this.animation = new Animation(this.system.animationManager);
         this.addMesh();

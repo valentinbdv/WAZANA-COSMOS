@@ -1,5 +1,5 @@
 
-import { SystemAsset } from './systemAsset';
+import { MeshSystem } from './meshSystem';
 import { AdvancedDynamicTexture } from '@babylonjs/gui/2D/AdvancedDynamicTexture';
 import { StackPanel } from '@babylonjs/gui/2D/controls/stackPanel';
 
@@ -9,7 +9,7 @@ import { StackPanel } from '@babylonjs/gui/2D/controls/stackPanel';
  * The system is really important as it is often sent in every other class created to manage core assets
  */
 
-export class SystemUI extends SystemAsset {
+export class SystemUI extends MeshSystem {
 
     advancedTexture: AdvancedDynamicTexture;
     panel: StackPanel;

@@ -1,4 +1,4 @@
-import { SystemAsset } from '../System/systemAsset';
+import { MeshSystem } from '../System/meshSystem';
 import { Animation } from '../System/animation';
 import { GravityGrid } from '../System/GravityGrid';
 import { MovingEntity, MovingEntityInterface } from './movingEntity';
@@ -25,7 +25,7 @@ export class BlackHole extends MovingEntity {
     gravityField = 10;
     depth = BlackHoleDepth;
 
-    constructor(system: SystemAsset, gravityGrid: GravityGrid, position: Vector2) {
+    constructor(system: MeshSystem, gravityGrid: GravityGrid, position: Vector2) {
         super('blackhole', system, {});
         this.gravityGrid = gravityGrid;
 

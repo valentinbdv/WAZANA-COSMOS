@@ -1,4 +1,4 @@
-import { SystemAsset } from '../System/systemAsset';
+import { MeshSystem } from '../System/meshSystem';
 import { Star, StarInterface } from './star';
 import { Animation } from '../System/animation';
 
@@ -16,7 +16,7 @@ export class StarFighter extends Star {
     absorber: MovingEntity;
     isDead = false;
 
-    constructor(system: SystemAsset, starInterface: StarInterface) {
+    constructor(system: MeshSystem, starInterface: StarInterface) {
         super(system, starInterface);
 
         this.particleCurve = new CubicEase();

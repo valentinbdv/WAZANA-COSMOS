@@ -1,4 +1,4 @@
-import { SystemAsset } from './systemAsset';
+import { MeshSystem } from './meshSystem';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Color3, Vector3, Vector2 } from '@babylonjs/core/Maths/math';
@@ -15,11 +15,11 @@ import remove from 'lodash/remove';
 
 export class GravityGrid {
 
-    system: SystemAsset;
+    system: MeshSystem;
     starCurve: EasingFunction;
     blackHoleCurve: EasingFunction;
 
-    constructor(system: SystemAsset) {
+    constructor(system: MeshSystem) {
         this.system = system;
 
         this.initMap();
