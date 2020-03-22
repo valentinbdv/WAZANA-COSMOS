@@ -43,7 +43,6 @@ export class GravityGrid {
             frame = !frame;
         });
 
-
         this.starCurve = new CubicEase();
         this.starCurve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
         this.blackHoleCurve = new CubicEase();
@@ -153,8 +152,8 @@ export class GravityGrid {
     pointDepth = 20;
     pointSize = 3;
     setMassPoint(key: string, pos: Vector2, size: number, curve: EasingFunction, depth?: number) {
-        let MassToCenter = Vector2.Distance(pos, this.center);
         this.eraseMass(key);
+        let MassToCenter = Vector2.Distance(pos, this.center);
         // If too far from center, ignore it
         if (MassToCenter > this.halfSize) return;
         let mapPos = pos.subtract(this.center);

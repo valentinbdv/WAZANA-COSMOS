@@ -351,8 +351,8 @@ export class TileMap {
 
     checkPlayersDust() {
         for (const key in this.players) {
-            const player = this.players[key];
-            if (!player.accelerating) this.checkPlayerDust(player);
+            const player: Player = this.players[key];
+            if (!player.accelerating && player.isStarVisible) this.checkPlayerDust(player);
         }
     }
 

@@ -143,8 +143,8 @@ export class Star extends MovingEntity {
         // this.heart = MeshBuilder.CreateIcoSphere(this.key + "star", { radius: 1, flat: true, subdivisions: 2 }, this.system.scene);
         this.heart = MeshBuilder.CreateSphere(this.key + "star", { diameter: 2.8 }, this.system.scene);
         // Not always active as we check if star in frustrum for opti
-        // this.heart.alwaysSelectAsActiveMesh = true;
-        // this.heart.doNotSyncBoundingInfo = true;
+        this.heart.alwaysSelectAsActiveMesh = true;
+        this.heart.doNotSyncBoundingInfo = true;
         this.heartMaterial = new StandardMaterial(this.key + "material", this.system.scene);
         this.heartMaterial.backFaceCulling = false;
         this.heartMaterial.maxSimultaneousLights = 0;
@@ -169,8 +169,8 @@ export class Star extends MovingEntity {
 
         this.surface = MeshBuilder.CreatePolyhedron("h", { custom: heptagonalPrism, size: 2, sideOrientation: Mesh.DOUBLESIDE }, this.system.scene);
         // Not always active as we check if star in frustrum for opti
-        // this.surface.alwaysSelectAsActiveMesh = true;
-        // this.surface.doNotSyncBoundingInfo = true;
+        this.surface.alwaysSelectAsActiveMesh = true;
+        this.surface.doNotSyncBoundingInfo = true;
         // this.surface.renderingGroupId = 1;
 
         // Cool Poly 2, 3, 

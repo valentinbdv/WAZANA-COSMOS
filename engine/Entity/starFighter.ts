@@ -112,7 +112,7 @@ export class StarFighter extends Star {
             } 
         }
         
-        if (this.isStarOnScreen()) this.particle.start();
+        if (this.isStarVisible) this.particle.start();
     }
 
     setGetAbsobByBlackHoleFunction() {
@@ -153,7 +153,7 @@ export class StarFighter extends Star {
             }
         }
 
-        if (this.isStarOnScreen()) this.particle.start();
+        if (this.isStarVisible) this.particle.start();
     }
 
     setExplodeUpdateFunction() {
@@ -192,7 +192,7 @@ export class StarFighter extends Star {
             }
         }
 
-        if (this.isStarOnScreen()) this.particle.start();
+        if (this.isStarVisible) this.particle.start();
     }
 
     explode(callback?: Function) {

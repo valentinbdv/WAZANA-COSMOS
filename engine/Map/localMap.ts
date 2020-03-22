@@ -43,10 +43,12 @@ export class LocalMap {
     checkPlayersAbsorbtion() {
         for (const key in this.tileMap.players) {
             if (this.tileMap.players.hasOwnProperty(key)) {
-                const player = this.tileMap.players[key];
-                this.checkPlayerAbsorbtion(player);
-                this.checkPlanetMap(player);
-                if (player.size < minSize) this.playerDead(player);
+                const player: Player = this.tileMap.players[key];
+                if (player.isStarVisible) {
+                    this.checkPlayerAbsorbtion(player);
+                    this.checkPlanetMap(player);
+                    if (player.size < minSize) this.playerDead(player);
+                }
             }
         }
     }
@@ -98,12 +100,14 @@ export class LocalMap {
         let testTarget = '';
         for (const key in this.tileMap.players) {
             const otherplayer: Player = this.tileMap.players[key];
-            let dist = Vector2.Distance(player.position, otherplayer.position) * 0.8;
-            if (minDist > dist && otherplayer.key != player.key && player.gravityField > otherplayer.gravityField) {
-                minDist = dist;
-                closestTarget = otherplayer;
-                if (dist < (player.gravityField * gravityRatio)) {
-                    testTarget = otherplayer.key;
+            if (otherplayer.isStarVisible) {
+                let dist = Vector2.Distance(player.position, otherplayer.position) * 0.8;
+                if (minDist > dist && otherplayer.key != player.key && player.gravityField > otherplayer.gravityField) {
+                    minDist = dist;
+                    closestTarget = otherplayer;
+                    if (dist < (player.gravityField * gravityRatio)) {
+                        testTarget = otherplayer.key;
+                    }
                 }
             }
 
