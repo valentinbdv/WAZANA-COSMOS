@@ -56,24 +56,12 @@ export class MoveCatcher {
     positionReal = new Vector2(0, 0);
     positionCatch = new Vector2(0, 0);
     catch(position: Vector2) {
-        if (position.x == 0 && position.y == 0) return this.inertiaStop();
+        if (position.x == 0 && position.y == 0) return;
         this.positionReal = position.clone();
         this.animation.infinite(() => {
             this.step = this.positionReal.clone();
             this.step.multiplyInPlace(this.speedVector);
             this.positionCatch.addInPlace(this.step);
-            this.sendToListener();
-        });
-    }
-    
-    inertiaLength = 50;
-    inertiaStop() {
-        this.animation.simple(this.inertiaLength, (count, perc) => {
-            this.step = this.positionReal.clone();
-            let easePerc = (1 - this.curve.ease(perc)) / 10;
-            let vectorPerc = new Vector2(easePerc, easePerc)
-            this.step.multiplyInPlace(this.speedVector).multiplyInPlace(vectorPerc);
-            this.positionCatch.addInPlace(this.step).multiplyInPlace(vectorPerc);
             this.sendToListener();
         });
     }

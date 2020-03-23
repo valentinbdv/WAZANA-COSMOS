@@ -136,30 +136,15 @@ export class Player extends StarFighter {
     }
 
     direction: Vector2 = Vector2.Zero();
-    // move(mousepos: Vector2) {
-    //     let x = Math.sign(mousepos.x) * Math.min(Math.abs(mousepos.x) * this.velocity, this.velocity / (this.size * 20));
-    //     let y = Math.sign(mousepos.y) * Math.min(Math.abs(mousepos.y) * this.velocity, this.velocity / (this.size * 20));
-    //     this.direction = new Vector2(x, y);
-    //     let pos = this.position.add(this.direction);
-    //     this.setPosition(pos);
-    // }
     starVelocity: 0.03;
     move(step: Vector2) {
         if (step.y == 0) step.y = 0.001;
-        // step = Vector2.Maximize(step.multiplyInPlace(new Vector2(5, 5)), new Vector2(0.0001, 0.0001));
         let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 50);
         let ratio = Math.abs(step.x / step.y);
         let maxX = Math.sqrt((Math.pow(max, 2) * ratio) / (ratio + 1));
         let maxY = Math.sqrt(Math.pow(max, 2) / (ratio + 1));
-        let x, y;
-        if (this.accelerating) {
-            x = Math.sign(step.x) * maxX;
-            y = Math.sign(step.y) * maxY;
-        } else {
-            x = Math.sign(step.x) * Math.min(Math.abs(step.x) * this.velocity, maxX);
-            y = Math.sign(step.y) * Math.min(Math.abs(step.y) * this.velocity, maxY);
-
-        }
+        let x = Math.sign(step.x) * maxX;
+        let y = Math.sign(step.y) * maxY;
         this.direction = new Vector2(x, y);
         let pos = this.position.add(this.direction);
         this.setPosition(pos);
