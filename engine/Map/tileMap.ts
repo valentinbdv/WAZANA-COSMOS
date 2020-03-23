@@ -194,7 +194,7 @@ export class TileMap {
         for (let i = 0; i < dustNumber; i++) {
             let newDust = this.addDust(0.03);
             if (newDust) {
-                let pos = this.getNewRandomPositionFromCenter(position, 40);
+                let pos = this.getNewRandomPositionFromCenter(position, 20, 0);
                 newDust.setPosition(pos);
             }
         }
@@ -320,11 +320,11 @@ export class TileMap {
         return pos;
     }
 
-    getNewRandomPositionFromCenter(position: Vector2, size: number): Vector2 {
+    getNewRandomPositionFromCenter(position: Vector2, size: number, gap: number): Vector2 {
         let angle = Math.random() * Math.PI * 2;
-        let centerRatio = Math.pow(Math.random(), 1.5);
-        let x = Math.cos(angle) * size * centerRatio;
-        let y = Math.sin(angle) * size * centerRatio;
+        let centerRatio = Math.pow(Math.random(), 1.5) * size;
+        let x = Math.cos(angle) * (gap + centerRatio);
+        let y = Math.sin(angle) * (gap + centerRatio);
         return new Vector2(position.x + x, position.y + y);
     }
 
@@ -341,7 +341,7 @@ export class TileMap {
     moveDustToPlayer(player: Player, dust: StarDust) {
         this.removeDust(dust);
         dust.goToEntity(player, () => {
-            player.changeSize(0.002 / (player.size));
+            player.changeSize(0.002 / (Math.pow(player.size, 2)));
             player.shine();
             this.storageDust(dust);
         });

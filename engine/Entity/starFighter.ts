@@ -90,7 +90,7 @@ export class StarFighter extends Star {
             
             for (var index = 0; index < particles.length; index++) {
                 var particle = particles[index];
-                particle.age += this._scaledUpdateSpeed;
+                particle.age += this._scaledUpdateSpeed * that.system.fpsRatio;
                 
                 if (particle.age >= particle.lifeTime) { // Recycle
                     particles.splice(index, 1);
@@ -132,7 +132,7 @@ export class StarFighter extends Star {
 
             for (var index = 0; index < particles.length; index++) {
                 var particle = particles[index];
-                particle.age += this._scaledUpdateSpeed;
+                particle.age += this._scaledUpdateSpeed * that.system.fpsRatio;
 
                 if (particle.age >= particle.lifeTime) { // Recycle
                     particles.splice(index, 1);
@@ -175,7 +175,7 @@ export class StarFighter extends Star {
         this.particle.updateFunction = function (particles) {
             for (var index = 0; index < particles.length; index++) {
                 var particle = particles[index];
-                particle.age += this._scaledUpdateSpeed;
+                particle.age += this._scaledUpdateSpeed * that.system.fpsRatio;
 
                 if (particle.age >= particle.lifeTime) { // Recycle
                     particles.splice(index, 1);
@@ -200,11 +200,11 @@ export class StarFighter extends Star {
     }
     _explode(callback?: Function) {
         this.system.checkMaterials();
-        this.updateSize(100 * this.size, 80, () => {
+        this.updateSize(10, 80, () => {
             this.setReflectionLevel(1);
             this.updateSize(0.01, 30, () => {
-                this.hide();
                 setTimeout(() => {
+                    this.hide();
                     // Wait for the particle effect to end
                     if (callback) callback();
                 }, 2000);

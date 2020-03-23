@@ -8,7 +8,7 @@ import { BlackHole } from '../Entity/blackHole';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import find from 'lodash/find';
 import { IAPlayer } from '../Player/iaPlayer';
-import { StarCategory, StarCategories } from '../Entity/star';
+import { StarCategory, StarCategories, starMapDistance } from '../Entity/star';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -162,7 +162,12 @@ export class LocalMap {
         return newPlanet;
     }
 
-    iaNeeded = 50;
+    iaLevel = 1;
+    setIaLevel(level: number) {
+        this.iaLevel = level;
+    }
+
+    iaNeeded = 30;
     ias: Object = {};
     checkIaMap() {
         let newIaNeeded = Math.round(this.iaNeeded - Object.keys(this.ias).length);
@@ -176,11 +181,10 @@ export class LocalMap {
         for (const key in this.ias) {
             const ia:IAPlayer = this.ias[key];
             let p = ia.position;
-            if (ia.isStarOnScreen()) {
-                ia.showIA();
-            } else {
-                ia.hideIA();
-            }
+            if (ia.isStarOnScreen()) ia.showIA();
+            else ia.hideIA();
+
+            if (!ia.isStarOnMap()) this.removeIa(ia);
         }
     }
 
@@ -192,32 +196,34 @@ export class LocalMap {
 
     createIa() {
         let newIa = new IAPlayer(this.system, this.gravityGrid);
-        this.tileMap.addPlayer(newIa);
         let pos = this.getFreePosition();
         newIa.setPosition(pos);
         let cat = this.getRandomCategory();
         newIa.setCategory(cat, false);
+        newIa.setLevel(this.iaLevel);
         this.addIa(newIa);
     }
     
     addIa(ia: IAPlayer) {
         this.ias[ia.key] = ia;
+        this.tileMap.addPlayer(ia);
     }
 
     removeIa(ia: IAPlayer) {
+        this.tileMap.removePlayer(this.ias[ia.key]);
         delete this.ias[ia.key];
     }
 
     getFreePosition(): Vector2 {
         let test = true;
-        let distProgress = 5;
+        let distProgress = starMapDistance/2;
         while (test) {
-            let pos = this.tileMap.getNewRandomPositionFromCenter(Vector2.Zero(), distProgress);
+            let pos = this.tileMap.getNewRandomPositionFromCenter(this.tileMap.playerToFollow.position, distProgress, distProgress);
             let distTest = true;
             for (const key in this.tileMap.players) {
                 let player: Player = this.tileMap.players[key];
                 let dist = Vector2.Distance(pos, player.position);
-                if (dist < 50) { distTest = false; }
+                if (dist < 25) { distTest = false; }
             }
             if (distTest) {
                 test = false;

@@ -5,7 +5,7 @@ import { StarCategories } from './Entity/star';
 import { RealPlayer } from './Player/realPlayer';
 import { IntroUI } from './Ui/intro';
 import { PlayUI } from './Ui/play';
-import { Player } from "./player/player";
+import { Player, startSize } from "./player/player";
 import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
 import { TileMap } from './Map/tileMap';
@@ -18,9 +18,8 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 // Etoile diminue toute seul si ne fais rien du à la combustion
 // Restart bug
 // acceleration stop mouvement sur mobile
-// Ia plus offensive et plus concentrée au centre de la MAP
-// Mieux différencier les taille
 // Create particle in show/hide to avoid creating 100 particleSystem
+// Mouvement en permanence
 
 interface State {
     players: Array<Player>;
@@ -79,7 +78,9 @@ export class GameEngine {
         
         this.system.launchRender();
         this.system.setSky(0, () => {
+            this.realPlayer.show();
             this.realPlayer.setCategory(StarCategories[0], true);
+            this.realPlayer.setSize(startSize);
             this.gameStartAnim(() => {
                 this.introUI.showAnim();
             });
@@ -89,7 +90,6 @@ export class GameEngine {
     gameOver() {
         this.realPlayer.fixeCamera(false);
         this.playUI.hideAnim();
-        this.tileMap.addPlayer(this.realPlayer);
         this.gameOverAnim(() => {
             this.localMap.eraseAllIas();
             this.tileMap.eraseAllEntity();
@@ -133,8 +133,8 @@ export class GameEngine {
     gameStartAnim(callback: Function) {
         this.system.unfreezeMaterials();
         this.animation.simple(this.gameAnimLength, (count, perc) => {
-            this.system.ribbonMaterial.reflectionTexture.level = 0.1 * (perc);
-            this.system.sceneTexture.level = (perc);
+            this.system.ribbonMaterial.reflectionTexture.level = 0.1 * perc;
+            this.system.sceneTexture.level = perc;
         }, () => {
             this.system.freezeMaterials();
             callback();

@@ -15,6 +15,8 @@ import { Planet } from './planet';
 // https://www.youtube.com/watch?v=i4RtO_qIQHk
 
 
+export let starMapDistance = 120;
+
 export interface StarCategory {
     name: string;
     temperature: number;
@@ -109,6 +111,9 @@ export class Star extends MovingEntity {
         this.addSurface();
         this.addLight();
         this.setSize(this.size);
+        this.setTemperature(this.temperature);
+        this.setReflectionLevel(0);
+        this.system.checkActiveMeshes();
     }
 
     maxPlanet: number;
@@ -124,13 +129,12 @@ export class Star extends MovingEntity {
         let color = this.system.getColorFromTemperature(temperature);
         this.color = color.toColor4();
         if (!this.isStarVisible) return;
-        this.heartMaterial.emissiveColor = color;
-        this.heartMaterial.diffuseColor = Color3.White();
+        this.heartMaterial.emissiveColor = color.scale(1.5);
+        // this.heartMaterial.diffuseColor = Color3.White();
         this.surfaceMaterial.reflectivityColor = color;
-        // this.surfaceMaterial.albedoColor = color;
+        this.surfaceMaterial.albedoColor = color;
         this.light.diffuse = color;
     }
-
 
     heart: Mesh;
     heartMaterial: StandardMaterial;
@@ -181,7 +185,7 @@ export class Star extends MovingEntity {
         // this.surfaceMaterial.linkRefractionWithTransparency = true;
         this.surfaceMaterial.indexOfRefraction = 0;
         // this.surfaceMaterial.alpha = 0;
-        this.surfaceMaterial.microSurface = 0.8;
+        this.surfaceMaterial.microSurface = 0.85;
         
         this.surface.material = this.surfaceMaterial;
         this.surface.parent = this.movingMesh;
@@ -209,11 +213,11 @@ export class Star extends MovingEntity {
     shine() {
         if (!this.isStarVisible) return;
         if (this.shineAnimation.running || this.accelerating) return;
+        let size = Math.pow(this.size, 2)
         this.shineAnimation.simple(20, (count, perc) => {
             let y = 1 - 4 * Math.pow(perc - 0.5, 2);
             this.setReflectionLevel(y/2);
-            let sizeVector = new Vector3(this.size + y/10, this.size + y/10, this.size + y/10);
-            this.heart.scaling = sizeVector;
+            this.setHeartScale(size + y / 10);
         }, () => {
             this.setReflectionLevel(0);
         });
@@ -229,11 +233,23 @@ export class Star extends MovingEntity {
         newSize = Math.sqrt(newSize);
         this._setSize(newSize);
         if (!this.isStarVisible) return;
-        this.surface.scaling.x = newSize;
-        this.surface.scaling.y = newSize;
-        this.surface.scaling.z = newSize;
+        this.setSurfaceScale(Math.pow(newSize, 2))
         this.light.intensity = 1000 * size;
         this.cycleProgress = 1 / Math.sqrt(this.size);
+        if (!this.shineAnimation.running) this.setHeartScale(Math.pow(newSize, 2));
+
+    }
+
+    setSurfaceScale(scale: number) {
+        this.surface.scaling.x = scale;
+        this.surface.scaling.y = scale;
+        this.surface.scaling.z = scale;
+    }
+
+    setHeartScale(scale: number) {
+        this.heart.scaling.x = scale;
+        this.heart.scaling.y = scale;
+        this.heart.scaling.z = scale;
     }
 
     updateSize(size: number, time?:number, callback?: Function) {
@@ -274,9 +290,17 @@ export class Star extends MovingEntity {
         this.surface.visibility = opacity;
     }
 
-    visibleDistance = 100; // ia Maximum Distance
+    visibleDistance = 60; // ia Maximum Distance
     isStarOnScreen(): boolean {
         let vd = this.visibleDistance;
+        let p = this.position;
+        let c = this.system.center;
+        return (p.x < c.x + vd && p.x > c.x - vd && p.y < c.y + vd && p.y > c.y - vd);
+    }
+
+    mapDistance = starMapDistance; // ia Maximum Distance
+    isStarOnMap(): boolean {
+        let vd = this.mapDistance;
         let p = this.position;
         let c = this.system.center;
         return (p.x < c.x + vd && p.x > c.x - vd && p.y < c.y + vd && p.y > c.y - vd);
@@ -285,7 +309,6 @@ export class Star extends MovingEntity {
     isStarVisible = false;
     show() {
         if (this.isStarVisible) return;
-        console.log('show');
         this.isStarVisible = true;
         this.createStar();
         this.system.addSkyChangeListener((texture) => {
@@ -296,7 +319,6 @@ export class Star extends MovingEntity {
 
     hide() {
         if (!this.isStarVisible) return;
-        console.log('hide');
         this.isStarVisible = false;
         this._disposeStar();
         this.system.removeSkyChangeListener((texture) => {

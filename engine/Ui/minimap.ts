@@ -9,7 +9,7 @@ import { TileMap } from '../Map/tileMap';
 
 import { Ellipse } from '@babylonjs/gui/2D/controls/ellipse';
 import { Line } from '@babylonjs/gui/2D/controls/line';
-import { Color4 } from '@babylonjs/core/Maths/math';
+import { Color4, Color3 } from '@babylonjs/core/Maths/math';
 
 export class MinimapUI {
 
@@ -74,12 +74,13 @@ export class MinimapUI {
         plIcon.width = this.iconSize+'px';
         plIcon.height = this.iconSize+'px';
         plIcon.thickness = 0;
-        plIcon.background = 'rgb('+color.r * 255+', '+color.g * 255+', '+color.b * 255+')';
+        // plIcon.background = 'white';
+        plIcon.background = 'rgb(' + color.r * 255+', '+color.g * 255+', '+color.b * 255+')';
         this.limit.addControl(plIcon);
         return plIcon;
     }
 
-    mR = 0.4;
+    mR = 1;
     getIconPosition(player: Player) {
         let rP = this.realPlayer.position;
         let pos = { y: (player.position.x - rP.x) * this.mR, x: (player.position.y - rP.y) * this.mR };
@@ -92,17 +93,20 @@ export class MinimapUI {
     }
 
     playersIcons = {};
+    otherPLayerColor = new Color4(0.7, 0.7, 0.7, 1);
     checkMap() {
         for (const key in this.tileMap.players) {
             if (this.tileMap.players.hasOwnProperty(key)) {
                 const player = this.tileMap.players[key];
                 if (!this.playersIcons[key]) {
                     this.playersIcons[key] = new ui_node(this.system);
-                    this.playersIcons[key].container = this.createPlayerIcon(player.color);
+                    this.playersIcons[key].container = this.createPlayerIcon(this.otherPLayerColor);
                 }
                 if (key != this.realPlayer.key) {
                     let pos = this.getIconPosition(player);
                     this.playersIcons[key].setPosition(pos);
+                    // let size = Math.pow(player.size * 2, 2);
+                    // this.playersIcons[key].setSize({ width: size, height: size}); 
                 }
             }
         }
@@ -112,6 +116,10 @@ export class MinimapUI {
                 if (!this.tileMap.players.hasOwnProperty(key)) this.limit.removeControl(pl.container);
             }
         }
+
+        // let pl = this.realPlayer;
+        // let size = Math.pow(pl.size * 2, 2);
+        // this.playersIcons[pl.key].setSize({ width: size, height: size }); 
     }
 
     setRealPlayerIcon() {

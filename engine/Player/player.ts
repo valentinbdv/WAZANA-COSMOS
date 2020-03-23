@@ -11,7 +11,7 @@ import { BlackHole } from '../Entity/blackHole';
 import { MovingEntity } from '../Entity/movingEntity';
 
 export let minSize = 0.5; 
-export let startSize = 0.5;
+export let startSize = 1;
 export let gravityRatio = 10;
 
 export interface PlayerInterface {

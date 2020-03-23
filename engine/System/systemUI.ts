@@ -33,18 +33,25 @@ export class SystemUI extends MeshSystem {
             this.checkScreenSize();
         }
 
-        window
+        if (this.checkPlatform()) {
+            this.engine.setHardwareScalingLevel(0.5);
+            this.scalingLevel = 0.5;
+        }
     }
     
     checkScreenSize() {
-        let width = window.innerWidth;
         let height = window.innerHeight;
-        let scale = this.scalingLevel / (width / 2000 + height / 2000);
+        // let width = window.innerWidth;
+        // let ratio = width / height;
+        let scaleDiv = Math.min(height / 600, 1)
+        let scale = this.scalingLevel / scaleDiv;
         this.advancedTexture.scale(scale);
     }
 
     checkMobile() {
-        if (this.checkPlatform()) this.goFullScreen();
+        if (this.isOnMobile) {
+            this.goFullScreen();
+        }
     }
 
     isOnMobile = false;

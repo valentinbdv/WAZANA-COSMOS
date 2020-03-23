@@ -14,6 +14,11 @@ export class IAPlayer extends Player {
         this.startMovingAround();
     }
 
+    level = 1;
+    setLevel(level: number) {
+        this.level = level;
+    }
+
     moveInt;
     startMovingAround() {        
         this.moveInt = setInterval(() => {
@@ -24,12 +29,13 @@ export class IAPlayer extends Player {
     }
 
     checkAction(closestTarget: Player) {
-        let clumsy = Math.random() > 0.7;
         if (this.absorber) {
+            let clumsy = Math.random() > 0.8 - ( this.level / 10);
             if (!clumsy) this.avoidAbsorption();
         } else if (closestTarget) {
             let dist = Vector2.Distance(this.position, closestTarget.position);
-            if (dist < this.gravityField * 5 && !clumsy) this.goToPlayer(closestTarget);
+            let clumsy = Math.random() > 0.6 - (this.level / 10);
+            if (dist < this.gravityField * 50 && !clumsy) this.goToPlayer(closestTarget);
         }
     }
 
@@ -52,7 +58,6 @@ export class IAPlayer extends Player {
         this._disposePlayer();
     }
 
-    isStarVisible = false;
     showIA() {
         if (this.isStarVisible) return;
         this.show();

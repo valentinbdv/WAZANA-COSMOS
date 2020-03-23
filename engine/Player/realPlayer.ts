@@ -136,6 +136,7 @@ export class RealPlayer extends Player {
         this.isDead = false;
         this.show();
         this.shine();
+        this.gravityGrid.setCenterAndSize(this.position, this.size);
     }
 
     dispose() {
