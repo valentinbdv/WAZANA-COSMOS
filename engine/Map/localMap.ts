@@ -102,7 +102,7 @@ export class LocalMap {
             const otherplayer: Player = this.tileMap.players[key];
             if (otherplayer.isStarVisible) {
                 let dist = Vector2.Distance(player.position, otherplayer.position) * 0.8;
-                if (minDist > dist && otherplayer.key != player.key && player.gravityField > otherplayer.gravityField) {
+                if (minDist > dist && otherplayer.key != player.key && player.size > otherplayer.size) {
                     minDist = dist;
                     closestTarget = otherplayer;
                     if (dist < (player.gravityField * gravityRatio)) {
@@ -167,7 +167,7 @@ export class LocalMap {
         this.iaLevel = level;
     }
 
-    iaNeeded = 30;
+    iaNeeded = starMapDistance/3;
     ias: Object = {};
     checkIaMap() {
         let newIaNeeded = Math.round(this.iaNeeded - Object.keys(this.ias).length);
@@ -211,6 +211,7 @@ export class LocalMap {
 
     removeIa(ia: IAPlayer) {
         this.tileMap.removePlayer(this.ias[ia.key]);
+        this.ias[ia.key].dispose();
         delete this.ias[ia.key];
     }
 
@@ -236,6 +237,8 @@ export class LocalMap {
 
     eraseAllIas() {
         clearInterval(this.chekIaInterval);
+        console.log(this.ias);
+        
         for (const key in this.ias) {
             this.removeIa(this.ias[key]);
         }

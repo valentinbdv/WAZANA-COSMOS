@@ -19,7 +19,6 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 // Restart bug
 // acceleration stop mouvement sur mobile
 // Create particle in show/hide to avoid creating 100 particleSystem
-// Mouvement en permanence
 
 interface State {
     players: Array<Player>;
@@ -78,9 +77,10 @@ export class GameEngine {
         
         this.system.launchRender();
         this.system.setSky(0, () => {
+            this.realPlayer.createStar();
+            this.realPlayer.setSize(startSize);
             this.realPlayer.show();
             this.realPlayer.setCategory(StarCategories[0], true);
-            this.realPlayer.setSize(startSize);
             this.gameStartAnim(() => {
                 this.introUI.showAnim();
             });
@@ -93,7 +93,7 @@ export class GameEngine {
         this.gameOverAnim(() => {
             this.localMap.eraseAllIas();
             this.tileMap.eraseAllEntity();
-            this.realPlayer.restart();
+            this.system.checkActiveMeshes();
             this.gameStartAnim(() => {
                 this.introUI.showAnim();
             });

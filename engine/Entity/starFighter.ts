@@ -204,7 +204,6 @@ export class StarFighter extends Star {
             this.setReflectionLevel(1);
             this.updateSize(0.01, 30, () => {
                 setTimeout(() => {
-                    this.hide();
                     // Wait for the particle effect to end
                     if (callback) callback();
                 }, 2000);

@@ -129,17 +129,36 @@ export class RealPlayer extends Player {
     restart() {
         this.fixeCamera(true);
         this.setSize(startSize);
-        this.setCategory(this.category, true);
+        this.setOpacity(1);
         this.setPosition(Vector2.Zero());
-        this.system.checkActiveMeshes();
         this.movingMesh.position.y = 0;
         this.isDead = false;
-        this.show();
+        
         this.shine();
+        this.show();
         this.gravityGrid.setCenterAndSize(this.position, this.size);
+        this.setCategory(this.category, true);
+        this.system.checkActiveMeshes();
     }
 
     dispose() {
         this.setMoving(false);
+        this.restart();
+    }
+
+    show() {
+        if (this.isStarVisible) return;
+        this.isStarVisible = true;
+        this.setSize(this.size);
+        this.setOpacity(1);
+    }
+
+    hide() {
+        if (!this.isStarVisible) return;
+        this.isStarVisible = false;
+        this.setSize(0);
+        console.log('hide');
+        
+        this.setOpacity(0);
     }
 }

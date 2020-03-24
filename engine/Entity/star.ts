@@ -15,7 +15,7 @@ import { Planet } from './planet';
 // https://www.youtube.com/watch?v=i4RtO_qIQHk
 
 
-export let starMapDistance = 120;
+export let starMapDistance = 150;
 
 export interface StarCategory {
     name: string;
@@ -29,29 +29,29 @@ export let StarCategories: Array<StarCategory> = [
     {
         name: 'Red Dwarf',
         temperature: StarTemperatures[0],
-        planets: 3,
+        planets: 2,
         gravity: 1.2,
         velocity: 1
     },
     {
         name: 'Yellow Dwarf',
         temperature: StarTemperatures[1],
-        planets: 4,
+        planets: 3,
         gravity: 1.1,
         velocity: 1.1
     },
     {
         name: 'White Dwarf',
         temperature: StarTemperatures[2],
-        planets: 5,
+        planets: 4,
         gravity: 1,
         velocity: 0.9
     },
     {
         name: 'Blue Dwarf',
         temperature: StarTemperatures[3],
-        planets: 6,
-        gravity: 0.6,
+        planets: 5,
+        gravity: 0.8,
         velocity: 1.3
     },
 ];
@@ -123,8 +123,6 @@ export class Star extends MovingEntity {
 
     temperature: number;
     setTemperature(temperature: number) {
-        temperature = Math.max(3000, temperature);
-        temperature = Math.min(30000, temperature);
         this.temperature = temperature;
         let color = this.system.getColorFromTemperature(temperature);
         this.color = color.toColor4();
@@ -177,6 +175,7 @@ export class Star extends MovingEntity {
 
         this.surface.convertToFlatShadedMesh();
         this.surfaceMaterial = new PBRMaterial(this.key + "material", this.system.scene);
+        this.surfaceMaterial.backFaceCulling = false;
         this.surfaceMaterial.backFaceCulling = false;
         // this.surfaceMaterial.roughness = 0.5;
         // this.surfaceMaterial.metallic = 1;
@@ -237,7 +236,6 @@ export class Star extends MovingEntity {
         this.light.intensity = 1000 * size;
         this.cycleProgress = 1 / Math.sqrt(this.size);
         if (!this.shineAnimation.running) this.setHeartScale(Math.pow(newSize, 2));
-
     }
 
     setSurfaceScale(scale: number) {

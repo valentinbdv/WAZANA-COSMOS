@@ -72,7 +72,7 @@ export class Player extends StarFighter {
         this.setTemperature(category.temperature);
         this.setMaxPlanet(category.planets)
         this.setGravity(category.gravity);
-        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField);
+        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField/2);
         this.removeAllPlanets();
         if (withPlanets) {
             for (let i = 0; i < category.planets; i++) {
@@ -155,7 +155,7 @@ export class Player extends StarFighter {
         this.movingMesh.position.x = this.position.x;
         this.movingMesh.position.z = this.position.y;
         
-        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField);
+        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField/2);
     }
 
     addPlanet(planet?: Planet) {
@@ -256,6 +256,8 @@ export class Player extends StarFighter {
     }
     
     _disposePlayer() {
+        this.isDead = true;
+        this.moveCatcher.stop();
         this.accelerateAnimation.stop();
         this.removeAllPlanets();
         this._disposeStarFighter();
