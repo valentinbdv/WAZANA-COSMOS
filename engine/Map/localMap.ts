@@ -211,7 +211,6 @@ export class LocalMap {
 
     removeIa(ia: IAPlayer) {
         this.tileMap.removePlayer(this.ias[ia.key]);
-        this.ias[ia.key].dispose();
         delete this.ias[ia.key];
     }
 
@@ -237,10 +236,10 @@ export class LocalMap {
 
     eraseAllIas() {
         clearInterval(this.chekIaInterval);
-        console.log(this.ias);
-        
         for (const key in this.ias) {
+            this.ias[key].dispose();
             this.removeIa(this.ias[key]);
         }
+        this.ias =  {};
     }
 }

@@ -106,7 +106,8 @@ export class Star extends MovingEntity {
         this.surface.rotation.y += this.cycleProgress * this.system.fpsRatio / 200;
     }
 
-    createStar() {        
+    createStar() {
+        if (this.heart && this.heart.isVisible) return;
         this.addHeart();
         this.addSurface();
         this.addLight();

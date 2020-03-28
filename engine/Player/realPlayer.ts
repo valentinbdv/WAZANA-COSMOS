@@ -94,6 +94,7 @@ export class RealPlayer extends Player {
         this.system.scene.registerBeforeRender(() => {
             if (!this.isDead) {
                 let newRadius = Math.max(this.size * 70, 50);
+                newRadius = Math.min(this.size * 70, 100);
                 // Large size to check stuff
                 // let newRadius = 200;
                 let change = newRadius - this.system.camera.radius;
@@ -130,20 +131,22 @@ export class RealPlayer extends Player {
         this.fixeCamera(true);
         this.setSize(startSize);
         this.setOpacity(1);
+        this.setMoving(false);
         this.setPosition(Vector2.Zero());
+        this.gravityGrid.setCenterAndSize(this.position, this.size);
         this.movingMesh.position.y = 0;
         this.isDead = false;
         
         this.shine();
         this.show();
-        this.gravityGrid.setCenterAndSize(this.position, this.size);
-        this.setCategory(this.category, true);
+
+        this.updateCategory(this.category, true);
         this.system.checkActiveMeshes();
     }
 
     dispose() {
         this.setMoving(false);
-        this.restart();
+        this.fixeCamera(true);
     }
 
     show() {
@@ -157,8 +160,6 @@ export class RealPlayer extends Player {
         if (!this.isStarVisible) return;
         this.isStarVisible = false;
         this.setSize(0);
-        console.log('hide');
-        
         this.setOpacity(0);
     }
 }

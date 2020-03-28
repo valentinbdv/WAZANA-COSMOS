@@ -1,6 +1,6 @@
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
-import { Player, startSize } from './player';
+import { Player, startSize, maxSize } from './player';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
@@ -10,8 +10,10 @@ export class IAPlayer extends Player {
 
     constructor(system: MeshSystem, gravityGrid: GravityGrid) {
         super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
-        this.setSize(0.8 + Math.random());
-        this.startMovingAround();
+        
+        let random = Math.pow(Math.random(), 10);
+        let size = startSize / 2 + random * maxSize;
+        this.setSize(size);
     }
 
     level = 1;
@@ -55,6 +57,7 @@ export class IAPlayer extends Player {
 
     dispose() {
         clearInterval(this.moveInt);
+        this.hide();
         this._disposePlayer();
     }
 

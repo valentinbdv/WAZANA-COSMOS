@@ -10,7 +10,8 @@ import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { BlackHole } from '../Entity/blackHole';
 import { MovingEntity } from '../Entity/movingEntity';
 
-export let minSize = 0.5; 
+export let minSize = 0.5;
+export let maxSize = 5; 
 export let startSize = 1;
 export let gravityRatio = 10;
 
@@ -68,11 +69,15 @@ export class Player extends StarFighter {
     setCategory(category: StarCategory, withPlanets: boolean) {
         if (this.category == category) return;
         this.category = category;
+        this.updateCategory(category, withPlanets);
+    }
+
+    updateCategory(category: StarCategory, withPlanets: boolean) {
         this.setVelocity(category.velocity);
         this.setTemperature(category.temperature);
         this.setMaxPlanet(category.planets)
         this.setGravity(category.gravity);
-        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField/2);
+        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField / 2);
         this.removeAllPlanets();
         if (withPlanets) {
             for (let i = 0; i < category.planets; i++) {
@@ -245,10 +250,10 @@ export class Player extends StarFighter {
                 if (callback) callback();
             });
         }
-        if (this.onDied) this.onDied();
         this.absorbStop();
         this.setMoving(false);
         this.isDead = true;
+        if (this.onDied) this.onDied();
     }
     
     dispose() {

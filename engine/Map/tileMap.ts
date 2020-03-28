@@ -160,7 +160,10 @@ export class TileMap {
 
     eraseAllPlanets() {
         for (const key in this.planets) {
-            this.removePlanet(this.planets[key]);
+            this.storagePlanet(this.planets[key]);
+        }
+        for (const key in this.planetsStorage) {
+            this.planetsStorage[key].hide();
         }
         this.planets = {};
     }
