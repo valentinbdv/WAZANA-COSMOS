@@ -16,13 +16,7 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 // Faire étoile filante plutôt que point blanc
 // Tableau de récap à la fin
 // Etoile diminue toute seul si ne fais rien du à la combustion
-// Restart bug
-// acceleration stop mouvement sur mobile
 // Create particle in show/hide to avoid creating 100 particleSystem
-// Changer particule effet en fonction de la taille de l'étoile 
-// Champ de gravity trop large quand l'étoile devient trop grosse + Toujours prendre l'étoile la plus proche
-// Plus on est gros et plus on diminue rapidement
-// Ne pas utiliser setInterval pour l'absortion sinon très lent de mourrir
 
 interface State {
     players: Array<Player>;
@@ -63,9 +57,7 @@ export class GameEngine {
         this.realPlayer = new RealPlayer(this.system, this.gravityGrid, this.onlineMap);
         this.realPlayer.setMoving(false);
         this.realPlayer.onDied = () => {
-            setTimeout(() => {
-                this.gameOver();
-            }, 2000);
+            this.gameOver();
         };
         
         this.tileMap.setPlayerToFollow(this.realPlayer);
@@ -95,15 +87,17 @@ export class GameEngine {
     
     gameOver() {
         this.playUI.hideAnim();
-        this.gameOverAnim(() => {
-            this.localMap.eraseAllIas();
-            this.tileMap.eraseAllEntity();
-            this.realPlayer.restart();
-            this.gameStartAnim(() => {
-                this.introUI.showAnim();
-            });
-        });
         this.tileMap.checkPlayerAndRessources(false);
+        setTimeout(() => {
+            this.gameOverAnim(() => {
+                this.localMap.eraseAllIas();
+                this.tileMap.eraseAllEntity();
+                this.realPlayer.restart();
+                this.gameStartAnim(() => {
+                    this.introUI.showAnim();
+                });
+            });
+        }, 2000);
     }
 
     gameAnimLength = 100;

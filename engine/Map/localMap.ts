@@ -18,7 +18,6 @@ import { StarCategory, StarCategories, starMapDistance } from '../Entity/star';
 
 export class LocalMap {
 
-    chekIaInterval;
     system: MeshSystem;
     gravityGrid: GravityGrid;
     tileMap: TileMap
@@ -32,12 +31,9 @@ export class LocalMap {
             if (this.tileMap.check) {
                 this.checkPlayersAbsorbtion();
                 this.checkRessourceMap();
+                this.checkIaMap();
             }
         }, 200);
-        
-        this.chekIaInterval = setInterval(()=> {
-            if (this.tileMap.check) this.checkIaMap();
-        }, 2000);
     }
 
     checkPlayersAbsorbtion() {
@@ -73,12 +69,15 @@ export class LocalMap {
     checkBlackHoleAbsorption(player: Player): boolean {
         let blackHoleTest = '';
         let minDist = 1000000;
+        let minBlackHoleField = 1;
         for (const key in this.tileMap.blackHoles) {
             const blackHole: BlackHole = this.tileMap.blackHoles[key];
+            let blackHoleField = Math.sqrt(blackHole.gravityField * gravityRatio * 20);
             let dist = Vector2.Distance(blackHole.position, player.position);
-            if (dist < (blackHole.gravityField * gravityRatio)) {
+            if (dist < blackHoleField) {
                 if (minDist > dist) {
                     minDist = dist;
+                    minBlackHoleField = blackHoleField;
                     blackHoleTest = blackHole.key;
                 }
             }
@@ -86,7 +85,7 @@ export class LocalMap {
 
         if (blackHoleTest) {
             let blackHole: BlackHole = this.tileMap.blackHoles[blackHoleTest]
-            player.absorbByBlackHole(blackHole);
+            player.absorbByBlackHole(blackHole, minDist / minBlackHoleField);
             return true;
         } else {
             if (player.blackHoleAbsorber) player.absorbStop();
@@ -98,14 +97,15 @@ export class LocalMap {
         let closestTarget: Player;
         let minDist = 1000000;
         let testTarget = '';
+        let palyerGravityField = Math.sqrt(player.gravityField * gravityRatio * 20);
         for (const key in this.tileMap.players) {
             const otherplayer: Player = this.tileMap.players[key];
-            if (otherplayer.isStarVisible) {
-                let dist = Vector2.Distance(player.position, otherplayer.position) * 0.8;
-                if (minDist > dist && otherplayer.key != player.key && player.size > otherplayer.size) {
+            if (otherplayer.isStarVisible && otherplayer.key != player.key && player.size > otherplayer.size) {
+                let dist = Vector2.Distance(player.position, otherplayer.position);
+                if (minDist > dist) {
                     minDist = dist;
                     closestTarget = otherplayer;
-                    if (dist < (player.gravityField * gravityRatio)) {
+                    if (dist < palyerGravityField) {
                         testTarget = otherplayer.key;
                     }
                 }
@@ -116,7 +116,7 @@ export class LocalMap {
         if (testTarget) {
             let otherPlayer: Player = this.tileMap.players[testTarget]
             player.absorbTarget(otherPlayer);
-            otherPlayer.setAbsorber(player);
+            otherPlayer.setAbsorber(player, minDist / palyerGravityField);
             return true;
         } else {
             player.absorbStop();
@@ -172,19 +172,18 @@ export class LocalMap {
     checkIaMap() {
         let newIaNeeded = Math.round(this.iaNeeded - Object.keys(this.ias).length);
         for (let i = 0; i < newIaNeeded; i++) {
-            setTimeout(() => {
-                this.createIa();
-            }, i * 100);
+            this.createIa();
         }
 
-        let c = this.tileMap.playerToFollow.position;
         for (const key in this.ias) {
             const ia:IAPlayer = this.ias[key];
-            let p = ia.position;
             if (ia.isStarOnScreen()) ia.showIA();
             else ia.hideIA();
 
-            if (!ia.isStarOnMap()) this.removeIa(ia);
+            if (!ia.isStarOnMap()) {
+                ia.dispose();
+                this.removeIa(ia);
+            }
         }
     }
 
@@ -235,7 +234,6 @@ export class LocalMap {
     }
 
     eraseAllIas() {
-        clearInterval(this.chekIaInterval);
         for (const key in this.ias) {
             this.ias[key].dispose();
             this.removeIa(this.ias[key]);

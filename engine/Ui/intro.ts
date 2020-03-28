@@ -151,7 +151,7 @@ export class IntroUI {
         });
         this.startOnline._setStyle({ zIndex: 100 });
 
-        this.startLocal = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Play against AI' }, { x: 0, y: 250 }, { width: 180, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
+        this.startLocal = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Play' }, { x: 0, y: 250 }, { width: 180, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
         this.startLocal.on('click', () => {
             this.onStart('local');
         });

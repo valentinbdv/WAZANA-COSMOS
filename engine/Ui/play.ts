@@ -20,7 +20,7 @@ export class PlayUI extends MinimapUI {
     fontSize = 20;
     showAnimation: Animation;
     shineAnimation: Animation;
-    progressWidthAnimation: Animation;
+    checkAnimation: Animation;
     curve: EasingFunction;
 
     constructor(system: SystemUI, realPlayer: RealPlayer, tileMap: TileMap) {
@@ -30,7 +30,7 @@ export class PlayUI extends MinimapUI {
         this.tileMap = tileMap;
         this.showAnimation = new Animation(system.animationManager);
         this.shineAnimation = new Animation(system.animationManager);
-        this.progressWidthAnimation = new Animation(system.animationManager);
+        this.checkAnimation = new Animation(system.animationManager);
         this.curve = new CircleEase();
 
         this.addPlayerStat();
@@ -87,8 +87,10 @@ export class PlayUI extends MinimapUI {
         // let perc = playerIndex/ranks.length;
         // let fakePlayerIndex = Math.round(perc * this.totalPlayers)
         let perc = (this.realPlayer.size - minSize) / (maxSize - minSize);
+        
         // perc = Math.pow(perc, 0.8);
         let fakePlayerIndex = Math.round(( 1 - perc ) * this.totalPlayers);
+        // console.log(this.realPlayer.size, perc, fakePlayerIndex);
         this.rankText.setText('Your rank :' + fakePlayerIndex + '/' + this.totalPlayers);
         // this.player1.setText('#1  ' + ranks[0].key);
         // if (ranks[1]) this.player2.setText('#2 ' + ranks[1].key);
@@ -106,12 +108,12 @@ export class PlayUI extends MinimapUI {
         this.sizeText.setText('Your size: ' + (playerSize + 1).toString());
         let width = Math.round((sizeAdjusted - playerSize) * 150);
         if (width != this.currentWidth) { 
-            this.animateProgressWidth(width);
+            this.sizePorgress.setWidth(width);
             this.currentWidth = width;
         }
         if (playerSize != this.currentSize) {
             this.shinePlayerSize();
-            this.animateProgressWidth(width);
+            this.sizePorgress.setWidth(width);
             this.currentSize = playerSize;
         }
     }
@@ -120,7 +122,7 @@ export class PlayUI extends MinimapUI {
     animateProgressWidth(width) {
         let startWidth = this.progressWidth;
         let change = width - this.progressWidth;
-        this.progressWidthAnimation.simple(5, (count, perc) => {
+        this.checkAnimation.simple(5, (count, perc) => {
             this.progressWidth = startWidth + change * perc;
             this.sizePorgress.setWidth(this.progressWidth);
         });
@@ -136,23 +138,22 @@ export class PlayUI extends MinimapUI {
         });
     }
 
-    checkInterval;
     show() {
         // this.listLayout.show();
         this.statLayout.show();
         this.minimapLayout.show();
         this.setRealPlayerIcon();
         this.totalPlayers = Math.round(Math.random() * 50 + 450);
-        this.checkInterval = setInterval(() => {
+
+        this.checkAnimation.infinite((count, perc) => {
             this.checkRanks();
             this.checkPlayerSize();
             this.checkMap();
-        }, 100);
+        });
     }
 
     hideAnim(callback?: Function) {
-        // Need to clearnterval first to prevent bug
-        if (this.checkInterval) clearInterval(this.checkInterval);
+        this.checkAnimation.stop();
         this.setLayerChangeAnim(0);
         this.showAnimation.simple(50, (count, perc) => {
             this.setLayerChangeAnim(perc);
@@ -167,7 +168,7 @@ export class PlayUI extends MinimapUI {
     }
 
     hide() {
-        if (this.checkInterval) clearInterval(this.checkInterval);
+        this.checkAnimation.stop();
         // this.listLayout.hide();
         this.statLayout.hide();
         this.minimapLayout.hide();

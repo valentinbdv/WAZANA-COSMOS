@@ -344,7 +344,7 @@ export class TileMap {
     moveDustToPlayer(player: Player, dust: StarDust) {
         this.removeDust(dust);
         dust.goToEntity(player, () => {
-            player.changeSize(0.002 / (Math.pow(player.size, 2)));
+            player.changeSize(0.005 / (Math.pow(player.size, 3)));
             player.shine();
             this.storageDust(dust);
         });

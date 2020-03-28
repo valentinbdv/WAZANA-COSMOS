@@ -25,11 +25,11 @@ export class StarFighter extends Star {
     }
 
     decrease() {
-        this.changeSize(-0.01);
+        this.changeSize(-0.001);
     }
 
     increase() {
-        this.changeSize(0.001);
+        this.changeSize(0.0001);
         this.shine();
     }
 
@@ -38,8 +38,6 @@ export class StarFighter extends Star {
         let newSize = Math.pow(this.size, 2) + change;
         this.setSize(newSize);
         if (!this.isStarVisible) return;
-        let sizeVector = new Vector3(this.size, this.size, this.size);
-        this.heart.scaling = sizeVector;
     }
 
     particle: ParticleSystem;
@@ -79,11 +77,11 @@ export class StarFighter extends Star {
         this.particle.maxSize = 0.5;
         this.particle.particleTexture = this.system.circleTexture;
         // this.particle.manualEmitCount = null;
+        // Must keep that because we need function word on particle
+        let that = this;
         this.particle.startDirectionFunction = (worldMatrix: Matrix, directionToUpdate: Vector3) => {
             Vector3.TransformNormalFromFloatsToRef(Math.random(), Math.random(), Math.random(), worldMatrix, directionToUpdate);
         }
-        // Must keep that because we need function word on particle
-        let that = this;
         this.particle.updateFunction = function(particles) {
             let changeposition: Vector2 = that.position.subtract(that.target.position);
             let changecolor: Color4 = that.color.subtract(that.target.color);
@@ -95,6 +93,7 @@ export class StarFighter extends Star {
                 if (particle.age >= particle.lifeTime) { // Recycle
                     particles.splice(index, 1);
                     this._stockParticles.push(particle);
+                    particle.color.a = 0;
                     index--;
                     continue;
                 } else {
@@ -106,8 +105,8 @@ export class StarFighter extends Star {
                     let progressposition: Vector2 = changeposition.multiply(new Vector2(posprogress, posprogress));
                     let pos: Vector2 = that.target.position.add(progressposition);
 
-                    particle.position.x = pos.x + 2 * (particle.direction.x - 0.5) * (1 - posprogress);
-                    particle.position.z = pos.y + 2 * (particle.direction.z - 0.5) * (1 - posprogress);
+                    particle.position.x = pos.x + (particle.direction.x - 0.5) * (1 - posprogress) * that.size;
+                    particle.position.z = pos.y + (particle.direction.z - 0.5) * (1 - posprogress) * that.size;
                 }
             } 
         }

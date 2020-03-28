@@ -98,8 +98,8 @@ export class Star extends MovingEntity {
     starCycle() {
         for (let i = 0; i < this.planets.length; i++) {
             const planet = this.planets[i];
-            planet.mesh.position.x = (this.size + planet.radius) * Math.cos((planet.velocity * planet.cycle) / 100 + planet.offset);
-            planet.mesh.position.z = (this.size + planet.radius) * Math.sin((planet.velocity * planet.cycle) / 100 + planet.offset);
+            planet.mesh.position.x = ((this.size * 1.5) + planet.radius) * Math.cos((planet.velocity * planet.cycle) / 100 + planet.offset);
+            planet.mesh.position.z = ((this.size * 1.5) + planet.radius) * Math.sin((planet.velocity * planet.cycle) / 100 + planet.offset);
             planet.mesh.rotation.y = planet.velocity * ( this.cycleProgress / 100 );
             planet.cycle += this.cycleProgress * this.system.fpsRatio;
         }
@@ -272,12 +272,12 @@ export class Star extends MovingEntity {
     }
     
     _disposeStar() {
-        if (!this.isStarVisible) return;
+        if (!this.heart) return;
         this.heart.isVisible = false;
         this.surface.isVisible = false;
-        // this.heart.dispose();
+        this.heart.dispose();
         this.heartMaterial.dispose();
-        // this.surface.dispose();
+        this.surface.dispose();
         this.surfaceMaterial.dispose();
         this.light.isEnabled(false);
         this.light.dispose();
@@ -309,6 +309,7 @@ export class Star extends MovingEntity {
     show() {
         if (this.isStarVisible) return;
         this.isStarVisible = true;
+        
         this.createStar();
         this.system.addSkyChangeListener((texture) => {
             this.setTexture(texture);

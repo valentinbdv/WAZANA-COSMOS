@@ -10,7 +10,7 @@ import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { BlackHole } from '../Entity/blackHole';
 import { MovingEntity } from '../Entity/movingEntity';
 
-export let minSize = 0.5;
+export let minSize = 0.6;
 export let maxSize = 5; 
 export let startSize = 1;
 export let gravityRatio = 10;
@@ -46,6 +46,7 @@ export class Player extends StarFighter {
     gravityGrid: GravityGrid;
     fixeAnimation: Animation;
     accelerateAnimation: Animation;
+    absorbAnimation: Animation;
     fixeCurve: EasingFunction;
     particleCurve: EasingFunction;
     ia = false;
@@ -58,6 +59,7 @@ export class Player extends StarFighter {
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.fixeAnimation = new Animation(this.system.animationManager);
         this.accelerateAnimation = new Animation(this.system.animationManager);
+        this.absorbAnimation = new Animation(this.system.animationManager);
 
         this.fixeCurve = new CubicEase();
         this.fixeCurve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
@@ -95,46 +97,56 @@ export class Player extends StarFighter {
         this.realVelocity = realVelocity;
     }
 
-    absorbingInt;
+    absorbRatio = 0.0005;
     absorbTarget(target: Player) {
-        if (this.absorbing) return;
+        // Check target to make sure we always absorb closest target
+        if (this.absorbing && target == this.target) return;
         this.absorbStop();
         this.absorbing = target.key;
         this.target = target;
         this.setAbsobUpdateFunction();
         this.system.checkActiveMeshes();
-        this.absorbingInt = setInterval(() => {
-            this.target.decrease();
-            this.increase();
+        let lastCount = 0;
+        this.absorbAnimation.infinite((count) => {
+            let change = count - lastCount;
+            lastCount = count;
+            let up = change * this.absorbRatio * Math.pow(this.target.size, 1 / 2) / 2;
+            this.changeSize(up);
+            let down = -change * this.absorbRatio * Math.pow(this.target.size, 2) * 5;
+            this.target.changeSize(down);
             if (this.target.isDead) this.absorbStop();
-        }, 100);
+        });
     }
 
-    setAbsorber(absorber: MovingEntity) {
+    setAbsorber(absorber: MovingEntity, proximity: number) {
         this.absorber = absorber;
-        let dist = Vector2.Distance(this.position, absorber.position);
-        let velocity = Math.min(Math.pow(dist / (absorber.gravityField * gravityRatio), 2), 0.8);
-        this.setRealVelocity(velocity);
+        // console.log(proximity);
+        
+        this.setRealVelocity(Math.sqrt(proximity));
     }
 
     blackHoleAbsorber: BlackHole;
-    absorbByBlackHole(absorber: BlackHole) {
+    absorbByBlackHole(absorber: BlackHole, proximity: number) {
         if (this.blackHoleAbsorber) return;
         this.absorbStop();
         this.blackHoleAbsorber = absorber;
         this.absorbing = absorber.key;
-        this.setAbsorber(absorber);
+        this.setAbsorber(absorber, proximity);
         this.setGetAbsobByBlackHoleFunction();
         this.system.checkActiveMeshes();
-        this.absorbingInt = setInterval(() => {
-            this.changeSize(-0.02);
-        }, 100);
+
+        let lastCount = 0;
+        this.absorbAnimation.infinite((count) => {
+            let change = count - lastCount;
+            lastCount = count;
+            this.changeSize(-change * this.absorbRatio * 2 * this.size);
+        });
     }
 
     absorbStop() {
         if (!this.absorbing && !this.target) return;
         this.particle.stop();
-        clearInterval(this.absorbingInt);
+        this.absorbAnimation.stop();
         this.absorbing = null;
         this.blackHoleAbsorber = null;
         this.setRealVelocity(1);
@@ -225,13 +237,13 @@ export class Player extends StarFighter {
             // else this.realVelocity = 1 + 4 * Math.max(1 - perc, 0);
             this.realVelocity = 1 + 2 * Math.sin(perc * Math.PI);
             let scale = (count < this.launchAnimationLength - 10) ? 1 + count % 10 / 20 : 1 + (10 - count % 10) / 20;
-            this.heart.scaling = new Vector3(scale * size, scale * size, scale * size);
+            this.setHeartScale(scale * size);
         }, () => {
             this.accelerating = false;
             planet.attachedToStar = false;
             planet.setParent(null);
             planet.hide();
-            this.heart.scaling = new Vector3(size, size, size);
+            this.setHeartScale(size);
             this.realVelocity = 1;
         });
     }
@@ -266,6 +278,7 @@ export class Player extends StarFighter {
         this.accelerateAnimation.stop();
         this.removeAllPlanets();
         this._disposeStarFighter();
+        this.absorbStop();
         this.fixeAnimation.stop();
         this.gravityGrid.eraseMass(this.key);
     }
