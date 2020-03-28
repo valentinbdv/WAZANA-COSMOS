@@ -1,8 +1,8 @@
 import { SystemUI } from '../System/systemUI'
 import { Animation } from '../System/animation'
-import { minSize, Player } from '../Player/player';
+import { minSize, Player, maxSize } from '../Player/player';
 import { RealPlayer } from '../Player/realPlayer';
-import { ui_group, ui_panel } from './group';
+import { ui_group, ui_panel, ui_control } from './group';
 import { ui_text, ui_bar, ui_back } from './node';
 import { colormain } from './color';
 import { TileMap } from '../Map/tileMap';
@@ -34,18 +34,20 @@ export class PlayUI extends MinimapUI {
         this.curve = new CircleEase();
 
         this.addPlayerStat();
-        this.addPlayerList();
+        // this.addPlayerList();
         this.hide();
     }
 
-    statLayout: ui_panel;
+    statLayout: ui_control;
     sizeText: ui_text;
     rankText: ui_text;
     sizePorgress: ui_back;
     addPlayerStat() {
-        this.statLayout = new ui_panel(this.system, { left: this.screenMargin, bottom: this.screenMargin }, { width: 150, height: 70 });
-        this.sizePorgress = this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: 100, height: 15, float: 'left' });
-        this.sizeText = this.statLayout.addText('Your size: 2', { x: 0, y: 0 }, { fontSize: this.fontSize, color: colormain, background: colormain, float: 'left' });
+        this.statLayout = new ui_control(this.system, { x: 0, y: 0 }, { width: 200, height: 80 });
+        this.statLayout.setScreenPosition({ left: this.screenMargin, bottom: this.screenMargin })
+        this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: 150, height: 20, float: 'left', opacity: 0.3 });
+        this.sizePorgress = this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: 150, height: 20, float: 'left' });
+        this.sizeText = this.statLayout.addText('Your size: 2', { x: 0, y: 0 }, { , width: 150, height: 20, fontSize: this.fontSize, color: colormain, background: colormain, float: 'left' });
         this.sizeText.setBackgroundOpacity(0);
         this.rankText = this.statLayout.addText('Rank: 5/100', { x: 0, y: -30 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
     }
@@ -58,7 +60,7 @@ export class PlayUI extends MinimapUI {
     player5: ui_text;
     addPlayerList() {
         this.listLayout = new ui_panel(this.system, {top: this.screenMargin, right: this.screenMargin}, { width: 250, height: 200 });
-        let title = this.listLayout.addText('Winners', { x: 0, y: -100 }, { fontSize: this.fontSize, color: colormain });
+        this.listLayout.addText('Winners', { x: 0, y: -100 }, { fontSize: this.fontSize, color: colormain });
         this.player1 = this.listLayout.addText('', { x: 0, y: 60 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
         this.player2 = this.listLayout.addText('', { x: 0, y: 80 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
         this.player3 = this.listLayout.addText('', { x: 0, y: 100 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
@@ -78,15 +80,21 @@ export class PlayUI extends MinimapUI {
         return ranks;
     }
 
+    totalPlayers = 500;
     checkRanks() {
-        let ranks = this.getRanks();
-        let playerIndex = ranks.indexOf(this.realPlayer) + 1;
-        this.rankText.setText('Your rank :' + playerIndex + '/' + ranks.length);
-        this.player1.setText('#1  ' + ranks[0].key);
-        if (ranks[1]) this.player2.setText('#2 ' + ranks[1].key);
-        if (ranks[2]) this.player3.setText('#3 ' + ranks[2].key);
-        if (ranks[3]) this.player4.setText('#4 ' + ranks[3].key);
-        if (ranks[4]) this.player5.setText('#5 ' + ranks[4].key);
+        // let ranks = this.getRanks();
+        // let playerIndex = ranks.indexOf(this.realPlayer) + 1;
+        // let perc = playerIndex/ranks.length;
+        // let fakePlayerIndex = Math.round(perc * this.totalPlayers)
+        let perc = (this.realPlayer.size - minSize) / (maxSize - minSize);
+        // perc = Math.pow(perc, 0.8);
+        let fakePlayerIndex = Math.round(( 1 - perc ) * this.totalPlayers);
+        this.rankText.setText('Your rank :' + fakePlayerIndex + '/' + this.totalPlayers);
+        // this.player1.setText('#1  ' + ranks[0].key);
+        // if (ranks[1]) this.player2.setText('#2 ' + ranks[1].key);
+        // if (ranks[2]) this.player3.setText('#3 ' + ranks[2].key);
+        // if (ranks[3]) this.player4.setText('#4 ' + ranks[3].key);
+        // if (ranks[4]) this.player5.setText('#5 ' + ranks[4].key);
     }
 
     currentWidth = 0;
@@ -130,10 +138,11 @@ export class PlayUI extends MinimapUI {
 
     checkInterval;
     show() {
-        this.listLayout.show();
+        // this.listLayout.show();
         this.statLayout.show();
         this.minimapLayout.show();
         this.setRealPlayerIcon();
+        this.totalPlayers = Math.round(Math.random() * 50 + 450);
         this.checkInterval = setInterval(() => {
             this.checkRanks();
             this.checkPlayerSize();
@@ -151,7 +160,7 @@ export class PlayUI extends MinimapUI {
             this.setLayerChangeAnim(1);
             this.minimapLayout.hideAll();
             this.statLayout.hideAll();
-            this.listLayout.hideAll();
+            // this.listLayout.hideAll();
             this.hide();
             if (callback) callback();
         });
@@ -159,7 +168,7 @@ export class PlayUI extends MinimapUI {
 
     hide() {
         if (this.checkInterval) clearInterval(this.checkInterval);
-        this.listLayout.hide();
+        // this.listLayout.hide();
         this.statLayout.hide();
         this.minimapLayout.hide();
     }
@@ -175,7 +184,7 @@ export class PlayUI extends MinimapUI {
         });
         this.minimapLayout.showAll();
         this.statLayout.showAll();
-        this.listLayout.showAll();
+        // this.listLayout.showAll();
     }
 
     setLayerChangeAnim(perc) {
@@ -187,8 +196,8 @@ export class PlayUI extends MinimapUI {
         this.statLayout.setOpacity(opacity);
         this.statLayout.setScreenPosition({ left: easePerc * 100 + this.screenMargin, bottom: this.screenMargin });
 
-        this.listLayout.setOpacity(opacity);
-        this.listLayout.setScreenPosition({ right: easePerc * 100 + this.screenMargin, top: this.screenMargin });
+        // this.listLayout.setOpacity(opacity);
+        // this.listLayout.setScreenPosition({ right: easePerc * 100 + this.screenMargin, top: this.screenMargin });
     }
 
 }
