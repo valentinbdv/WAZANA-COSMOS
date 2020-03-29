@@ -1,6 +1,6 @@
 import { Planet, PlanetInterface } from '../Entity/planet';
 import { Player } from '../player/player';
-import { minSize } from '../Entity/star';
+import { minSize, maxSize } from '../Entity/star';
 import { TileMap } from './tileMap';
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
@@ -44,6 +44,7 @@ export class LocalMap {
                 if (player.isStarVisible) {
                     this.checkPlayerAbsorbtion(player);
                     this.checkPlanetMap(player);
+                    this.checkPlayerSize(player);
                     if (player.size < minSize) this.playerDead(player);
                 }
             }
@@ -60,6 +61,12 @@ export class LocalMap {
             // if (Math.random() > 0.5 && Object.keys(this.blackHoles).length < gravityRatio) this.createBlackHole(player);
             // this.createBlackHole(player.position.clone());
         }
+    }
+
+    // We reduce player too big
+    checkPlayerSize(player: Player) {
+        // if (player.size > maxSize - 1) player.changeSize(-player.size / 1000);
+        player.changeSize(-player.size/10000);
     }
 
     checkPlayerAbsorbtion(player: Player) {
