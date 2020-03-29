@@ -51,8 +51,8 @@ export let StarCategories: Array<StarCategory> = [
         name: 'Blue Dwarf',
         temperature: StarTemperatures[3],
         planets: 5,
-        gravity: 0.8,
-        velocity: 1.3
+        gravity: 0.7,
+        velocity: 1.2
     },
 ];
 

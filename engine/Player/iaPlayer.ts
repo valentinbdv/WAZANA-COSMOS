@@ -11,7 +11,7 @@ export class IAPlayer extends Player {
     constructor(system: MeshSystem, gravityGrid: GravityGrid) {
         super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         
-        let random = Math.pow(Math.random(), 10);
+        let random = Math.pow(Math.random(), 3);
         let size = startSize + random * maxSize;
         this.setSize(size);
     }

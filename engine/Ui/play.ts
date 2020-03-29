@@ -89,8 +89,7 @@ export class PlayUI extends MinimapUI {
         let perc = (this.realPlayer.size - minSize) / (maxSize - minSize);
         
         // perc = Math.pow(perc, 0.8);
-        let fakePlayerIndex = Math.round(( 1 - perc ) * this.totalPlayers);
-        // console.log(this.realPlayer.size, perc, fakePlayerIndex);
+        let fakePlayerIndex = Math.round(Math.pow( 1 - perc , 2) * this.totalPlayers);
         this.rankText.setText('Your rank :' + fakePlayerIndex + '/' + this.totalPlayers);
         // this.player1.setText('#1  ' + ranks[0].key);
         // if (ranks[1]) this.player2.setText('#2 ' + ranks[1].key);

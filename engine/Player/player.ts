@@ -11,7 +11,7 @@ import { BlackHole } from '../Entity/blackHole';
 import { MovingEntity } from '../Entity/movingEntity';
 
 export let minSize = 0.6;
-export let maxSize = 5; 
+export let maxSize = 2; 
 export let startSize = 1;
 export let gravityRatio = 10;
 
@@ -156,7 +156,7 @@ export class Player extends StarFighter {
     starVelocity: 0.03;
     move(step: Vector2) {
         if (step.y == 0) step.y = 0.001;
-        let max = this.velocity * this.realVelocity / Math.sqrt(this.size * 50);
+        let max = this.velocity * this.realVelocity / (this.size * 5);
         let ratio = Math.abs(step.x / step.y);
         let maxX = Math.sqrt((Math.pow(max, 2) * ratio) / (ratio + 1));
         let maxY = Math.sqrt(Math.pow(max, 2) / (ratio + 1));
