@@ -335,8 +335,6 @@ export class ui_text extends ui_node {
         this.node.text = text;
 
         if (style.width != undefined) this.node.width = style.width;
-        console.log(style.float, Control.HORIZONTAL_ALIGNMENT_LEFT);
-        
         if (style.float == 'right') this.node.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
         else if (style.float == 'left') this.node.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
     }

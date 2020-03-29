@@ -74,6 +74,8 @@ export class StarFighter extends Star {
         this.particle.emitRate = 50;
         this.particle.minSize = 0.5;
         this.particle.maxSize = 0.5;
+        this.particle.color1.a = 0;
+        this.particle.color2.a = 0;
         this.particle.particleTexture = this.system.circleTexture;
         // this.particle.manualEmitCount = null;
         // Must keep that because we need function word on particle
@@ -98,14 +100,18 @@ export class StarFighter extends Star {
                 } else {
                     let progresscolor: Color4 = changecolor.multiply(new Color4(particle.age / 1.5, particle.age / 1.5, particle.age / 1.5, 1.0));
                     particle.color = progresscolor.add(that.target.color);
-                    particle.color.a = Math.min(particle.age, Math.pow(1 - particle.age, 1/2)) * 2;
+                    let progressGradient = Math.min(particle.age, Math.pow(1 - particle.age, 1 / 2));
+                    particle.color.a = progressGradient * 2;
+                    
+                    particle.scale.x = progressGradient * 5;
+                    particle.scale.y = progressGradient * 5;
 
-                    let posprogress = that.particleCurve.ease(particle.age + particle.direction.y/100);
-                    let progressposition: Vector2 = changeposition.multiply(new Vector2(posprogress, posprogress));
+                    let progressPos = that.particleCurve.ease(particle.age + particle.direction.y/100);
+                    let progressposition: Vector2 = changeposition.multiply(new Vector2(progressPos, progressPos));
                     let pos: Vector2 = that.target.position.add(progressposition);
 
-                    particle.position.x = pos.x + (particle.direction.x - 0.5) * (1 - posprogress) * that.size;
-                    particle.position.z = pos.y + (particle.direction.z - 0.5) * (1 - posprogress) * that.size;
+                    particle.position.x = pos.x + (particle.direction.x - 0.5) * (1 - progressPos) * that.size;
+                    particle.position.z = pos.y + (particle.direction.z - 0.5) * (1 - progressPos) * that.size;
                 }
             } 
         }
@@ -160,6 +166,8 @@ export class StarFighter extends Star {
         this.particle.manualEmitCount = 100;
         this.particle.minSize = 2;
         this.particle.maxSize = 2;
+        this.particle.color1 = this.color;
+        this.particle.color2 = this.color;
         this.particle.particleTexture = this.system.sparkleTexture;
         this.particle.startPositionFunction = (worldMatrix: Matrix, startPosition: Vector3) => {
             Vector3.TransformNormalFromFloatsToRef(0, 0, 0, worldMatrix, startPosition);
@@ -181,7 +189,12 @@ export class StarFighter extends Star {
                     index--;
                     continue;
                 } else {
-                    particle.color = new Color4(that.color.r, that.color.g, that.color.b, 1 - Math.pow(particle.age, 1/2));
+                    // particle.color = new Color4(that.color.r, that.color.g, that.color.b, 1 - Math.pow(particle.age, 1/2));
+                    let progressGradient = 1 - Math.pow(particle.age, 1 / 2);
+                    particle.color.a = progressGradient;
+
+                    particle.scale.x = progressGradient;
+                    particle.scale.y = progressGradient;
 
                     particle.position.x = that.position.x + Math.cos(particle.direction.x) * particle.age * 20;
                     particle.position.z = that.position.y + Math.sin(particle.direction.x) * particle.age * 20;

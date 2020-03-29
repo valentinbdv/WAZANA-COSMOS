@@ -233,6 +233,11 @@ export class Star extends MovingEntity {
 
     setSize(size: number) {
         size = Math.min(size, maxSize);
+        this.setSizeWithoutLimit(size);
+
+    }
+
+    setSizeWithoutLimit(size: number) {
         this._setSize(size);
         if (!this.isStarVisible) return;
         this.setSurfaceScale(size)
@@ -265,9 +270,9 @@ export class Star extends MovingEntity {
             this.setOpacity(1 - perc);
             this.light.intensity = perc * 1000;
             let newsize = currentsize + this.curve.ease(perc) * change;
-            this.setSize(newsize);
+            this.setSizeWithoutLimit(newsize);
         }, () => {
-            this.setSize(size);
+            this.setSizeWithoutLimit(size);
             this.setReflectionLevel(0);
             if (callback) callback();
         });
