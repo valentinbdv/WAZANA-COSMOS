@@ -2,12 +2,14 @@ import { MeshSystem } from '../System/meshSystem';
 import { PositionEntity, PositionEntityInterface } from './positionEntity';
 import { MoveCatcher } from '../Player/moveCatcher';
 
-import { Vector3, Vector2 } from '@babylonjs/core/Maths/math';
+import { Vector2 } from '@babylonjs/core/Maths/math';
 import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
 export interface MovingEntityInterface extends PositionEntityInterface {
     velocity ? : number,
 }
+
+export let gravityRatio = 10;
 
 export class MovingEntity extends PositionEntity {
 
@@ -58,20 +60,28 @@ export class MovingEntity extends PositionEntity {
     gravityField = 1;
     setGravity(gravity: number) {
         this.gravity = gravity;
-        this.gravityField = this.size * this.gravity;
+        this.updateGravityFiesld();
     }
 
     setSize(size: number) {
         this._setSize(size);
-        let newsize = Math.sqrt(size / 2);
-        let sizeVector = new Vector3(newsize, newsize, newsize);
-        this.movingMesh.scaling = sizeVector;
+        this.setMovingMeshSize(size);
+    }
+
+    setMovingMeshSize(size: number) {
+        this.movingMesh.scaling.x = size;
+        this.movingMesh.scaling.y = size;
+        this.movingMesh.scaling.z = size;
     }
     
     size: number;
     _setSize(size: number) {
         this.size = size;
-        this.gravityField = this.size * this.gravity;
+        this.updateGravityFiesld();
+    }
+    
+    updateGravityFiesld() {
+        this.gravityField = Math.sqrt(this.size * this.gravity) * gravityRatio;
     }
 
     setPosition(pos: Vector2) {

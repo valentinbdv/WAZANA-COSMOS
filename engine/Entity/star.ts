@@ -14,7 +14,6 @@ import { Planet } from './planet';
 
 // https://www.youtube.com/watch?v=i4RtO_qIQHk
 
-
 export let starMapDistance = 150;
 
 export interface StarCategory {
@@ -213,7 +212,7 @@ export class Star extends MovingEntity {
     shine() {
         if (!this.isStarVisible) return;
         if (this.shineAnimation.running || this.accelerating) return;
-        let size = Math.pow(this.size, 2)
+        let size = this.size;
         this.shineAnimation.simple(20, (count, perc) => {
             let y = 1 - 4 * Math.pow(perc - 0.5, 2);
             this.setReflectionLevel(y/2);
@@ -229,14 +228,12 @@ export class Star extends MovingEntity {
     }
 
     setSize(size: number) {
-        let newSize = Math.max(0.1, size);
-        newSize = Math.sqrt(newSize);
-        this._setSize(newSize);
+        this._setSize(size);
         if (!this.isStarVisible) return;
-        this.setSurfaceScale(Math.pow(newSize, 2))
+        this.setSurfaceScale(size)
         this.light.intensity = 1000 * size;
         this.cycleProgress = 1 / Math.sqrt(this.size);
-        if (!this.shineAnimation.running) this.setHeartScale(Math.pow(newSize, 2));
+        if (!this.shineAnimation.running) this.setHeartScale(size);
     }
 
     setSurfaceScale(scale: number) {
@@ -254,7 +251,7 @@ export class Star extends MovingEntity {
     updateSize(size: number, time?:number, callback?: Function) {
         if (!this.isStarVisible) return;
         this.shineAnimation.stop();
-        let currentsize = Math.pow(this.size, 2);
+        let currentsize = this.size;
         let change = size - currentsize;
         let animTime = (time)? time : 20;
         

@@ -335,7 +335,7 @@ export class TileMap {
         for (let i = 0; i < this.dusts.length; i++) {
             const dust = this.dusts[i];
             let dist = Vector2.Distance(dust.position, player.position);
-            if (dist < player.gravityField * 6) {
+            if (dist < player.gravityField) {
                 this.moveDustToPlayer(player, dust);
             }
         }

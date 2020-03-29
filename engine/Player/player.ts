@@ -13,7 +13,6 @@ import { MovingEntity } from '../Entity/movingEntity';
 export let minSize = 0.6;
 export let maxSize = 2; 
 export let startSize = 1;
-export let gravityRatio = 10;
 
 export interface PlayerInterface {
     key: string;
@@ -79,7 +78,7 @@ export class Player extends StarFighter {
         this.setTemperature(category.temperature);
         this.setMaxPlanet(category.planets)
         this.setGravity(category.gravity);
-        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField / 2);
+        this.updateGravityGrid();
         this.removeAllPlanets();
         if (withPlanets) {
             for (let i = 0; i < category.planets; i++) {
@@ -87,6 +86,10 @@ export class Player extends StarFighter {
             }
         }
         this.system.checkActiveMeshes();
+    }
+
+    updateGravityGrid() {
+        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField);
     }
 
     setVelocity(velocity: number) {
@@ -98,6 +101,7 @@ export class Player extends StarFighter {
     }
 
     absorbRatio = 0.0005;
+    sizeAbsorbRatio = 3;
     absorbTarget(target: Player) {
         // Check target to make sure we always absorb closest target
         if (this.absorbing && target == this.target) return;
@@ -110,9 +114,9 @@ export class Player extends StarFighter {
         this.absorbAnimation.infinite((count) => {
             let change = count - lastCount;
             lastCount = count;
-            let up = change * this.absorbRatio * Math.pow(this.target.size, 1 / 2) / 2;
+            let up = change * this.absorbRatio / (this.target.size * this.sizeAbsorbRatio);
             this.changeSize(up);
-            let down = -change * this.absorbRatio * Math.pow(this.target.size, 2) * 5;
+            let down = -change * this.absorbRatio * (this.target.size * this.sizeAbsorbRatio);
             this.target.changeSize(down);
             if (this.target.isDead) this.absorbStop();
         });
@@ -120,9 +124,8 @@ export class Player extends StarFighter {
 
     setAbsorber(absorber: MovingEntity, proximity: number) {
         this.absorber = absorber;
-        // console.log(proximity);
-        
-        this.setRealVelocity(Math.sqrt(proximity));
+        let newVelocity = Math.pow(proximity, 2)
+        this.setRealVelocity(newVelocity);
     }
 
     blackHoleAbsorber: BlackHole;
@@ -171,8 +174,7 @@ export class Player extends StarFighter {
         this._setPosition(pos);
         this.movingMesh.position.x = this.position.x;
         this.movingMesh.position.z = this.position.y;
-        
-        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField/2);
+        this.updateGravityGrid();
     }
 
     addPlanet(planet?: Planet) {

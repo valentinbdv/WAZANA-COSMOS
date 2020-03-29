@@ -1,5 +1,5 @@
 import { Planet, PlanetInterface } from '../Entity/planet';
-import { Player, minSize, gravityRatio } from '../player/player';
+import { Player, minSize } from '../player/player';
 import { TileMap } from './tileMap';
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
@@ -72,7 +72,7 @@ export class LocalMap {
         let minBlackHoleField = 1;
         for (const key in this.tileMap.blackHoles) {
             const blackHole: BlackHole = this.tileMap.blackHoles[key];
-            let blackHoleField = Math.sqrt(blackHole.gravityField * gravityRatio * 20);
+            let blackHoleField = blackHole.gravityField;
             let dist = Vector2.Distance(blackHole.position, player.position);
             if (dist < blackHoleField) {
                 if (minDist > dist) {
@@ -97,7 +97,7 @@ export class LocalMap {
         let closestTarget: Player;
         let minDist = 1000000;
         let testTarget = '';
-        let palyerGravityField = Math.sqrt(player.gravityField * gravityRatio * 20);
+        let palyerGravityField = player.gravityField;
         for (const key in this.tileMap.players) {
             const otherplayer: Player = this.tileMap.players[key];
             if (otherplayer.isStarVisible && otherplayer.key != player.key && player.size > otherplayer.size) {
@@ -143,7 +143,7 @@ export class LocalMap {
                 // New check of attachedToStar because in the loop it can change
                 if (!planet.attachedToStar) {
                     let dist = Vector2.Distance(planet.position, player.position);
-                    if (dist < player.gravityField * gravityRatio) {
+                    if (dist < player.gravityField) {
                         this.tileMap.setPlanetWithStar(planet);
                         player.addPlanet(planet);
                     }
@@ -167,7 +167,8 @@ export class LocalMap {
         this.iaLevel = level;
     }
 
-    iaNeeded = starMapDistance/3;
+    iaNeeded = starMapDistance / 3;
+    // iaNeeded = 2;
     ias: Object = {};
     checkIaMap() {
         let newIaNeeded = Math.round(this.iaNeeded - Object.keys(this.ias).length);

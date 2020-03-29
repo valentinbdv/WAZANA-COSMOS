@@ -1,6 +1,6 @@
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
-import { Player, startSize, maxSize } from './player';
+import { Player, minSize, maxSize } from './player';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
@@ -9,10 +9,10 @@ export class IAPlayer extends Player {
     ia = true;
 
     constructor(system: MeshSystem, gravityGrid: GravityGrid) {
-        super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
+        super(system, gravityGrid, { temperature: 5000, size: minSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         
         let random = Math.pow(Math.random(), 3);
-        let size = startSize + random * maxSize;
+        let size = minSize + random * (maxSize - minSize);
         this.setSize(size);
     }
 
@@ -48,7 +48,7 @@ export class IAPlayer extends Player {
         } else if (closestTarget) {
             let dist = Vector2.Distance(this.position, closestTarget.position);
             let clumsy = Math.random() > 0.7 - (this.level / 10);
-            if (dist < this.gravityField * 50 && !clumsy) this.goToPlayer(closestTarget);
+            if (dist < this.gravityField * 5 && !clumsy) this.goToPlayer(closestTarget);
             else this.moveAround();
         } else {
             this.goingToPlayer = false;

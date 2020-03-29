@@ -35,9 +35,8 @@ export class StarFighter extends Star {
 
     changeSize(change: number) {
         // if (this.isDead) return;
-        let newSize = Math.pow(this.size, 2) + change;
+        let newSize = this.size + change;
         this.setSize(newSize);
-        if (!this.isStarVisible) return;
     }
 
     particle: ParticleSystem;

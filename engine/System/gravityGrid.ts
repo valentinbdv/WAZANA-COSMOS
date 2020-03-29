@@ -143,14 +143,12 @@ export class GravityGrid {
         this.setMassPoint(key, pos, size, this.starCurve, depth);
     }
 
-
     setBlackHolePoint(key: string, pos: Vector2, size: number, depth?: number) {
         this.setMassPoint(key, pos, size, this.blackHoleCurve, depth);
     }
 
-
-    pointDepth = 20;
-    pointSize = 3;
+    pointDepth = 10;
+    pointAroundNeed = 0.15;
     setMassPoint(key: string, pos: Vector2, size: number, curve: EasingFunction, depth?: number) {
         this.eraseMass(key);
         let MassToCenter = Vector2.Distance(pos, this.center);
@@ -160,16 +158,17 @@ export class GravityGrid {
         let xRound = (Math.round(mapPos.x / this.step)) + this.halfDetail;
         let yRound = (Math.round(-mapPos.y / this.step)) + this.halfDetail;
 
+        size = size/10;
         let alteredPoints: Array<Vector3> = [];
         if (!depth) depth = size * this.pointDepth;
-        let width = Math.round(size * this.pointSize * this.mapDetail / 20);
+        let width = Math.round(size * this.pointAroundNeed * this.mapDetail);
         let newKeysToPath = [];
 
         for (let x = Math.max(xRound - width, 0); x < Math.min(xRound + width, this.mapDetail); x++) {
             for (let y = Math.max(yRound - width, 0); y < Math.min(yRound + width, this.mapDetail); y++) {
                 if (!this.paths[x] || !this.paths[x][y]) return;
                 let dist = Vector2.Distance(mapPos, new Vector2(x * this.step - this.halfSize, -(y * this.step - this.halfSize)));
-                let perc = curve.ease(dist / (size * 30));
+                let perc = curve.ease(dist / (size * 20));
                 let newY = Math.max(depth - depth * perc, 0);
 
                 if (newY > this.paths[x][y].y) {

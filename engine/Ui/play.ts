@@ -47,8 +47,10 @@ export class PlayUI extends MinimapUI {
         this.statLayout.setScreenPosition({ left: this.screenMargin, bottom: this.screenMargin })
         this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: 150, height: 20, float: 'left', opacity: 0.3 });
         this.sizePorgress = this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: 150, height: 20, float: 'left' });
-        this.sizeText = this.statLayout.addText('Your size: 2', { x: 0, y: 0 }, { , width: 150, height: 20, fontSize: this.fontSize, color: colormain, background: colormain, float: 'left' });
+        this.sizeText = this.statLayout.addText('Your size: 2', { x: 0, y: 0 }, { width: 150, height: 20, fontSize: this.fontSize, color: colormain, background: colormain, float: 'left' });
         this.sizeText.setBackgroundOpacity(0);
+        console.log(this.sizeText);
+        
         this.rankText = this.statLayout.addText('Rank: 5/100', { x: 0, y: -30 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
     }
 
@@ -89,7 +91,7 @@ export class PlayUI extends MinimapUI {
         let perc = (this.realPlayer.size - minSize) / (maxSize - minSize);
         
         // perc = Math.pow(perc, 0.8);
-        let fakePlayerIndex = Math.round(Math.pow( 1 - perc , 2) * this.totalPlayers);
+        let fakePlayerIndex = Math.round((1 - perc) * this.totalPlayers);
         this.rankText.setText('Your rank :' + fakePlayerIndex + '/' + this.totalPlayers);
         // this.player1.setText('#1  ' + ranks[0].key);
         // if (ranks[1]) this.player2.setText('#2 ' + ranks[1].key);
