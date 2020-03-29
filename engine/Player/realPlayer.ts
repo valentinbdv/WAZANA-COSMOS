@@ -1,4 +1,4 @@
-import { SystemUI } from '../System/systemUI';
+import { UiSystem } from '../System/uiSystem';
 import { MouseCatcher } from './mouseCatcher';
 import { TouchCatcher } from './touchCatcher';
 import { GravityGrid } from '../System/GravityGrid';
@@ -13,9 +13,9 @@ export class RealPlayer extends Player {
 
     map: onlineMap;
     dustField = false;
-    system: SystemUI;
+    system: UiSystem;
 
-    constructor(system: SystemUI, gravityGrid: GravityGrid, map: onlineMap) {
+    constructor(system: UiSystem, gravityGrid: GravityGrid, map: onlineMap) {
         super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.addMouseEvent();
         this.addKeyEvent();

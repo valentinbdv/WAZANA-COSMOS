@@ -1,4 +1,4 @@
-import { SystemUI } from '../System/systemUI'
+import { UiSystem } from '../System/uiSystem'
 import { Animation } from '../System/animation'
 import { StarCategories, StarCategory } from '../Entity/star';
 import { RealPlayer } from '../Player/realPlayer';
@@ -13,14 +13,14 @@ import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
 export class IntroUI {
     
-    system: SystemUI;
+    system: UiSystem;
     showAnimation: Animation;
     categoryAnimation: Animation;
     realPlayer: RealPlayer;
     minimap: MinimapUI;
     curve: EasingFunction;
 
-    constructor(system: SystemUI, realPlayer: RealPlayer, minimap: MinimapUI) {
+    constructor(system: UiSystem, realPlayer: RealPlayer, minimap: MinimapUI) {
         this.system = system;
         this.realPlayer = realPlayer;
         this.minimap = minimap;

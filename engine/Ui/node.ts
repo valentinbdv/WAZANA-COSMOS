@@ -1,5 +1,5 @@
 import { Animation } from '../System/animation';
-import { SystemUI } from '../System/systemUI';
+import { UiSystem } from '../System/uiSystem';
 
 import { AdvancedDynamicTexture } from '@babylonjs/gui/2D/advancedDynamicTexture';
 import { Image } from '@babylonjs/gui/2D/controls/image';
@@ -66,9 +66,9 @@ export class ui {
     size: size;
     position: position;
     anim: Animation;
-    system: SystemUI;
+    system: UiSystem;
 
-    constructor(system: SystemUI) {
+    constructor(system: UiSystem) {
         this.system = system;
         this.anim = new Animation(system.animationManager);
         return this;
@@ -314,7 +314,7 @@ export class ui_node extends ui {
 export class ui_text extends ui_node {
     node: TextBlock;
 
-    constructor(system: SystemUI, texture: Control, text: string, pos: position, style: style, event ? : boolean) {
+    constructor(system: UiSystem, texture: Control, text: string, pos: position, style: style, event ? : boolean) {
         super(system);
         style.fontFamily = "'Aldrich', sans-serif";
         this.setNode(text, style);
@@ -402,7 +402,7 @@ export class ui_image extends ui_node {
     node: Image;
     image: string;
 
-    constructor(system: SystemUI, texture: Control, image: string, pos: position, style: style, event ? : boolean) {
+    constructor(system: UiSystem, texture: Control, image: string, pos: position, style: style, event ? : boolean) {
         super(system);
         this.setNode(image, style);
         this.createContainer(texture);
@@ -426,7 +426,7 @@ export class ui_icon extends ui_text {
 
     icon = true;
 
-    constructor(system: SystemUI, texture: Control, icon: string, pos: position, style: style, event ? : boolean) {
+    constructor(system: UiSystem, texture: Control, icon: string, pos: position, style: style, event ? : boolean) {
         super(system, texture, icon, pos, style, event);
         style.fontFamily = 'wznicon';
         let text = (icon != '') ? this.icontochar[icon] : '';
@@ -511,7 +511,7 @@ export interface backstyle {
 }
 
 export class ui_back extends ui_node {
-    constructor(system: SystemUI, texture: Control, pos: position, style: backstyle) {
+    constructor(system: UiSystem, texture: Control, pos: position, style: backstyle) {
         super(system);
         this.createContainer(texture);
         this._setStyle({
@@ -543,7 +543,7 @@ export interface linestyle {
 export class ui_line extends ui_node {
 
     angle: number;
-    constructor(system: SystemUI, texture: Control, pos: position, style: linestyle) {
+    constructor(system: UiSystem, texture: Control, pos: position, style: linestyle) {
         super(system);
         this.angle = (style.angle) ? style.angle : 0;
         this.createContainer(texture);
@@ -570,7 +570,7 @@ export class ui_line extends ui_node {
 export class ui_bar extends ui_node {
     bar: any = {};
 
-    constructor(system: SystemUI, texture: Control, pos: position, style: style) {
+    constructor(system: UiSystem, texture: Control, pos: position, style: style) {
         super(system);
         this.createContainer(texture);
         this.setStyle(style);

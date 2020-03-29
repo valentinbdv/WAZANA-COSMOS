@@ -1,4 +1,3 @@
-
 import { AnimationManager } from './animation';
 
 import { Engine } from '@babylonjs/core/Engines/engine';

@@ -1,4 +1,4 @@
-import { SystemUI } from '../System/systemUI'
+import { UiSystem } from '../System/uiSystem'
 import { Animation } from '../System/animation'
 import { Player } from '../Player/player';
 import { RealPlayer } from '../Player/realPlayer';
@@ -13,13 +13,13 @@ import { Color4, Color3 } from '@babylonjs/core/Maths/math';
 
 export class MinimapUI {
 
-    system: SystemUI;
+    system: UiSystem;
     animation: Animation;
     realPlayer: RealPlayer;
     tileMap: TileMap;
     screenMargin = 10;
 
-    constructor(system: SystemUI, realPlayer: RealPlayer, tileMap: TileMap) {
+    constructor(system: UiSystem, realPlayer: RealPlayer, tileMap: TileMap) {
         this.system = system;
         this.realPlayer = realPlayer;
         this.tileMap = tileMap;

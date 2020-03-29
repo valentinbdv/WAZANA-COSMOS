@@ -2,7 +2,7 @@ import { Control } from '@babylonjs/gui/2D/controls/control';
 
 import { ui, ui_node, ui_text, ui_icon, ui_image, ui_back, ui_line, position, style, size, linestyle } from './node';
 import { Animation } from '../System/animation';
-import { SystemUI } from '../System/systemUI';
+import { UiSystem } from '../System/uiSystem';
 
 export class ui_anim extends ui_node {
 
@@ -56,7 +56,7 @@ export class congrats extends ui_anim {
     layernumber = 6;
     anim: Animation;
     style = { width: 0.02, height: 0.3, opacity: 1, color: '' };
-    constructor(system: SystemUI, pos: position, style: effectstyle) {
+    constructor(system: UiSystem, pos: position, style: effectstyle) {
         super(system);
         let angle = 0;
         if (style.scale) {
@@ -148,7 +148,7 @@ export class ui_button extends ui_anim {
     float: string;
     container: any;
 
-    constructor(system: SystemUI, texture: Control, content: content, pos: position, size: size, style: buttonstyle) {
+    constructor(system: UiSystem, texture: Control, content: content, pos: position, size: size, style: buttonstyle) {
         super(system);
         this.content = content;
         this.style = style;
@@ -192,7 +192,7 @@ export class ui_border extends ui_anim {
     side = 50;
     width: number;
 
-    constructor(system: SystemUI, texture: Control, pos: position, style: linestyle) {
+    constructor(system: UiSystem, texture: Control, pos: position, style: linestyle) {
         super(system);
         this.style = style;
         this.width = style.width;
@@ -280,7 +280,7 @@ export class ui_title extends ui_anim {
     iconwidth: number;
     iconheight: number;
 
-    constructor(system: SystemUI, texture: Control, title: string, pos: position, style: style) {
+    constructor(system: UiSystem, texture: Control, title: string, pos: position, style: style) {
         super(system);
         this.style = style;
         this.title = title;
@@ -366,7 +366,7 @@ export interface arrowstyle {
 
 export class ui_arrow extends ui_anim {
 
-    constructor(system: SystemUI, texture: Control, pos: position, style?: arrowstyle) {
+    constructor(system: UiSystem, texture: Control, pos: position, style?: arrowstyle) {
         super(system);
         this.createContainer(texture);
         this.setPosition(pos);

@@ -1,4 +1,4 @@
-import { SystemUI } from '../System/systemUI'
+import { UiSystem } from '../System/uiSystem'
 import { Animation } from '../System/animation'
 import { Player } from '../Player/player';
 import { minSize, maxSize } from '../Entity/star';
@@ -14,7 +14,7 @@ import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
 export class PlayUI extends MinimapUI {
 
-    system: SystemUI;
+    system: UiSystem;
     animation: Animation;
     realPlayer: RealPlayer;
     tileMap: TileMap;
@@ -24,7 +24,7 @@ export class PlayUI extends MinimapUI {
     checkAnimation: Animation;
     curve: EasingFunction;
 
-    constructor(system: SystemUI, realPlayer: RealPlayer, tileMap: TileMap) {
+    constructor(system: UiSystem, realPlayer: RealPlayer, tileMap: TileMap) {
         super(system, realPlayer, tileMap);
         this.system = system;
         this.realPlayer = realPlayer;

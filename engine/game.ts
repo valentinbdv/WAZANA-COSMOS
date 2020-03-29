@@ -1,4 +1,4 @@
-import { SystemUI } from './System/systemUI'
+import { UiSystem } from './System/uiSystem'
 import { Animation } from './System/animation'
 import { GravityGrid } from './System/GravityGrid';
 import { StarCategories } from './Entity/star';
@@ -31,7 +31,7 @@ export interface GameInterface {
 
 export class GameEngine {
 
-    system: SystemUI;
+    system: UiSystem;
     animation: Animation;
 
     gravityGrid: GravityGrid;
@@ -43,7 +43,7 @@ export class GameEngine {
     onlineMap: onlineMap;
 
     constructor(gameOptions: GameInterface) {
-        this.system = new SystemUI(gameOptions.canvas);
+        this.system = new UiSystem(gameOptions.canvas);
         this.system.optimize();
         this.animation = new Animation(this.system.animationManager);
 

@@ -1,7 +1,7 @@
-
 import { MeshSystem } from './meshSystem';
 import { AdvancedDynamicTexture } from '@babylonjs/gui/2D/AdvancedDynamicTexture';
 import { StackPanel } from '@babylonjs/gui/2D/controls/stackPanel';
+import { SoundManager } from './sound';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -9,11 +9,12 @@ import { StackPanel } from '@babylonjs/gui/2D/controls/stackPanel';
  * The system is really important as it is often sent in every other class created to manage core assets
  */
 
-export class SystemUI extends MeshSystem {
+export class UiSystem extends MeshSystem {
 
     advancedTexture: AdvancedDynamicTexture;
     panel: StackPanel;
     scalingLevel = 1;
+    soundManager: SoundManager;
 
     /**
      * Creates a new System
@@ -37,6 +38,8 @@ export class SystemUI extends MeshSystem {
             this.engine.setHardwareScalingLevel(0.5);
             this.scalingLevel = 0.5;
         }
+
+        this.soundManager = new SoundManager(this.scene);
     }
     
     checkScreenSize() {

@@ -3,14 +3,14 @@ import { StackPanel } from '@babylonjs/gui/2D/controls/stackPanel';
 
 import { ui, ui_node, ui_text, ui_icon, ui_image, ui_back, ui_line, ui_bar, position, style, size, screenposition, backstyle, linestyle } from './node';
 import { ui_anim, ui_border, ui_button, content, buttonstyle, ui_arrow, arrowstyle } from './effect';
-import { SystemUI } from '../System/systemUI';
+import { UiSystem } from '../System/uiSystem';
 
 export class ui_group extends ui {
     nodes: Array<ui_node> = [];
     textnodes: Array<ui_text> = [];
     stylenodes: Array < ui_anim > = [];
 
-    constructor(system: SystemUI, container?: Control) {
+    constructor(system: UiSystem, container?: Control) {
         super(system);
         if (container) {
             this.texture = system.advancedTexture;
@@ -223,7 +223,7 @@ export class ui_group extends ui {
 
 export class ui_panel extends ui_group {
 
-    constructor(system: SystemUI, scpos: screenposition, size: size, container?: Control) {
+    constructor(system: UiSystem, scpos: screenposition, size: size, container?: Control) {
         super(system, container);
         if (!container) this.container = new StackPanel('');
         system.advancedTexture.addControl(this.container);
@@ -236,7 +236,7 @@ export class ui_panel extends ui_group {
 
 export class ui_control extends ui_group {
 
-    constructor(system: SystemUI, scpos: position, size: size, style?: style, container?: Control) {
+    constructor(system: UiSystem, scpos: position, size: size, style?: style, container?: Control) {
         super(system, container);
         this.createContainer(system.advancedTexture);
         // this.container = new Rectangle("");
@@ -272,7 +272,7 @@ export class ui_container extends ui_group {
     style: containerstyle;
     borders: Array < ui_border > ;
 
-    constructor(system: SystemUI, texture: Control, position: position, size: size, style: containerstyle) {
+    constructor(system: UiSystem, texture: Control, position: position, size: size, style: containerstyle) {
         super(system);
         this.createContainer(texture);
         this.setPosition(position);
