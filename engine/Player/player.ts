@@ -10,10 +10,6 @@ import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { BlackHole } from '../Entity/blackHole';
 import { MovingEntity } from '../Entity/movingEntity';
 
-export let minSize = 0.6;
-export let maxSize = 2; 
-export let startSize = 1;
-
 export interface PlayerInterface {
     key: string;
     size: number;

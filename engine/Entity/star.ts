@@ -15,6 +15,10 @@ import { Planet } from './planet';
 // https://www.youtube.com/watch?v=i4RtO_qIQHk
 
 export let starMapDistance = 150;
+export let minSize = 0.6;
+export let maxSize = 3;
+export let startSize = 1;
+
 
 export interface StarCategory {
     name: string;
@@ -228,6 +232,7 @@ export class Star extends MovingEntity {
     }
 
     setSize(size: number) {
+        size = Math.min(size, maxSize);
         this._setSize(size);
         if (!this.isStarVisible) return;
         this.setSurfaceScale(size)

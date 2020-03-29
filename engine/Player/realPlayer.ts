@@ -2,7 +2,8 @@ import { SystemUI } from '../System/systemUI';
 import { MouseCatcher } from './mouseCatcher';
 import { TouchCatcher } from './touchCatcher';
 import { GravityGrid } from '../System/GravityGrid';
-import { Player, startSize } from './player';
+import { Player } from './player';
+import { startSize } from '../Entity/star';
 import { onlineMap } from "../Map/onlineMap";
 
 import hotkeys from 'hotkeys-js';

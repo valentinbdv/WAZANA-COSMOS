@@ -1,6 +1,7 @@
 import { SystemUI } from '../System/systemUI'
 import { Animation } from '../System/animation'
-import { minSize, Player, maxSize } from '../Player/player';
+import { Player } from '../Player/player';
+import { minSize, maxSize } from '../Entity/star';
 import { RealPlayer } from '../Player/realPlayer';
 import { ui_group, ui_panel, ui_control } from './group';
 import { ui_text, ui_bar, ui_back } from './node';
@@ -42,15 +43,14 @@ export class PlayUI extends MinimapUI {
     sizeText: ui_text;
     rankText: ui_text;
     sizePorgress: ui_back;
+    width = 200;
     addPlayerStat() {
-        this.statLayout = new ui_control(this.system, { x: 0, y: 0 }, { width: 200, height: 80 });
+        this.statLayout = new ui_control(this.system, { x: 0, y: 0 }, { width: this.width, height: 80 });
         this.statLayout.setScreenPosition({ left: this.screenMargin, bottom: this.screenMargin })
-        this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: 150, height: 20, float: 'left', opacity: 0.3 });
-        this.sizePorgress = this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: 150, height: 20, float: 'left' });
-        this.sizeText = this.statLayout.addText('Your size: 2', { x: 0, y: 0 }, { width: 150, height: 20, fontSize: this.fontSize, color: colormain, background: colormain, float: 'left' });
+        this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: this.width, height: 20, float: 'left', opacity: 0.3 });
+        this.sizePorgress = this.statLayout.addBack({ x: 0, y: 30 }, { color: colormain, width: this.width, height: 20, float: 'left' });
+        this.sizeText = this.statLayout.addText('Your size: 2', { x: 0, y: 0 }, { fontSize: this.fontSize, color: colormain, background: colormain, float: 'left' });
         this.sizeText.setBackgroundOpacity(0);
-        console.log(this.sizeText);
-        
         this.rankText = this.statLayout.addText('Rank: 5/100', { x: 0, y: -30 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
     }
 

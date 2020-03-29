@@ -1,6 +1,7 @@
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
-import { Player, minSize, maxSize } from './player';
+import { minSize, maxSize } from '../Entity/star';
+import { Player } from './player';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 

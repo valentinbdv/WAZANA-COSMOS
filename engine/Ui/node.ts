@@ -323,7 +323,7 @@ export class ui_text extends ui_node {
         this.container.zIndex = 2;
         this.setPosition(pos);
         if (style.width == undefined) this.container.width = '100%';
-        else this.setWidthPosition();
+        else this.setWidth(style.width);
         this.setHeight(style.fontSize);
         this.container.addControl(this.node);
         if (!event) this.deleteEvent();
@@ -335,6 +335,8 @@ export class ui_text extends ui_node {
         this.node.text = text;
 
         if (style.width != undefined) this.node.width = style.width;
+        console.log(style.float, Control.HORIZONTAL_ALIGNMENT_LEFT);
+        
         if (style.float == 'right') this.node.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
         else if (style.float == 'left') this.node.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
     }
@@ -419,8 +421,6 @@ export class ui_image extends ui_node {
         this.node.stretch = 2;
 
         if (style.width != undefined) this.node.width = style.width;
-        // if (style.float == 'right') this.node.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        // else if (style.float == 'left' || style.float == undefined) this.node.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
     }
 }
 
