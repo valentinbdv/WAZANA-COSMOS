@@ -114,19 +114,11 @@ export class PlayUI extends MinimapUI {
         }
         if (playerSize != this.currentSize) {
             this.shinePlayerSize();
+            if (playerSize > this.currentSize) this.system.soundManager.play('levelUp');
+            else this.system.soundManager.play('levelDown');
             this.sizePorgress.setWidth(width);
             this.currentSize = playerSize;
         }
-    }
-    
-    progressWidth = 0;
-    animateProgressWidth(width) {
-        let startWidth = this.progressWidth;
-        let change = width - this.progressWidth;
-        this.checkAnimation.simple(5, (count, perc) => {
-            this.progressWidth = startWidth + change * perc;
-            this.sizePorgress.setWidth(this.progressWidth);
-        });
     }
 
     shinePlayerSize() {

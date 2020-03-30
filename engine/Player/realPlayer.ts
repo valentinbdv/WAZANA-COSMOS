@@ -13,6 +13,7 @@ export class RealPlayer extends Player {
 
     map: onlineMap;
     dustField = false;
+    realPlayer = true;
     system: UiSystem;
 
     constructor(system: UiSystem, gravityGrid: GravityGrid, map: onlineMap) {
@@ -132,6 +133,7 @@ export class RealPlayer extends Player {
         this.fixeCamera(true);
         this.setSize(startSize);
         this.setOpacity(1);
+        this.setRealVelocity(1);
         this.setMoving(false);
         this.setPosition(Vector2.Zero());
         this.gravityGrid.setCenterAndSize(this.position, this.size);

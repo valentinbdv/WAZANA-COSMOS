@@ -65,6 +65,7 @@ export class IntroUI {
     }
 
     checkStarCategory() {
+        this.system.soundManager.play('sunChange');
         let starCategory = StarCategories[this.starNumber];
         this.starText.writeText(starCategory.name)
         this.realPlayer.setCategory(starCategory, true);
@@ -116,7 +117,9 @@ export class IntroUI {
         this.nebulaLayout = new ui_control(this.system, { x: 0, y: this.nebulaTop }, { width: 300, height: 200 }, { zIndex: 100 });
         // this.nebulaLayout.setScreenPosition({ left: 0, bottom: 0 });
         let title = this.nebulaLayout.addText('Select Nebula', { x: 0, y: -60 }, { fontSize: 25, color: colormain });
-        this.nebulaText = this.nebulaLayout.addText('Eagle', { x: 0, y: 0 }, { fontSize: 25, color: colormain });
+        let firstNebula = this.nebulaNames[this.system.skyDesign];
+        
+        this.nebulaText = this.nebulaLayout.addText(firstNebula, { x: 0, y: 0 }, { fontSize: 25, color: colormain });
         this.nebulaArrowRight = this.nebulaLayout.addArrow({ x: 100, y: 0 }, { orientation: 'right' });
         this.nebulaArrowLeft = this.nebulaLayout.addArrow({ x: -100, y: 0 }, { orientation: 'left' });
         this.nebulaArrowRight.setColor(colormain);
@@ -136,6 +139,7 @@ export class IntroUI {
     }
 
     checkNebula() {
+        this.system.soundManager.play('nebulaChange');
         this.system.setSky(this.nebulaNumber);
         this.minimap.setBackGroundColor(this.system.skyColor);
         this.nebulaText.writeText(this.nebulaNames[this.system.skyDesign], 20);
@@ -148,12 +152,14 @@ export class IntroUI {
         this.startOnline = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Play online' }, { x: -110, y: 250 }, { width: 180, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
         this.startOnline.on('click', () => {
             this.onStart('online');
+            this.system.soundManager.play('play');
         });
         this.startOnline._setStyle({ zIndex: 100 });
 
         this.startLocal = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Play' }, { x: 0, y: 250 }, { width: 180, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
         this.startLocal.on('click', () => {
             this.onStart('local');
+            this.system.soundManager.play('play');
         });
         this.startLocal._setStyle({ zIndex: 100 });
     }
@@ -172,9 +178,10 @@ export class IntroUI {
         this.startLocal.show();
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));
-        this.checkNebula();
-        this.checkStarCategory();
-    }
+        let starCategory = StarCategories[this.starNumber];
+        this.animateChange(starCategory);
+        this.minimap.setBackGroundColor(this.system.skyColor);
+    }        
 
     show() {
         this.setLayerChangeAnim(0);
@@ -185,8 +192,6 @@ export class IntroUI {
         this.startLocal.show();
         this.realPlayer.setSize(1);
         this.realPlayer.setPosition(new Vector2(0, 0));
-        this.checkStarCategory();
-        this.checkNebula();
     }
 
     hideAnim(callback?: Function) {

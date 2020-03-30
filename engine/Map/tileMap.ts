@@ -299,19 +299,6 @@ export class TileMap {
         let y = c.y + sign2 * Math.sqrt(s) * (this.sizeDustRatio / 2 + Math.random() * this.sizeDustRatio * 10);
         return new Vector2(x, y);
     }
-    
-    // getCloseDust(): Array< StarDust > {
-    //     let dusts = [];
-    //     let c = this.playerToFollow.position;
-    //     let s = this.playerToFollow.size * 5;
-    //     for (let i = 0; i < this.dusts.length; i++) {
-    //         const dust = this.dusts[i];
-    //         let xTest = dust.position.x < c.x + s && dust.position.x > c.x - s;
-    //         let yTest = dust.position.y < c.y + s && dust.position.y > c.y - s;
-    //         if (xTest && yTest) dusts.push(dust);
-    //     }
-    //     return dusts;
-    // }
 
     mapSize = 200;
     getNewRandomPosition(): Vector2 {
@@ -344,8 +331,7 @@ export class TileMap {
     moveDustToPlayer(player: Player, dust: StarDust) {
         this.removeDust(dust);
         dust.goToEntity(player, () => {
-            player.changeSize(0.005 / (Math.pow(player.size, 3)));
-            player.shine();
+            player.addDust();
             this.storageDust(dust);
         });
     }

@@ -45,6 +45,7 @@ export class Player extends StarFighter {
     fixeCurve: EasingFunction;
     particleCurve: EasingFunction;
     ia = false;
+    realPlayer = false;
     dustField = true;
     target: Player;
 
@@ -202,6 +203,8 @@ export class Player extends StarFighter {
     
     fixeAnimationLength = 50;
     animatePlanetToStar(planet: Planet, radius: number, velocity: number) {
+        // if (this.realPlayer) this.system.soundManager.playMesh('catchPlanet', planet.mesh);
+        if (this.realPlayer) this.system.soundManager.play('catchPlanet');
         let dist = Vector2.Distance(planet.position, this.position);
         let xgap = this.position.x - planet.position.x;
         let ygap = this.position.y - planet.position.y;
@@ -219,11 +222,21 @@ export class Player extends StarFighter {
         });
     }
 
+    addDust() {
+        // if (this.realPlayer) this.system.soundManager.playMesh('catchDust', this.movingMesh);
+        if (this.realPlayer) this.system.soundManager.play('catchDust');
+        this.changeSize(0.005 / (Math.pow(this.size, 3)));
+        this.shine();
+    }
+
     launchAnimationLength = 80;
     accelerate() {
         if (!this.moving || this.accelerating || !this.isStarVisible) return;
         let planet = this.planets.pop();
         if (!planet) return;
+
+        // if this.system.soundManager.playMesh('accelerate', this.movingMesh);
+        if (this.realPlayer) this.system.soundManager.play('accelerate');
 
         this.accelerating = true;
         let size = this.size;
@@ -255,6 +268,7 @@ export class Player extends StarFighter {
                 if (callback) callback();
             });
         } else {
+            this.system.soundManager.playMesh('explode', this.movingMesh);
             this.explode(() => {
                 this.dispose();
                 if (callback) callback();

@@ -105,7 +105,7 @@ export class EnvironmentSystem extends System {
         4: new Color3(47 / 255, 37 / 255, 18 / 255), 
         6: new Color3(39 / 255, 28 / 255, 41 / 255)
     };
-    skyDesign = 0;
+    skyDesign = this.skyDesignOrder[0];
     setSky(design: number, callback?: Function) {
         this.skyDesign = this.skyDesignOrder[design];
         this.skyColor = this.skyColors[this.skyDesign];

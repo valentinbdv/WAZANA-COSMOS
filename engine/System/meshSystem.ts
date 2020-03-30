@@ -8,6 +8,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 
 import { PearlMesh } from '../Entity/pearlMesh';
 import { EnvironmentSystem } from './environmentSystem';
+import { SoundManager } from './sound';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -29,12 +30,17 @@ export class MeshSystem extends EnvironmentSystem {
      * Creates a new System
      * @param canvas Element where the scene will be drawn
      */
+
+    soundManager: SoundManager;
+
     constructor(canvas: HTMLCanvasElement) {
         super(canvas);
         this.addStarMesh();
         this.addDustMesh();
         this.addUpperDustMesh();
         this.addPlanetMesh();
+
+        this.soundManager = new SoundManager(this.scene);
     }
 
     dustMesh: Mesh;

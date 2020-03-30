@@ -83,6 +83,7 @@ export class GameEngine {
             this.gameStartAnim(() => {
                 this.introUI.showAnim();
             });
+            this.system.soundManager.load();
         });
     }
     
