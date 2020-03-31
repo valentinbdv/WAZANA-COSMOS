@@ -31,7 +31,7 @@ export class PlayUI extends MinimapUI {
         this.tileMap = tileMap;
         this.showAnimation = new Animation(system.animationManager);
         this.shineAnimation = new Animation(system.animationManager);
-        this.checkAnimation = new Animation(system.animationManager);
+        this.checkAnimation = new Animation(system.animationManager, );
         this.curve = new CircleEase();
 
         this.addPlayerStat();
@@ -138,7 +138,7 @@ export class PlayUI extends MinimapUI {
         this.setRealPlayerIcon();
         this.totalPlayers = Math.round(Math.random() * 50 + 450);
 
-        this.checkAnimation.infinite((count, perc) => {
+        this.checkAnimation.interval(200, (count, perc) => {
             this.checkRanks();
             this.checkPlayerSize();
             this.checkMap();
@@ -165,6 +165,7 @@ export class PlayUI extends MinimapUI {
         // this.listLayout.hide();
         this.statLayout.hide();
         this.minimapLayout.hide();
+        this.hideAllIcon();
     }
 
     showAnim(callback?: Function) {

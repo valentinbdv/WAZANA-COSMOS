@@ -221,6 +221,17 @@ export class Animation {
         return this;
     }
 
+    interval(time: number, funct: Function) {
+        let timeTest = 0;
+        this.infinite((count: number) => {
+            let milisecond = count * 1000 / 60;
+            if (milisecond - timeTest > time) {
+                funct();
+                timeTest = milisecond;
+            }
+        });
+    }
+
     // steps (steps:any) {
     // 	this.loopsteps(steps, 0);
     // 	return this;

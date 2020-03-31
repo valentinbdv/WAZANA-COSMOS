@@ -6,10 +6,11 @@ import { ui_panel } from './group';
 import { ui_text, ui_node } from './node';
 import { colormain } from './color';
 import { TileMap } from '../Map/tileMap';
+import { starMapDistance } from '../Entity/star';
 
 import { Ellipse } from '@babylonjs/gui/2D/controls/ellipse';
 import { Line } from '@babylonjs/gui/2D/controls/line';
-import { Color4, Color3 } from '@babylonjs/core/Maths/math';
+import { Color4 } from '@babylonjs/core/Maths/math';
 
 export class MinimapUI {
 
@@ -26,6 +27,28 @@ export class MinimapUI {
 
         this.addContainer();
         // this.addGridLines();
+        this.createAllIcons();
+    }
+
+    iconNumber = starMapDistance/2;
+    storageIcons: Array<ui_node> = []
+    createAllIcons() {
+        for (let i = 0; i < this.iconNumber; i++) {
+            let icon = new ui_node(this.system);
+            icon.container = this.createPlayerIcon(this.otherPlayerColor);
+            this.hideIcon(icon);
+        }
+    }
+
+    iconSize = 5;
+    createPlayerIcon(color: Color4): Ellipse {
+        let plIcon = new Ellipse();
+        plIcon.width = this.iconSize + 'px';
+        plIcon.height = this.iconSize + 'px';
+        plIcon.thickness = 0;
+        // plIcon.background = 'white';
+        plIcon.background = 'rgb(' + color.r * 255 + ', ' + color.g * 255 + ', ' + color.b * 255 + ')';
+        return plIcon;
     }
 
     minimapLayout: ui_panel;
@@ -68,18 +91,6 @@ export class MinimapUI {
         this.limit.background = 'rgb(' + color.r * 255 + ', ' + color.g * 255 + ', ' + color.b * 255 + ')';
     }
 
-    iconSize = 5;
-    createPlayerIcon(color: Color4): Ellipse {
-        let plIcon = new Ellipse();
-        plIcon.width = this.iconSize+'px';
-        plIcon.height = this.iconSize+'px';
-        plIcon.thickness = 0;
-        // plIcon.background = 'white';
-        plIcon.background = 'rgb(' + color.r * 255+', '+color.g * 255+', '+color.b * 255+')';
-        this.limit.addControl(plIcon);
-        return plIcon;
-    }
-
     mR = 1;
     getIconPosition(player: Player) {
         let rP = this.realPlayer.position;
@@ -92,16 +103,26 @@ export class MinimapUI {
         return {x: x, y: y};
     }
 
+    getFreeIcon() {
+        let newIcon = this.storageIcons.pop();
+        if (newIcon) {
+            this.limit.addControl(newIcon.container);
+            return newIcon;
+        }
+    }
+
+    hideIcon(icon:ui_node) {
+        this.limit.removeControl(icon.container);
+        this.storageIcons.push(icon);
+    }
+
     playersIcons = {};
-    otherPLayerColor = new Color4(0.7, 0.7, 0.7, 1);
+    otherPlayerColor = new Color4(0.7, 0.7, 0.7, 1);
     checkMap() {
         for (const key in this.tileMap.players) {
             if (this.tileMap.players.hasOwnProperty(key)) {
                 const player = this.tileMap.players[key];
-                if (!this.playersIcons[key]) {
-                    this.playersIcons[key] = new ui_node(this.system);
-                    this.playersIcons[key].container = this.createPlayerIcon(this.otherPLayerColor);
-                }
+                if (!this.playersIcons[key]) this.playersIcons[key] = this.getFreeIcon();
                 if (key != this.realPlayer.key) {
                     let pos = this.getIconPosition(player);
                     this.playersIcons[key].setPosition(pos);
@@ -112,14 +133,27 @@ export class MinimapUI {
         }
         for (const key in this.playersIcons) {
             if (this.playersIcons.hasOwnProperty(key)) {
-                const pl = this.playersIcons[key];
-                if (!this.tileMap.players.hasOwnProperty(key)) this.limit.removeControl(pl.container);
+                const icon = this.playersIcons[key];
+                if (!this.tileMap.players.hasOwnProperty(key)) {
+                    this.hideIcon(icon);
+                    delete this.playersIcons[key];
+                }
             }
         }
 
         // let pl = this.realPlayer;
         // let size = Math.pow(pl.size * 2, 2);
         // this.playersIcons[pl.key].setSize({ width: size, height: size }); 
+    }
+
+    hideAllIcon() {
+        for (const key in this.playersIcons) {
+            if (this.playersIcons.hasOwnProperty(key)) {
+                const icon = this.playersIcons[key];
+                this.hideIcon(icon);
+                delete this.playersIcons[key];
+            }
+        }
     }
 
     setRealPlayerIcon() {
