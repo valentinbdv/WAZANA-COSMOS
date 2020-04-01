@@ -96,7 +96,7 @@ export class RealPlayer extends Player {
         this.system.scene.registerBeforeRender(() => {
             if (!this.isDead) {
                 let newRadius = Math.max(this.size * 60, 50);
-                newRadius = Math.min(this.size * 60, 80);
+                newRadius = Math.min(newRadius, 70);
                 // Large size to check stuff
                 // let newRadius = 200;
                 let change = newRadius - this.system.camera.radius;

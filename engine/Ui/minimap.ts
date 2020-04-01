@@ -28,6 +28,7 @@ export class MinimapUI {
         this.addContainer();
         // this.addGridLines();
         this.createAllIcons();
+        this.addRealPlayerIcon();
     }
 
     iconNumber = starMapDistance/2;
@@ -156,11 +157,21 @@ export class MinimapUI {
         }
     }
 
-    setRealPlayerIcon() {
+    setRealPlayerColor() {
+        let c = this.realPlayer.color;
+        console.log(this.realPlayerIcon.container);
+        
+        this.realPlayerIcon.container.background = 'rgb(' + c.r * 255 + ', ' + c.g * 255 + ', ' + c.b * 255 + ')';
+    }
+
+    realPlayerIcon: ui_node;
+    addRealPlayerIcon() {
         let pl = this.realPlayer;
-        this.playersIcons[pl.key] = new ui_node(this.system);
-        this.playersIcons[pl.key].container = this.createPlayerIcon(pl.color);
-        this.playersIcons[pl.key].container.width = (this.iconSize + 3) + 'px';
-        this.playersIcons[pl.key].container.height = (this.iconSize + 3) + 'px';
+        this.realPlayerIcon = new ui_node(this.system);
+        this.realPlayerIcon.container = this.createPlayerIcon(pl.color);
+        this.realPlayerIcon.container.width = (this.iconSize + 3) + 'px';
+        this.realPlayerIcon.container.height = (this.iconSize + 3) + 'px';
+        this.realPlayerIcon.container.zIndex = 10;
+        this.limit.addControl(this.realPlayerIcon.container);
     }
 }

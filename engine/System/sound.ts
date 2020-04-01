@@ -5,6 +5,7 @@ import { Vector3 } from '@babylonjs/core/Maths/math';
 import { Scene } from '@babylonjs/core/scene';
 import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 import find from 'lodash/find';
+import remove from 'lodash/remove';
 
 import { Animation } from './Animation';
 
@@ -15,29 +16,36 @@ interface SoundInterface {
     'sunChange' | 
     'nebulaChange' | 
     'play' |
+    'dead' |
     'catchPlanet' |
     'catchDust' |
     'absorb' |
-    'explode' |
+    'explodeStart' |
+    'explodeEnd' |
     'levelUp' |
     'levelDown' |
     'accelerate'
     ;
     volume: number;
     needClone: boolean;
+    duration: number;
+    loop: boolean;
+    spatial: boolean;
 }
 
 let soundList: Array<SoundInterface> = [
-    { name: 'nebulaChange', volume: 1, needClone: false },
-    { name: 'sunChange', volume: 1, needClone: false },
-    { name: 'play', volume: 1, needClone: false },
-    { name: 'catchPlanet', volume: 1, needClone: true },
-    { name: 'catchDust', volume: 0.3, needClone: true },
-    { name: 'absorb', volume: 1, needClone: true },
-    { name: 'explode', volume: 0.3, needClone: true },
-    { name: 'levelDown', volume: 0.3, needClone: false },
-    { name: 'levelUp', volume: 0.3, needClone: false },
-    { name: 'accelerate', volume: 1, needClone: true },
+    { name: 'nebulaChange', volume: 1, needClone: false, duration: 1, loop: false, spatial: false },
+    { name: 'sunChange', volume: 1, needClone: false, duration: 1, loop: false, spatial: false },
+    { name: 'play', volume: 1, needClone: false, duration: 2, loop: false, spatial: false },
+    { name: 'dead', volume: 1, needClone: false, duration: 3, loop: false, spatial: false },
+    { name: 'catchPlanet', volume: 1, needClone: true, duration: 1, loop: false, spatial: false },
+    { name: 'catchDust', volume: 0.2, needClone: true, duration: 0.5, loop: false, spatial: false },
+    { name: 'absorb', volume: 0.2, needClone: true, duration: 1, loop: true, spatial: true },
+    { name: 'explodeStart', volume: 1, needClone: true, duration: 1, loop: false, spatial: true },
+    { name: 'explodeEnd', volume: 0.5, needClone: true, duration: 3, loop: false, spatial: true },
+    { name: 'levelDown', volume: 0.3, needClone: false, duration: 1, loop: false, spatial: false },
+    { name: 'levelUp', volume: 0.3, needClone: false, duration: 1, loop: false, spatial: false },
+    { name: 'accelerate', volume: 1, needClone: true, duration: 2, loop: false, spatial: true },
 ];
 
 export class SoundManager {
@@ -50,6 +58,10 @@ export class SoundManager {
 
     constructor(scene: Scene) {
         this.scene = scene;
+
+        window.addEventListener('blur', () => {
+            this.stopAllSounds();
+        });
     }
     
     load() {
@@ -57,7 +69,10 @@ export class SoundManager {
         for (let i = 0; i < soundList.length; i++) {
             const sound = soundList[i];
             let n = sound.name;
-            this.Sounds[n] = new Sound(n, soundUrl + n + ".wav", this.scene);
+            this.Sounds[n] = new Sound(n, soundUrl + n + ".wav", this.scene, null, {
+                loop: sound.loop,
+                // spatialSound: sound.spatial,
+            });
         }
     }
 
@@ -67,26 +82,38 @@ export class SoundManager {
 
     setOff() {
         this.on = false;
-        for (const key in this.Sounds) {
-            const sound = this.Sounds[key];
-            sound.stop();
-        }
+        this.stopAllSounds();
     }
 
-    play(sound: SoundInterface['name']) {
-        if (this.on) this.start(sound, 1);
-    }
-
-    playMesh(sound: SoundInterface['name'], mesh: TransformNode, volume ? : number) {
+    play(sound: SoundInterface['name']): Sound {
         if (!this.on) return;
-        volume = this.checkVolume(sound) * volume;
+        let volume = this.checkVolume(sound);
         if (volume == 0) return;
-        this.start(sound, volume, mesh);
+        return this.start(sound, volume);
+    }
+
+    playMesh(sound: SoundInterface['name'], mesh: TransformNode, volume ? : number): Sound {
+        if (!this.on) return;
+        // volume = (volume) ? volume : 1;
+        // volume = this.checkVolume(sound) * volume;
+        // console.log(volume);
+        
+        // if (volume == 0) return;
+        let soundO = this.start(sound, 1, mesh);
+        if (mesh) {
+            if (mesh.position) {
+                let pos = mesh.position;
+                if (this.checkFinitePosition(pos)) {
+                    soundO.attachToMesh(mesh);
+                }
+            }
+        }
+        return soundO;
     }
 
     currentSound: any = {};
     maxSound = 10;
-    checkVolume(sound: SoundInterface['name']) {
+    checkVolume(sound: SoundInterface['name']): number {
         if (this.currentSound[sound] == undefined) return this.currentSound[sound] = 1;
         else this.currentSound[sound]++;
         // FIXME Shouldn't have to reset currentSound value
@@ -111,7 +138,8 @@ export class SoundManager {
         // });
     }
 
-    start(sound: SoundInterface['name'], volume: number, mesh?: TransformNode) {
+    soundsPlaying:Array<Sound> = [];
+    start(sound: SoundInterface['name'], volume: number, mesh?: TransformNode): Sound {
         if (!this.checkFinitePosition(this.scene.activeCamera.position)) return;
         let soundParam = find(soundList, (s) => { return s.name == sound });
         
@@ -119,25 +147,34 @@ export class SoundManager {
         if (soundParam.needClone) soundO = this.Sounds[sound].clone();
         else soundO = this.Sounds[sound];
         
-        volume = (volume) ? volume : 1;
         soundO.setVolume(volume * soundParam.volume);
-        if (mesh) {
-            if (mesh.position) {
-                let pos = mesh.position;
-                if (this.checkFinitePosition(pos)) {
-                    soundO.attachToMesh(mesh);
-                }
-            }
+        soundO.play();
+        this.soundsPlaying.push(soundO);
+        if (!soundParam.loop) {
+            setTimeout(() => {
+                this.stop(sound, soundO);
+            }, soundParam.duration * 1000);
         }
 
-        soundO.play();
+        return soundO;
+    }
+
+    stop(sound: SoundInterface['name'], soundO: Sound) {
+        this.currentSound[sound]--;
+        soundO.stop();
+        remove(this.soundsPlaying, (s) => { return s == soundO });
+        let soundParam = find(soundList, (s) => { return s.name == sound });
         if (soundParam.needClone) {
-            setTimeout(() => {
-                this.currentSound[sound]--;
-                soundO.stop();
-                soundO.dispose();
-            }, 5000);
+            soundO.dispose();
         }
+    }
+
+    stopAllSounds() {
+        for (let i = 0; i < this.soundsPlaying.length; i++) {
+            const soundO = this.soundsPlaying[i];
+            soundO.stop();
+        }
+        this.soundsPlaying = [];
     }
 
     checkFinitePosition(position: Vector3) {

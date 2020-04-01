@@ -16,8 +16,10 @@ import { Vector2 } from '@babylonjs/core/Maths/math';
 // Trou noir attaque uniquement les leaders
 // Faire étoile filante plutôt que point blanc
 // Tableau de récap à la fin
-// Etoile diminue toute seul si ne fais rien du à la combustion
 // Create particle in show/hide to avoid creating 100 particleSystem
+// Add menu with Sound, twitter and discoord
+// Explosion create a wave on the grid Or simple rotate/shake a bit the grid
+// Use Saved Star and avoid checkactivemeshes
 
 interface State {
     players: Array<Player>;
@@ -92,6 +94,7 @@ export class GameEngine {
         this.tileMap.checkPlayerAndRessources(false);
         setTimeout(() => {
             this.gameOverAnim(() => {
+                this.system.soundManager.play('dead');
                 this.localMap.eraseAllIas();
                 this.tileMap.eraseAllEntity();
                 this.realPlayer.restart();
@@ -115,6 +118,7 @@ export class GameEngine {
     }
 
     gameStart() {
+        this.system.soundManager.play('play');
         this.system.checkMobile();
         this.system.checkActiveMeshes();
         this.introUI.hideAnim(() => {

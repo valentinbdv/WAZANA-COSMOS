@@ -100,11 +100,15 @@ export class PlayUI extends MinimapUI {
         // if (ranks[4]) this.player5.setText('#5 ' + ranks[4].key);
     }
 
+    getPlayerSize() {
+        let plSize = this.realPlayer.size;
+        return Math.max((plSize - minSize) * 10, 0);
+    }
+
     currentWidth = 0;
     currentSize = 0;
     checkPlayerSize() {
-        let plSize = this.realPlayer.size;
-        let sizeAdjusted = Math.max((plSize - minSize) * 10, 0);
+        let sizeAdjusted = this.getPlayerSize();
         let playerSize = Math.floor(sizeAdjusted);
         this.sizeText.setText('Your size: ' + (playerSize + 1).toString());
         let width = Math.round((sizeAdjusted - playerSize) * this.width);
@@ -135,8 +139,10 @@ export class PlayUI extends MinimapUI {
         // this.listLayout.show();
         this.statLayout.show();
         this.minimapLayout.show();
-        this.setRealPlayerIcon();
+        this.setRealPlayerColor();
         this.totalPlayers = Math.round(Math.random() * 50 + 450);
+        let sizeAdjusted = this.getPlayerSize();
+        this.currentSize = Math.floor(sizeAdjusted);
 
         this.checkAnimation.interval(200, (count, perc) => {
             this.checkRanks();
