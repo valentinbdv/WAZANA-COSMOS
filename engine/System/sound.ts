@@ -69,7 +69,7 @@ export class SoundManager {
         for (let i = 0; i < soundList.length; i++) {
             const sound = soundList[i];
             let n = sound.name;
-            this.Sounds[n] = new Sound(n, soundUrl + n + ".wav", this.scene, null, {
+            this.Sounds[n] = new Sound(n, soundUrl + n + ".mp3", this.scene, null, {
                 loop: sound.loop,
                 // spatialSound: sound.spatial,
             });
