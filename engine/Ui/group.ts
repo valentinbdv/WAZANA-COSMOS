@@ -219,6 +219,11 @@ export class ui_group extends ui {
         });
         return this;
     }
+
+    setFullScreen() {
+        this.container.width = '100%';
+        this.container.height = '100%';
+    }
 }
 
 export class ui_panel extends ui_group {

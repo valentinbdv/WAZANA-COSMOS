@@ -3,7 +3,7 @@ import { Animation } from './System/animation'
 import { GravityGrid } from './System/GravityGrid';
 import { StarCategories } from './Entity/star';
 import { RealPlayer } from './Player/realPlayer';
-import { IntroUI } from './Ui/intro';
+import { PauseUI } from './Ui/pause';
 import { PlayUI } from './Ui/play';
 import { Player } from "./player/player";
 import { startSize } from './Entity/star';
@@ -12,7 +12,9 @@ import { LocalMap } from './Map/localMap';
 import { TileMap } from './Map/tileMap';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
-import '../asset/icons/style.css';
+// import 'https://cosmos.wazana.io/font/style.css';
+// import '../asset/icons/style.css';
+import { IntroUI } from './Ui/intro';
 // import '../asset/meshWriter.js';
 
 // Improve dive function to reproduce planet attraction effect
@@ -20,8 +22,8 @@ import '../asset/icons/style.css';
 // Tableau de récap à la fin
 // Create particle in show/hide to avoid creating 100 particleSystem
 // Use Saved Star and avoid checkactivemeshes
-// Optimiser son
 // Add Intro image/text
+// Ajouter facebook analytics
 
 interface State {
     players: Array<Player>;
@@ -42,7 +44,7 @@ export class GameEngine {
     tileMap: TileMap;
     localMap: LocalMap;
     realPlayer: RealPlayer;
-    introUI: IntroUI;
+    pauseUI: PauseUI;
     playUI: PlayUI;
     onlineMap: onlineMap;
 
@@ -50,6 +52,9 @@ export class GameEngine {
         this.system = new UiSystem(gameOptions.canvas);
         this.system.optimize();
         this.animation = new Animation(this.system.animationManager);
+
+        let test = new IntroUI(this.system);
+        test.hideAnim();
 
         this.gravityGrid = new GravityGrid(this.system);
         this.tileMap = new TileMap(this.system, this.gravityGrid);
@@ -70,8 +75,8 @@ export class GameEngine {
 
         
         this.playUI = new PlayUI(this.system, this.realPlayer, this.tileMap);
-        this.introUI = new IntroUI(this.system, this.realPlayer, this.playUI);
-        this.introUI.onStart = (mode: 'local' | 'online') => {
+        this.pauseUI = new PauseUI(this.system, this.realPlayer, this.playUI);
+        this.pauseUI.onStart = (mode: 'local' | 'online') => {
             if (mode == 'online') this.joinGameServer();
             else this.joinGameLocal();
         };
@@ -85,7 +90,7 @@ export class GameEngine {
             this.realPlayer.show();
             this.realPlayer.setCategory(StarCategories[0], true);
             this.gameStartAnim(() => {
-                this.introUI.showAnim();
+                this.pauseUI.showAnim();
             });
             this.system.soundManager.load();
         });
@@ -101,7 +106,7 @@ export class GameEngine {
                 this.tileMap.eraseAllEntity();
                 this.realPlayer.restart();
                 this.gameStartAnim(() => {
-                    this.introUI.showAnim();
+                    this.pauseUI.showAnim();
                 });
             });
         }, 2000);
@@ -123,7 +128,7 @@ export class GameEngine {
         this.system.soundManager.play('play');
         this.system.checkMobile();
         this.system.checkActiveMeshes();
-        this.introUI.hideAnim(() => {
+        this.pauseUI.hideAnim(() => {
             this.playUI.showAnim();
         });
 

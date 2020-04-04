@@ -416,8 +416,6 @@ export class ui_image extends ui_node {
         this.node = new Image("", image);
         this.image = image;
         this.node.stretch = 2;
-
-        if (style.width != undefined) this.node.width = style.width;
     }
 }
 
