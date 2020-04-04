@@ -25,11 +25,11 @@ export class RealPlayer extends Player {
         this.map = map;
 
         hotkeys('space', (event, param) => {
-            if (this.moving) this.accelerate();
+            if (this.moving) this.realPlayerAccelerate();
         });
 
         window.addEventListener('click', () => {
-            if (this.moving) this.accelerate();
+            if (this.moving) this.realPlayerAccelerate();
         });
 
         setInterval(() => {
@@ -39,6 +39,14 @@ export class RealPlayer extends Player {
                 if (this.map.started) this.map.send({ position: this.position });
             }
         }, 500);
+    }
+
+    // Test to use Motion Blur but not really working
+    realPlayerAccelerate() {
+        let test = this.accelerate(() => {
+            // this.system.removeMotionBlur();
+        });
+        // if (test) this.system.addMotionBLur();
     }
 
     addMouseEvent() {

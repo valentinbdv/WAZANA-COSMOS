@@ -1,9 +1,10 @@
-import { AnimationManager } from './animation';
+import { AnimationManager, Animation } from './animation';
 
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { Scene } from '@babylonjs/core/scene';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { Color3, Color4, Vector3, Vector2 } from '@babylonjs/core/Maths/math';
+import { MotionBlurPostProcess } from '@babylonjs/core/PostProcesses/motionBlurPostProcess';
 import { Camera } from '@babylonjs/core/Cameras/camera';
 
 /**
@@ -95,12 +96,17 @@ export class System {
         // }, 1000);
     }
     
+    shakeAnim: Animation;
+    motionBlur: MotionBlurPostProcess;
     setCamera() {
         this.camera = new ArcRotateCamera('camera', 0, Math.PI/6, 10, Vector3.Zero(), this.scene);
         this.camera.minZ = 0;
         this.camera.setTarget(Vector3.Zero());
         // this.camera.attachControl(this.canvas);
         
+        this.shakeAnim = new Animation(this.animationManager);
+        // this.motionBlur.motionStrength = 10;
+        // this.motionBlur.isEnabled = fasle;
         // this.camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
         // let aspect = this.scene.getEngine().getAspectRatio(this.camera);
         // let ortho = 25;
@@ -108,6 +114,29 @@ export class System {
         // this.camera.orthoBottom = -ortho;
         // this.camera.orthoLeft = -ortho * aspect;
         // this.camera.orthoRight = ortho * aspect;
+    }
+
+    addMotionBLur() {
+        this.motionBlur = new MotionBlurPostProcess('mb', this.scene, 1.0, this.camera);
+        this.motionBlur.motionStrength = 0.1;
+    }
+
+    removeMotionBlur() {
+        if (this.motionBlur) this.motionBlur.dispose();
+    }
+
+    shacking = false;
+    cameraShake() {
+        this.shacking = true;
+        this.shakeAnim.alternate(30, 3, (count, perc) => {
+            this.camera.alpha = perc / 70;
+        }, (count, perc) => {
+            this.camera.alpha = -perc / 70;
+        }, () => {
+            this.shacking = false;
+            // this.cameraposition = camPosition;
+            this.camera.alpha = 0;
+        });
     }
 
     center = Vector2.Zero();

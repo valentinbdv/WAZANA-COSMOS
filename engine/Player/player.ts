@@ -239,10 +239,10 @@ export class Player extends StarFighter {
     }
 
     launchAnimationLength = 80;
-    accelerate() {
-        if (!this.moving || this.accelerating || !this.isStarVisible) return;
+    accelerate(callback?: Function): boolean {
+        if (!this.moving || this.accelerating || !this.isStarVisible) return false;
         let planet = this.planets.pop();
-        if (!planet) return;
+        if (!planet) return false;
 
         this.system.soundManager.playMesh('accelerate', this.movingMesh);
         // if (this.realPlayer) this.system.soundManager.play('accelerate');
@@ -265,7 +265,10 @@ export class Player extends StarFighter {
             planet.hide();
             this.setHeartScale(size);
             this.realVelocity = 1;
+            if (callback) callback();
         });
+
+        return true
     }
     
     onDied: Function;

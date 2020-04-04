@@ -13,18 +13,15 @@ import { TileMap } from './Map/tileMap';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
 import '../asset/icons/style.css';
-import '../asset/meshWriter.js';
+// import '../asset/meshWriter.js';
 
 // Improve dive function to reproduce planet attraction effect
-// Trou noir attaque uniquement les leaders
 // Faire étoile filante plutôt que point blanc
 // Tableau de récap à la fin
 // Create particle in show/hide to avoid creating 100 particleSystem
-// Add menu with Sound, twitter and discoord
-// Explosion create a wave on the grid Or simple rotate/shake a bit the grid
 // Use Saved Star and avoid checkactivemeshes
 // Optimiser son
-// Add Motion when star accelerate
+// Add Intro image/text
 
 interface State {
     players: Array<Player>;
