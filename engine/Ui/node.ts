@@ -324,7 +324,6 @@ export class ui_text extends ui_node {
         this.setPosition(pos);
         if (style.width == undefined) this.container.width = '100%';
         else this.setWidth(style.width);
-        this.setHeight(style.fontSize);
         this.container.addControl(this.node);
         if (!event) this.deleteEvent();
     }
@@ -428,60 +427,15 @@ export class ui_icon extends ui_text {
 
     constructor(system: UiSystem, texture: Control, icon: string, pos: position, style: style, event ? : boolean) {
         super(system, texture, icon, pos, style, event);
-        style.fontFamily = 'wznicon';
-        let text = (icon != '') ? this.icontochar[icon] : '';
-        if (text == undefined) return console.log(icon);
-        this.setText(text);
+        this.setIcon(icon);
     }
 
     icontochar = {
-        wazanaLogo: 'a',
-        close: 'z',
-        cure: 'e',
-        health: 'e',
-        fastbuilt: 'r',
-        fastmove: 't',
-        fasttime: 'y',
-        hole: 'u',
-        invisible: 'i',
-        shield: 'o',
-        slowtime: 'p',
-        strong: 'q',
-        teleport: 's',
-        damage: 'Y',
-        energy: 'f',
-        entity: 'g',
-        matter: 'h',
-        progress: 'x',
-        rate: 'c',
-        scope: 'v',
-        speed: 'R',
-        slice1: 'b',
-        slice2: 'A',
-        slicebis1: 'Z',
-        slicebis2: 'E',
-        // arrowbottomleft:'j',
-        // arrowbottomright:'k',
-        // arrowtopleft:'l',
-        // arrowtopright:'m',
-        grade1: '1',
-        grade2: '2',
-        grade3: '3',
-        grade4: '4',
-        grade5: '5',
-        grade6: '6',
-        grade7: '7',
-        grade8: '8',
-        grade9: '9',
-        grade10: '0',
-        map: 'd',
-        mousecursor: 'j',
-        mousemove: 'k',
-        mousepointer: 'l',
-        mouseselect: 'm',
-        mousetarget: 'w',
-        mouseteleport: 'U',
-        wall: 'T',
+        home: 'a',
+        chat: 'b',
+        volumeOn: 'c',
+        volumeOff: 'd',
+        twitter: 'e',
     };
 
     setIcon(icon: string) {
@@ -493,10 +447,11 @@ export class ui_icon extends ui_text {
 
     setText(text: string) {
         text = text.toString();
+        this.node.fontFamily = 'icomoon';
+        this.node.fontSize = this.style.fontSize;
         this.node.text = text;
         this.node.color = this.style.color;
         this.text = text;
-        this.show();
         return this;
     }
 }

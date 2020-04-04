@@ -5,7 +5,7 @@ import { RealPlayer } from '../Player/realPlayer';
 import { ui_group, ui_control } from './group';
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import { ui_arrow, ui_button } from './effect';
-import { ui_text, ui_back } from './node';
+import { ui_text, ui_back, ui_icon } from './node';
 import { colormain } from './color';
 import { MinimapUI } from './minimap';
 
@@ -32,6 +32,7 @@ export class IntroUI {
         this.addStarChoice();
         this.addPlayerLayout();
         this.addStartButton();
+        this.addMenu();
 
         this.hide();
     }
@@ -154,12 +155,37 @@ export class IntroUI {
             this.onStart('online');
         });
         this.startOnline._setStyle({ zIndex: 100 });
+        this.startOnline._setStyle({ zIndex: 100 });
 
         this.startLocal = new ui_button(this.system, this.system.advancedTexture, { ui: 'text', text: 'Play' }, { x: 0, y: 250 }, { width: 180, height: 40 }, { color: '#000', background: colormain, fontSize: 20 });
         this.startLocal.on('click', () => {
             this.onStart('local');
         });
         this.startLocal._setStyle({ zIndex: 100 });
+    }
+
+    menuLayout: ui_control;
+    menuTop = -280;
+    iconSize = 35;
+    addMenu() {
+        this.menuLayout = new ui_control(this.system, { x: 0, y: this.menuTop }, { width: 300, height: 400 }, { zIndex: 100 });
+        let homeIcon = this.menuLayout.addIcon('home', { x: 0, y: 0 }, { color: colormain, fontSize: this.iconSize, width: this.iconSize, height: this.iconSize });
+        homeIcon.on('click', () => {
+            window.location = 'https://wazana.io';
+        });
+
+        let chatIcon = this.menuLayout.addIcon('chat', { x: this.iconSize + 30, y: 0 }, { color: colormain, fontSize: this.iconSize - 5, width: this.iconSize + 10, height: this.iconSize + 10 });
+        chatIcon.on('click', () => {
+            window.open('https://discord.gg/EX5yNM');
+        });
+
+        let twitterIcon = this.menuLayout.addIcon('twitter', { x: -(this.iconSize + 30), y: 0 }, { color: colormain, fontSize: this.iconSize, width: this.iconSize, height: this.iconSize });
+        twitterIcon.on('click', () => {
+            window.open('https://twitter.com/wazana_io');
+        });
+
+        // if (way == 'next') soundManager.setOn();
+        // else soundManager.setOff();
     }
 
     showAnim(callback?: Function) {
@@ -172,6 +198,7 @@ export class IntroUI {
         this.starLayout.showAll();
         this.nebulaLayout.showAll();
         this.playerLayout.showAll();
+        this.menuLayout.showAll();
         this.startOnline.hide();
         this.startLocal.show();
         this.realPlayer.setSize(1);
@@ -186,6 +213,7 @@ export class IntroUI {
         this.starLayout.showAll();
         this.nebulaLayout.showAll();
         this.playerLayout.showAll();
+        this.menuLayout.showAll();
         this.startOnline.hide();
         this.startLocal.show();
         this.realPlayer.setSize(1);
@@ -202,6 +230,7 @@ export class IntroUI {
             this.starLayout.hideAll();
             this.nebulaLayout.hideAll();
             this.playerLayout.hideAll();
+            this.menuLayout.hideAll();
             this.startOnline.hide();
             this.startLocal.hide();
             if (callback) callback();
@@ -215,6 +244,7 @@ export class IntroUI {
         this.starLayout.hideAll();
         this.nebulaLayout.hideAll();
         this.playerLayout.hideAll();
+        this.menuLayout.hideAll();
         this.startOnline.hide();
         this.startLocal.hide();
     }
@@ -228,6 +258,9 @@ export class IntroUI {
 
         this.nebulaLayout.setOpacity(opacity);
         this.nebulaLayout.setPosition({ x: 0, y: this.nebulaTop - easePerc * 50 });
+
+        this.menuLayout.setOpacity(opacity);
+        this.menuLayout.setPosition({ x: 0, y: this.menuTop - easePerc * 50 });
 
         this.playerLayout.setOpacity(opacity);
         this.playerLayout.setPosition({ x: 0, y: this.playerTop + easePerc * 50 });
