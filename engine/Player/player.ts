@@ -244,8 +244,8 @@ export class Player extends StarFighter {
         let planet = this.planets.pop();
         if (!planet) return false;
 
-        this.system.soundManager.playMesh('accelerate', this.movingMesh);
-        // if (this.realPlayer) this.system.soundManager.play('accelerate');
+        // this.system.soundManager.playMesh('accelerate', this.movingMesh);
+        if (this.realPlayer) this.system.soundManager.play('accelerate');
 
         this.accelerating = true;
         let size = this.size;
