@@ -22,8 +22,7 @@ import { IntroUI } from './Ui/intro';
 // Tableau de récap à la fin
 // Create particle in show/hide to avoid creating 100 particleSystem
 // Use Saved Star and avoid checkactivemeshes
-// Add Intro image/text
-// Ajouter facebook analytics
+// Add fog in order to not see white in side
 
 interface State {
     players: Array<Player>;

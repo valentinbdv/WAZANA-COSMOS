@@ -107,6 +107,7 @@ export class System {
         this.shakeAnim = new Animation(this.animationManager);
         // this.motionBlur.motionStrength = 10;
         // this.motionBlur.isEnabled = fasle;
+        
         // this.camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
         // let aspect = this.scene.getEngine().getAspectRatio(this.camera);
         // let ortho = 25;
