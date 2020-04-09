@@ -23,6 +23,11 @@ import { IntroUI } from './Ui/intro';
 // Create particle in show/hide to avoid creating 100 particleSystem
 // Use Saved Star and avoid checkactivemeshes
 // Add fog in order to not see white in side
+// Add star style to custom and make people pay for it
+// Se faire aspirer plus rapidement quand on est au centre
+// Garder un peu plus de visttesse quand on est gros.
+// Tu deviens une supernova et un trou noir quand tu est trop gros comme ça ça donne un objectif pour continuer à grossir
+// Il n'y a plus de planet à un moment donné
 
 interface State {
     players: Array<Player>;
