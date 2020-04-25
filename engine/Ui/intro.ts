@@ -1,7 +1,7 @@
 import { UiSystem } from '../System/uiSystem'
 import { Animation } from '../System/animation'
-import { ui_group, ui_control } from './group';
-import { colormain } from './color';
+import { ui_control } from './group';
+import { colorbackground } from './color';
 
 import { EasingFunction, CircleEase } from '@babylonjs/core/Animations/easing';
 
@@ -24,7 +24,7 @@ export class IntroUI {
     layout: ui_control;
     iconSize = 35;
     addLayout() {
-        this.layout = new ui_control(this.system, { x: 0, y: 0 }, { width: 100, height: 100 }, { zIndex: 1000, background: '#151034' });
+        this.layout = new ui_control(this.system, { x: 0, y: 0 }, { width: 100, height: 100 }, { zIndex: 1000, background: colorbackground });
         this.layout.setFullScreen();
         let lgo = this.layout.addImage('https://asset.wazana.io/logos/Cosmos.png', { x: 0, y: 0 }, { width: '50%', height: '50%' });
     }

@@ -4,8 +4,8 @@ import { Player } from '../Player/player';
 import { minSize, maxSize } from '../Entity/star';
 import { RealPlayer } from '../Player/realPlayer';
 import { ui_group, ui_panel, ui_control } from './group';
-import { ui_text, ui_bar, ui_back } from './node';
-import { colormain } from './color';
+import { ui_text, ui_back } from './node';
+import { colormain, colorbackground } from './color';
 import { TileMap } from '../Map/tileMap';
 import { MinimapUI } from './minimap';
 
@@ -35,6 +35,7 @@ export class PlayUI extends MinimapUI {
         this.curve = new CircleEase();
 
         this.addPlayerStat();
+        this.addSupernovaLayer();
         // this.addPlayerList();
         this.hide();
     }
@@ -68,6 +69,14 @@ export class PlayUI extends MinimapUI {
         this.player3 = this.listLayout.addText('', { x: 0, y: 100 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
         this.player4 = this.listLayout.addText('', { x: 0, y: 120 }, { fontSize: this.fontSize, color: colormain, float: 'left' });
         this.player5 = this.listLayout.addText('', { x: 0, y: 140 }, { fontSize: this.fontSize, color: colormain, float:'left' });
+    }
+
+    supernovaLayout: ui_control;
+    supernovaText: ui_text;
+    addSupernovaLayer() {
+        this.supernovaLayout = new ui_control(this.system, { x: 0, y: 0 }, { width: '100%', height: '100%' }, { background: colorbackground });
+        this.supernovaText = this.supernovaLayout.addText('1 level before supernova', { x: 0, y: 0 }, { fontSize: this.fontSize + 10, color: colormain });
+        this.supernovaLayout.hide();
     }
 
     getRanks(): Array<Player> {
@@ -109,8 +118,8 @@ export class PlayUI extends MinimapUI {
     currentSize = 0;
     checkPlayerSize() {
         let sizeAdjusted = this.getPlayerSize();
-        let playerSize = Math.floor(sizeAdjusted);
-        this.sizeText.setText('Your size: ' + (playerSize + 1).toString());
+        let playerSize = Math.floor(sizeAdjusted) + 1;
+        this.sizeText.setText('Your size: ' + playerSize.toString());
         let width = Math.round((sizeAdjusted - playerSize) * this.width);
         if (width != this.currentWidth) { 
             this.sizePorgress.setWidth(width);
@@ -122,6 +131,10 @@ export class PlayUI extends MinimapUI {
             else this.system.soundManager.play('levelDown');
             this.sizePorgress.setWidth(width);
             this.currentSize = playerSize;
+            // > 5 to avoid showing at the beginning
+            if ( playerSize > 5 && Math.round(playerSize / 5) == playerSize / 5 ) {
+                this.showLevelBeforeSupernova(25 - playerSize);
+            }
         }
     }
 
@@ -132,6 +145,18 @@ export class PlayUI extends MinimapUI {
             this.sizeText.setBackgroundOpacity(opacity);
         }, () => {
             this.sizeText.setBackgroundOpacity(0);
+        });
+    }
+
+    showLevelBeforeSupernova(level: number) {
+        this.supernovaText.setText(level + ' level before supernova.');
+        this.supernovaLayout.show();
+        this.shineAnimation.simple(100, (count, perc) => {
+            let opacity = Math.min(perc * 2, 2 - perc * 2);
+            this.supernovaLayout.setOpacity(opacity);
+        }, () => {
+            this.supernovaLayout.setOpacity(0);
+            this.supernovaLayout.hide();
         });
     }
 
