@@ -31,7 +31,7 @@ export class LocalMap {
         setInterval(() => {
             if (this.tileMap.check) {
                 this.checkPlayersAbsorbtion();
-                this.checkRessourceMap();
+                this.checkPlanetRessourceMap();
                 this.checkIaMap();
             }
         }, 200);
@@ -135,9 +135,20 @@ export class LocalMap {
     }
 
     planetDensity = 200;
-    checkRessourceMap() {
-        let newPlanetNeeded = this.planetDensity - Object.keys(this.tileMap.planets).length;
-        for (let i = 0; i < newPlanetNeeded; i++) {
+    checkPlanetRessourceMap() {
+        for (const key in this.tileMap.planets) {
+            const planet = this.tileMap.planets[key];
+            let dist = Vector2.Distance(planet.position, this.system.center);
+            if (dist > this.planetDensity) {
+                console.log('remove');
+                
+                planet.hide();
+                this.tileMap.storagePlanet(planet);
+            }
+        }
+        let newPlanetAvailable = this.tileMap.planetsStorage.length;
+        console.log(Object.keys(this.tileMap.planets).length, this.tileMap.planetsStorage.length);
+        for (let i = 0; i < newPlanetAvailable; i++) {
             this.addNewPlanet();
         }
     }
@@ -148,8 +159,8 @@ export class LocalMap {
         if (Object.keys(player.planets).length < player.maxPlanet) {
             for (const key in this.tileMap.planets) {
                 const planet: Planet = this.tileMap.planets[key];
-                // New check of attachedToStar because in the loop it can change
-                if (!planet.attachedToStar) {
+                // New check of attachedToStar andmaxPlanet because in the loop it can change
+                if (!planet.attachedToStar && Object.keys(player.planets).length < player.maxPlanet) {
                     let dist = Vector2.Distance(planet.position, player.position);
                     if (dist < player.gravityField) {
                         this.tileMap.setPlanetWithStar(planet);
@@ -164,7 +175,8 @@ export class LocalMap {
         let planetNumber = Object.keys(this.tileMap.planets).length;
         let radius = 2 + planetNumber;
         let velocity = 5 / (1 + planetNumber / 2);
-        let pos = this.tileMap.getNewRandomPosition();
+        // let pos = this.tileMap.getNewRandomPosition();
+        let pos = this.getFreePosition(10, 50, 50);
         let planetInterface: PlanetInterface = { position: pos, radius: radius, size: 1, velocity: velocity };
         let newPlanet = this.tileMap.addPlanet(planetInterface);
         return newPlanet;
@@ -203,8 +215,8 @@ export class LocalMap {
     }
 
     createIa() {
-        let newIa = new IAPlayer(this.system, this.gravityGrid);
-        let pos = this.getFreePosition();
+        let newIa = new IAPlayer(this.system, this.gravityGrid, this.tileMap);
+        let pos = this.getFreePosition(starMapDistance / 2, 25, 5);
         newIa.setPosition(pos);
         let cat = this.getRandomCategory();
         newIa.setCategory(cat, false);
@@ -222,22 +234,22 @@ export class LocalMap {
         delete this.ias[ia.key];
     }
 
-    getFreePosition(): Vector2 {
+    getFreePosition(gap: number, close: number, step: number): Vector2 {
         let test = true;
-        let distProgress = starMapDistance/2;
+        let distProgress = gap;
         while (test) {
-            let pos = this.tileMap.getNewRandomPositionFromCenter(this.tileMap.playerToFollow.position, distProgress, distProgress);
+            let pos = this.tileMap.getNewRandomPositionFromCenter(this.system.center, distProgress, distProgress);
             let distTest = true;
             for (const key in this.tileMap.players) {
                 let player: Player = this.tileMap.players[key];
                 let dist = Vector2.Distance(pos, player.position);
-                if (dist < 25) { distTest = false; }
+                if (dist < close) { distTest = false; }
             }
             if (distTest) {
                 test = false;
                 return pos;
             }
-            distProgress += 5;
+            distProgress += step;
         }
         return new Vector2(0, 0);
     }

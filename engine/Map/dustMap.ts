@@ -40,7 +40,7 @@ export class DustMap {
             let dust = this.dustsStorage.pop();
             dust.setSize(dustSize);
             dust.show();
-            this.dusts.push(dust);
+            if (this.dusts.indexOf(dust) == -1) this.dusts.push(dust);
             return dust;
         }
         return false;
@@ -64,7 +64,7 @@ export class DustMap {
     storageDust(dust: StarDust) {
         dust.hide();
         dust.animation.stop();
-        this.dustsStorage.push(dust);
+        if (this.dustsStorage.indexOf(dust) == -1) this.dustsStorage.push(dust);
     }
 
     eraseAllDusts() {

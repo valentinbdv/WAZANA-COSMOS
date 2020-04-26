@@ -71,7 +71,6 @@ export class MinimapUI {
     addGridLines() {
         for (let i = 0; i < 1; i++) {
             let line = this.getLine();
-            console.log(line);
             this.hLines.push(line);
         }
     }
@@ -159,8 +158,6 @@ export class MinimapUI {
 
     setRealPlayerColor() {
         let c = this.realPlayer.color;
-        console.log(this.realPlayerIcon.container);
-        
         this.realPlayerIcon.container.background = 'rgb(' + c.r * 255 + ', ' + c.g * 255 + ', ' + c.b * 255 + ')';
     }
 

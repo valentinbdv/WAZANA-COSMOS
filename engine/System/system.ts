@@ -72,7 +72,6 @@ export class System {
         });
     }
 
-    size = 300;
     buildScene() {
         this.scene = new Scene(this.engine);
         this.scene.ambientColor = new Color3(0.0, 0.0, 0.0);
@@ -140,9 +139,19 @@ export class System {
         });
     }
 
+    setCenterAndSize(center: Vector2, size: number) {
+        this.setCenter(center);
+        this.setSize(size);
+    }
+
     center = Vector2.Zero();
     setCenter(center: Vector2) {
         this.center = center;
+    }
+
+    size = 300;
+    setSize(size: number) {
+        this.size = size;
     }
 
     /**

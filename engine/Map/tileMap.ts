@@ -32,7 +32,6 @@ export class TileMap extends PlanetMap {
                 this.checkPlayersDust();
                 this.checkDustMap();
                 this.checkUpperDustMap();
-                this.checkLonelyPlanet();
                 frame = 0;
             }
             frame++;
@@ -47,7 +46,7 @@ export class TileMap extends PlanetMap {
     ////////// PLAYER
 
     createPlayer(starInterface: StarInterface) {
-        let player = new Player(this.system, this.gravityGrid, starInterface);
+        let player = new Player(this.system, this.gravityGrid, this, starInterface);
         player.key = starInterface.key;
         this.addPlayer(player);
         return player;

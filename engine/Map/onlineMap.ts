@@ -95,6 +95,7 @@ export class onlineMap {
                     let planet = this.tileMap.planets[planetkey]
                     player.addPlanet(planet);
                     planet.attachedToStar = true;
+                    planet.hide();
                     this.tileMap.storagePlanet(planet);
                 }
             }

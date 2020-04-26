@@ -69,7 +69,7 @@ export class GameEngine {
             this.gameOver();
         }
 
-        this.realPlayer = new RealPlayer(this.system, this.gravityGrid, this.onlineMap);
+        this.realPlayer = new RealPlayer(this.system, this.gravityGrid, this.tileMap, this.onlineMap);
         this.realPlayer.setMoving(false);
         this.realPlayer.onDied = () => {
             this.gameOver();

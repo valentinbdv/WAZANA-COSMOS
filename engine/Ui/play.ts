@@ -151,7 +151,7 @@ export class PlayUI extends MinimapUI {
     showLevelBeforeSupernova(level: number) {
         this.supernovaText.setText(level + ' level before supernova.');
         this.supernovaLayout.show();
-        this.shineAnimation.simple(100, (count, perc) => {
+        this.showAnimation.simple(100, (count, perc) => {
             let opacity = Math.min(perc * 2, 2 - perc * 2);
             this.supernovaLayout.setOpacity(opacity);
         }, () => {

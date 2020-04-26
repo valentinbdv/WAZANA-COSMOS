@@ -53,7 +53,7 @@ export class PlanetMap extends DustMap {
     storagePlanet(planet: Planet) {
         this.removePlanet(planet);
         planet.animation.stop();
-        this.planetsStorage.push(planet);
+        if (this.planetsStorage.indexOf(planet) == -1) this.planetsStorage.push(planet);
     }
 
     setPlanetWithStar(planet: Planet) {
@@ -69,14 +69,6 @@ export class PlanetMap extends DustMap {
             this.planetsStorage[key].hide();
         }
         this.planets = {};
-    }
-
-    checkLonelyPlanet() {
-        for (const key in this.planets) {
-            if (!this.planets[key].size && !this.planets[key].attachedToStar) {
-                this.storagePlanet(this.planets[key]);
-            }
-        }
     }
 
     checkPlanetsCycle() {

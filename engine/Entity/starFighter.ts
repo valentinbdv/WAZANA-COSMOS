@@ -1,12 +1,13 @@
 import { MeshSystem } from '../System/meshSystem';
 import { Star, StarInterface } from './star';
 import { Animation } from '../System/animation';
+import { MovingEntity } from './movingEntity';
+import { BlackHoleDepth } from './blackHole';
+import { PlanetMap } from '../Map/planetMap';
 
 import { Vector2, Vector3, Matrix, Color4 } from '@babylonjs/core/Maths/math';
 import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { ParticleSystem } from '@babylonjs/core/Particles/particleSystem';
-import { MovingEntity } from './movingEntity';
-import { BlackHoleDepth } from './blackHole';
 
 export class StarFighter extends Star {
 
@@ -16,8 +17,8 @@ export class StarFighter extends Star {
     absorber: MovingEntity;
     isDead = false;
 
-    constructor(system: MeshSystem, starInterface: StarInterface) {
-        super(system, starInterface);
+    constructor(system: MeshSystem, planetMap: PlanetMap, starInterface: StarInterface) {
+        super(system, planetMap, starInterface);
 
         this.particleCurve = new CubicEase();
         this.diveAnimation = new Animation(system.animationManager);

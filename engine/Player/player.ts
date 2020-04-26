@@ -5,11 +5,12 @@ import { Planet, PlanetInterface } from '../Entity/planet';
 import { StarFighter } from '../Entity/starFighter';
 import { StarCategory, StarInterface } from '../Entity/star';
 
-import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
+import { Vector2 } from '@babylonjs/core/Maths/math';
 import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 import { BlackHole } from '../Entity/blackHole';
 import { MovingEntity } from '../Entity/movingEntity';
 import { Sound } from '@babylonjs/core/Audio/sound';
+import { PlanetMap } from '../Map/planetMap';
 
 export interface PlayerInterface {
     key: string;
@@ -50,9 +51,10 @@ export class Player extends StarFighter {
     dustField = true;
     target: Player;
 
-    constructor(system: MeshSystem, gravityGrid: GravityGrid, playerInterface: StarInterface) {
-        super(system, playerInterface);
+    constructor(system: MeshSystem, gravityGrid: GravityGrid, planetMap: PlanetMap, playerInterface: StarInterface) {
+        super(system, planetMap, playerInterface);
         this.gravityGrid = gravityGrid;
+
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.fixeAnimation = new Animation(this.system.animationManager);
         this.accelerateAnimation = new Animation(this.system.animationManager);
@@ -203,14 +205,6 @@ export class Player extends StarFighter {
         planet.setParent(this.movingMesh);
         this.planets.push(planet);
     }
-
-    removeAllPlanets() {
-        for (let i = 0; i < this.planets.length; i++) {
-            const planet = this.planets[i];
-            planet.hide();
-        }
-        this.planets = [];
-    }
     
     fixeAnimationLength = 50;
     animatePlanetToStar(planet: Planet, radius: number, velocity: number) {
@@ -260,9 +254,8 @@ export class Player extends StarFighter {
             this.setHeartScale(scale * size);
         }, () => {
             this.accelerating = false;
-            planet.attachedToStar = false;
             planet.setParent(null);
-            planet.hide();
+            this.planetMap.storagePlanet(planet);
             this.setHeartScale(size);
             this.realVelocity = 1;
             if (callback) callback();

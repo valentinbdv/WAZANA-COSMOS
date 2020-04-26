@@ -2,6 +2,7 @@ import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
 import { minSize, maxSize } from '../Entity/star';
 import { Player } from './player';
+import { PlanetMap } from '../Map/planetMap';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
@@ -9,8 +10,8 @@ export class IAPlayer extends Player {
 
     ia = true;
 
-    constructor(system: MeshSystem, gravityGrid: GravityGrid) {
-        super(system, gravityGrid, { temperature: 5000, size: minSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
+    constructor(system: MeshSystem, gravityGrid: GravityGrid, planetMap: PlanetMap) {
+        super(system, gravityGrid, planetMap, { temperature: 5000, size: minSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         
         let random = Math.pow(Math.random(), 3);
         let size = minSize + random * (maxSize - minSize);

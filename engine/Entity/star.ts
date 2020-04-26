@@ -1,16 +1,14 @@
 import { MeshSystem, StarTemperatures } from '../System/meshSystem';
 import { Animation } from '../System/animation';
 import { MovingEntity, MovingEntityInterface } from './movingEntity';
+import { Planet } from './planet';
+import { PlanetMap } from '../Map/planetMap';
 
-import { Vector3, Color3, Color4, Vector2 } from '@babylonjs/core/Maths/math';
-import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
-import { MeshBuilder } from '@babylonjs/core/Meshes/MeshBuilder';
+import { Vector3, Color4 } from '@babylonjs/core/Maths/math';
 import { Mesh } from '@babylonjs/core/Meshes/Mesh';
-import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { EasingFunction, BezierCurveEase } from '@babylonjs/core/Animations/easing';
 import { CubeTexture } from '@babylonjs/core/Materials/Textures/cubeTexture';
-import { Planet } from './planet';
 
 // https://www.youtube.com/watch?v=i4RtO_qIQHk
 
@@ -81,11 +79,13 @@ export class Star extends MovingEntity {
 
     // rotateProgress = 0;
     cycleProgress = 0;
-    planets: Array< Planet > = [];
+    planetMap: PlanetMap;
+    planets: Array<Planet> = [];
     accelerating = false;
 
-    constructor(system: MeshSystem, options: StarInterface) {
+    constructor(system: MeshSystem, planetMap: PlanetMap, options: StarInterface) {
         super('star', system, options);
+        this.planetMap = planetMap;
 
         this.shineAnimation = new Animation(this.system.animationManager);
 
@@ -290,10 +290,20 @@ export class Star extends MovingEntity {
     hide() {
         if (!this.isStarVisible) return;
         this.isStarVisible = false;
+        this.removeAllPlanets();
         this._disposeStar();
         this.system.removeSkyChangeListener((texture) => {
             this.setTexture(texture);
             this.setReflectionLevel(0.1);
         });
+    }
+
+    removeAllPlanets() {
+        for (let i = 0; i < this.planets.length; i++) {
+            const planet = this.planets[i];
+            planet.hide();
+            this.planetMap.storagePlanet(planet);
+        }
+        this.planets = [];
     }
 }

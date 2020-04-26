@@ -4,7 +4,8 @@ import { TouchCatcher } from './touchCatcher';
 import { GravityGrid } from '../System/GravityGrid';
 import { Player } from './player';
 import { startSize } from '../Entity/star';
-import { onlineMap } from "../Map/onlineMap";
+import { onlineMap } from '../Map/onlineMap';
+import { PlanetMap } from '../Map/planetMap';
 
 import hotkeys from 'hotkeys-js';
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
@@ -16,8 +17,8 @@ export class RealPlayer extends Player {
     realPlayer = true;
     system: UiSystem;
 
-    constructor(system: UiSystem, gravityGrid: GravityGrid, map: onlineMap) {
-        super(system, gravityGrid, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
+    constructor(system: UiSystem, gravityGrid: GravityGrid, planetMap: PlanetMap, map: onlineMap) {
+        super(system, gravityGrid, planetMap, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.addMouseEvent();
         this.addKeyEvent();
         this.addZoomCatcher();
@@ -35,7 +36,7 @@ export class RealPlayer extends Player {
         setInterval(() => {
             if (this.moving) {
                 this.gravityGrid.setCenterAndSize(this.position, this.size);
-                this.system.setCenter(this.position);
+                this.system.setCenterAndSize(this.position, this.size);
                 if (this.map.started) this.map.send({ position: this.position });
             }
         }, 500);

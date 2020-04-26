@@ -28,8 +28,8 @@ export class Planet extends PositionEntity {
         this.animation = new Animation(this.system.animationManager);
 
         this.addMesh();
-        this.hide();
         this.setOptions(options);
+        this.hide();
     }
 
     setOptions(options: PlanetInterface) {
