@@ -216,7 +216,7 @@ export class StarFighter extends Star {
         this.updateSize(10, 80, () => {
             this.setReflectionLevel(1);
             this.updateSize(0.01, 30, () => {
-                this.system.cameraShake();
+                this.system.cameraShake(this.position);
                 this.system.soundManager.playMesh('explodeEnd', this.movingMesh);
                 setTimeout(() => {
                     // Wait for the particle effect to end

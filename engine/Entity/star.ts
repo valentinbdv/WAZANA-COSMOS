@@ -259,7 +259,7 @@ export class Star extends MovingEntity {
         this.surface.visibility = opacity;
     }
 
-    visibleDistance = 60; // ia Maximum Distance
+    visibleDistance = 70; // ia Maximum Distance
     isStarOnScreen(): boolean {
         let vd = this.visibleDistance;
         let p = this.position;

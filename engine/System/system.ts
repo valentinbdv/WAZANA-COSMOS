@@ -126,7 +126,9 @@ export class System {
     }
 
     shacking = false;
-    cameraShake() {
+    cameraShake(position: Vector2) {
+        let dist = Vector2.Distance(this.center, position);
+        if (dist > 60) return;
         this.shacking = true;
         this.shakeAnim.alternate(30, 3, (count, perc) => {
             this.camera.alpha = perc / 70;

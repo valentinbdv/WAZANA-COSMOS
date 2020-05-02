@@ -111,15 +111,16 @@ export class PlayUI extends MinimapUI {
 
     getPlayerSize() {
         let plSize = this.realPlayer.size;
-        return Math.max((plSize - minSize) * 10, 0);
+        return Math.max((plSize - minSize) * 10, 0) + 1;
     }
 
     currentWidth = 0;
     currentSize = 0;
     checkPlayerSize() {
         let sizeAdjusted = this.getPlayerSize();
-        let playerSize = Math.floor(sizeAdjusted) + 1;
+        let playerSize = Math.floor(sizeAdjusted);
         this.sizeText.setText('Your size: ' + playerSize.toString());
+        
         let width = Math.round((sizeAdjusted - playerSize) * this.width);
         if (width != this.currentWidth) { 
             this.sizePorgress.setWidth(width);

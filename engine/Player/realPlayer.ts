@@ -40,6 +40,11 @@ export class RealPlayer extends Player {
                 if (this.map.started) this.map.send({ position: this.position });
             }
         }, 500);
+
+        window.addEventListener("resize", () => {
+            this.checkScreenSize();
+        });
+        this.checkScreenSize();
     }
 
     // Test to use Motion Blur but not really working
@@ -101,11 +106,12 @@ export class RealPlayer extends Player {
         }
     }
 
+    maxRadius = 70;
     addZoomCatcher() {
         this.system.scene.registerBeforeRender(() => {
             if (!this.isDead) {
                 let newRadius = Math.max(this.size * 60, 50);
-                newRadius = Math.min(newRadius, 70);
+                newRadius = Math.min(newRadius, this.maxRadius);
                 // Large size to check stuff
                 // let newRadius = 200;
                 let change = newRadius - this.system.camera.radius;
@@ -119,6 +125,13 @@ export class RealPlayer extends Player {
                 // this.system.camera.orthoRight = ortho * aspect;
             }
         });
+    }
+
+    checkScreenSize() {
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        this.maxRadius = 120 * height / width;
+        // if ( width > height )
     }
 
     fixeCamera(fixe: boolean) {
