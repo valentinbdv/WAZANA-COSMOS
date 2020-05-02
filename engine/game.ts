@@ -24,10 +24,7 @@ import { IntroUI } from './Ui/intro';
 // Use Saved Star and avoid checkactivemeshes
 // Add fog in order to not see white in sides
 // Add star style to custom and make people pay for it
-// Se faire aspirer plus rapidement quand on est au centre
-// Garder un peu plus de vitesse quand on est gros.
 // Tu deviens une supernova et un trou noir quand tu est trop gros comme ça ça donne un objectif pour continuer à grossir
-// Il n'y a plus de planet à un moment donné
 // Faire annonce forum babylonjs
 
 interface State {
@@ -141,10 +138,10 @@ export class GameEngine {
         this.realPlayer.removeAllPlanets();
 
         // In order to test
-        // setTimeout(() => {
-        //     this.gameOver();
-        //     // let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
-        // }, 10000);
+        setTimeout(() => {
+            // this.gameOver();
+            // let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
+        }, 3000);
     }
 
     gameStartAnim(callback: Function) {

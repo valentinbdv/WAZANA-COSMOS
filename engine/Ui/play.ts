@@ -74,7 +74,7 @@ export class PlayUI extends MinimapUI {
     supernovaLayout: ui_control;
     supernovaText: ui_text;
     addSupernovaLayer() {
-        this.supernovaLayout = new ui_control(this.system, { x: 0, y: 0 }, { width: '100%', height: '100%' }, { background: colorbackground });
+        this.supernovaLayout = new ui_control(this.system, { x: 0, y: '-45%' }, { width: '100%', height: '10%' }, {});
         this.supernovaText = this.supernovaLayout.addText('1 level before supernova', { x: 0, y: 0 }, { fontSize: this.fontSize + 10, color: colormain });
         this.supernovaLayout.hide();
     }
@@ -127,14 +127,17 @@ export class PlayUI extends MinimapUI {
         }
         if (playerSize != this.currentSize) {
             this.shinePlayerSize();
-            if (playerSize > this.currentSize) this.system.soundManager.play('levelUp');
-            else this.system.soundManager.play('levelDown');
+            if (playerSize > this.currentSize) {
+                this.system.soundManager.play('levelUp');
+                // > 5 to avoid showing at the beginning
+                if ( playerSize > 5 && Math.round(playerSize / 5) == playerSize / 5 ) {
+                    this.showLevelBeforeSupernova(25 - playerSize);
+                }
+            } else {
+                this.system.soundManager.play('levelDown');
+            }
             this.sizePorgress.setWidth(width);
             this.currentSize = playerSize;
-            // > 5 to avoid showing at the beginning
-            if ( playerSize > 5 && Math.round(playerSize / 5) == playerSize / 5 ) {
-                this.showLevelBeforeSupernova(25 - playerSize);
-            }
         }
     }
 

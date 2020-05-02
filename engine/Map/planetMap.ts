@@ -4,6 +4,7 @@ import { DustMap } from './dustMap';
 
 import remove from 'lodash/remove';
 import filter from 'lodash/filter';
+import { Vector2 } from '@babylonjs/core/Maths/math';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
@@ -24,6 +25,7 @@ export class PlanetMap extends DustMap {
 
     planetNumbers = 50;
     planetsStorage: Array<Planet> = [];
+    planetsWithStar: Array<Planet> = [];
     createAllPlanets() {
         for (let i = 0; i < this.planetNumbers; i++) {
             let planetInterface: PlanetInterface = { size: 1 };
@@ -52,13 +54,12 @@ export class PlanetMap extends DustMap {
 
     storagePlanet(planet: Planet) {
         this.removePlanet(planet);
-        planet.animation.stop();
+        planet.hide();
         if (this.planetsStorage.indexOf(planet) == -1) this.planetsStorage.push(planet);
     }
 
     setPlanetWithStar(planet: Planet) {
-        this.storagePlanet(planet);
-        planet.attachedToStar = true;
+        this.removePlanet(planet);
     }
 
     eraseAllPlanets() {

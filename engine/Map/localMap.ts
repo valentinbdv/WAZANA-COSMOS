@@ -105,7 +105,7 @@ export class LocalMap {
         let closestTarget: Player;
         let minDist = 1000000;
         let testTarget = '';
-        let palyerGravityField = player.gravityField;
+        let playerGravityField = player.gravityField;
         for (const key in this.tileMap.players) {
             const otherplayer: Player = this.tileMap.players[key];
             if (otherplayer.isStarVisible && otherplayer.key != player.key && player.size > otherplayer.size) {
@@ -113,7 +113,7 @@ export class LocalMap {
                 if (minDist > dist) {
                     minDist = dist;
                     closestTarget = otherplayer;
-                    if (dist < palyerGravityField) {
+                    if (dist < playerGravityField) {
                         testTarget = otherplayer.key;
                     }
                 }
@@ -123,8 +123,8 @@ export class LocalMap {
 
         if (testTarget) {
             let otherPlayer: Player = this.tileMap.players[testTarget]
-            player.absorbTarget(otherPlayer);
-            otherPlayer.setAbsorber(player, minDist / palyerGravityField);
+            player.absorbTarget(otherPlayer, minDist);
+            otherPlayer.setAbsorber(player, minDist / playerGravityField);
             return true;
         } else {
             player.absorbStop();
@@ -140,14 +140,11 @@ export class LocalMap {
             const planet = this.tileMap.planets[key];
             let dist = Vector2.Distance(planet.position, this.system.center);
             if (dist > this.planetDensity) {
-                console.log('remove');
-                
                 planet.hide();
                 this.tileMap.storagePlanet(planet);
             }
         }
         let newPlanetAvailable = this.tileMap.planetsStorage.length;
-        console.log(Object.keys(this.tileMap.planets).length, this.tileMap.planetsStorage.length);
         for (let i = 0; i < newPlanetAvailable; i++) {
             this.addNewPlanet();
         }
@@ -159,8 +156,8 @@ export class LocalMap {
         if (Object.keys(player.planets).length < player.maxPlanet) {
             for (const key in this.tileMap.planets) {
                 const planet: Planet = this.tileMap.planets[key];
-                // New check of attachedToStar andmaxPlanet because in the loop it can change
-                if (!planet.attachedToStar && Object.keys(player.planets).length < player.maxPlanet) {
+                // New check maxPlanet because in the loop it can change
+                if (Object.keys(player.planets).length < player.maxPlanet) {
                     let dist = Vector2.Distance(planet.position, player.position);
                     if (dist < player.gravityField) {
                         this.tileMap.setPlanetWithStar(planet);

@@ -127,7 +127,7 @@ export class MeshSystem extends EnvironmentSystem {
         // Cool Poly 2, 3, 
         // this.surface = MeshBuilder.CreatePolyhedron("p", { type: 7, size: 4 }, this.system.scene);
 
-        this.surface.convertToFlatShadedMesh();
+        // this.surface.convertToUnIndexedMesh();
         this.surfaceMaterial = new PBRMaterial("surfaceMaterial", this.scene);
         this.surfaceMaterial.backFaceCulling = false;
         this.surfaceMaterial.backFaceCulling = false;
@@ -197,8 +197,8 @@ export class MeshSystem extends EnvironmentSystem {
             let b = Math.max(0, 1 - perc * 2);
             return new Color3(1, g, b);
         } else {
-            let perc = 1 - Math.pow(((temperature - 8000) / 22000), 2);
-            return new Color3(perc, perc, 0.8);
+            let perc = 1 - Math.pow(((temperature - 10000) / 22000), 2);
+            return new Color3(perc, perc, 1);
         }
     }
 }

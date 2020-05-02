@@ -36,8 +36,6 @@ export class BlackHole extends MovingEntity {
 
     moveInt;
     startMovingAround() {
-        this.addCactcher();
-
         this.moveInt = setInterval(() => {
             this.moveAround();
         }, 10000);

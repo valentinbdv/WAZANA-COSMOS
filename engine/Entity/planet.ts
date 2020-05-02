@@ -19,7 +19,6 @@ export class Planet extends PositionEntity {
 
     offset = 0; // Used to determine beginning position around star
     cycle = 0; // Around its star % Math.PI
-    attachedToStar = false;
 
     animation: Animation;
 
@@ -40,7 +39,7 @@ export class Planet extends PositionEntity {
 
     setGeostationnaryMovement(radius: number, velocity: number) {
         this.radius = radius;
-        this.velocity = velocity;
+        this.velocity = Math.max(velocity, 2);
     }
 
     mesh: InstancedMesh;
@@ -90,9 +89,16 @@ export class Planet extends PositionEntity {
     }
 
     hide() {
-        this.animation.stop();
-        this.attachedToStar = false;
         this.setSize(0);
+        this.reset();
         // this.mesh.isVisible = false;
+    }
+    
+    reset() {
+        this.setOffset(0);
+        this.animation.stop();
+        this.setPosition(Vector2.Zero());
+        this.cycle = 0;
+        this.setParent(null);
     }
 }

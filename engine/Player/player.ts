@@ -41,7 +41,7 @@ export class Player extends StarFighter {
     realVelocity: number = 1;
 
     gravityGrid: GravityGrid;
-    fixeAnimation: Animation;
+
     accelerateAnimation: Animation;
     absorbAnimation: Animation;
     fixeCurve: EasingFunction;
@@ -56,7 +56,6 @@ export class Player extends StarFighter {
         this.gravityGrid = gravityGrid;
 
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        this.fixeAnimation = new Animation(this.system.animationManager);
         this.accelerateAnimation = new Animation(this.system.animationManager);
         this.absorbAnimation = new Animation(this.system.animationManager);
 
@@ -100,10 +99,12 @@ export class Player extends StarFighter {
         this.realVelocity = realVelocity;
     }
 
-    absorbRatio = 0.0005;
+    distanceAbsorbRatio = 0.005;
     sizeAbsorbRatio = 3;
+    distanceWithTarget: number;
     currentSound: Sound;
-    absorbTarget(target: Player) {
+    absorbTarget(target: Player, distanceWithTarget: number) {
+        this.distanceWithTarget = distanceWithTarget;
         // Check target to make sure we always absorb closest target
         if (this.absorbing && target == this.target) return;
         if (!this.currentSound) {
@@ -120,9 +121,11 @@ export class Player extends StarFighter {
         this.absorbAnimation.infinite((count) => {
             let change = count - lastCount;
             lastCount = count;
-            let up = change * this.absorbRatio / (this.target.size * this.sizeAbsorbRatio);
+            let sizeSpeed = this.target.size * this.sizeAbsorbRatio;
+            let distanceSpeed = this.distanceAbsorbRatio / this.distanceWithTarget;
+            let up = change * distanceSpeed / sizeSpeed;
             this.changeSize(up);
-            let down = -change * this.absorbRatio * (this.target.size * this.sizeAbsorbRatio);
+            let down = -change * distanceSpeed * sizeSpeed;
             this.target.changeSize(down);
             if (this.target.isDead) this.absorbStop();
         });
@@ -169,7 +172,7 @@ export class Player extends StarFighter {
     starVelocity: 0.03;
     move(step: Vector2) {
         if (step.y == 0) step.y = 0.001;
-        let max = this.velocity * this.realVelocity / (this.size * 5);
+        let max = this.velocity * this.realVelocity / (Math.sqrt(this.size) * 5);
         let ratio = Math.abs(step.x / step.y);
         let maxX = Math.sqrt((Math.pow(max, 2) * ratio) / (ratio + 1));
         let maxY = Math.sqrt(Math.pow(max, 2) / (ratio + 1));
@@ -190,7 +193,7 @@ export class Player extends StarFighter {
     addPlanet(planet?: Planet) {
         let planetNumber = this.planets.length;
         let radius = 2 + planetNumber;
-        let velocity = 5 / (1 + planetNumber / 2) + Math.random() / 2;
+        let velocity = 1 / (1 + planetNumber / 2) + Math.random() / 2;
         if (!planet) {
             let planetInterface: PlanetInterface = { radius: radius, size: 1, velocity: velocity };
             planet = new Planet(this.system, planetInterface);
@@ -209,16 +212,16 @@ export class Player extends StarFighter {
     fixeAnimationLength = 50;
     animatePlanetToStar(planet: Planet, radius: number, velocity: number) {
         if (this.realPlayer) this.system.soundManager.play('catchPlanet');
-        let dist = Vector2.Distance(planet.position, this.position);
         let xgap = this.position.x - planet.position.x;
         let ygap = this.position.y - planet.position.y;
         let offset = (xgap > 0) ? Math.atan(ygap / xgap) + Math.PI : Math.atan(ygap / xgap);
         planet.setOffset(offset);
-            
+        
+        let dist = Vector2.Distance(planet.position, this.position);
         let radiusTemp = dist - this.size;
         let radiusChange = radiusTemp - radius;
         planet.setGeostationnaryMovement(radius +  radiusChange, 0);
-        this.fixeAnimation.simple(this.fixeAnimationLength, (count, perc) => {
+        planet.animation.simple(this.fixeAnimationLength, (count, perc) => {
             let progress = this.fixeCurve.ease(perc);
             planet.setGeostationnaryMovement(radius + (1 - progress) * radiusChange, progress * velocity);
         }, () => {
@@ -254,7 +257,6 @@ export class Player extends StarFighter {
             this.setHeartScale(scale * size);
         }, () => {
             this.accelerating = false;
-            planet.setParent(null);
             this.planetMap.storagePlanet(planet);
             this.setHeartScale(size);
             this.realVelocity = 1;
@@ -295,7 +297,6 @@ export class Player extends StarFighter {
         this.removeAllPlanets();
         this._disposeStarFighter();
         this.absorbStop();
-        this.fixeAnimation.stop();
         this.gravityGrid.eraseMass(this.key);
     }
 

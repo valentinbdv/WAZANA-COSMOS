@@ -131,11 +131,11 @@ export class Star extends MovingEntity {
         let color = this.system.getColorFromTemperature(temperature);
         this.color = color.toColor4();
         if (!this.isStarVisible) return;
-        this.heart.material.emissiveColor = color.scale(1.5);
+        this.heart.material.emissiveColor = color.scale(2);
         // this.heart.material.diffuseColor = Color3.White();
         this.surface.material.reflectivityColor = color;
         this.surface.material.albedoColor = color;
-        this.light.diffuse = color;
+        this.light.diffuse = color.scale(2);
     }
 
     heart: Mesh;
