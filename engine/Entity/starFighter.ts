@@ -34,12 +34,6 @@ export class StarFighter extends Star {
         this.shine();
     }
 
-    changeSize(change: number) {
-        // if (this.isDead) return;
-        let newSize = this.size + change;
-        this.setSize(newSize);
-    }
-
     particle: ParticleSystem;
     createParticle() {
         this.particle = new ParticleSystem("particle", 50, this.system.scene);
@@ -61,8 +55,6 @@ export class StarFighter extends Star {
         this.particle.maxInitialRotation = Math.PI / 2;
         this.particle.particleTexture = this.system.sparkleTexture;
         this.particle.blendMode = ParticleSystem.BLENDMODE_MULTIPLYADD;
-
-        this.particle.renderingGroupId = 2;
 
         this.system.scene.registerBeforeRender(() => {
             this.particle.animate();

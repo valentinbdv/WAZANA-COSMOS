@@ -93,7 +93,8 @@ export class LocalMap {
 
         if (blackHoleTest) {
             let blackHole: BlackHole = this.tileMap.blackHoles[blackHoleTest]
-            player.absorbByBlackHole(blackHole, minDist / minBlackHoleField);
+            player.absorbByBlackHole(blackHole, minDist);
+            player.setAbsorber(blackHole, minDist / minBlackHoleField);
             return true;
         } else {
             if (player.blackHoleAbsorber) player.absorbStop();

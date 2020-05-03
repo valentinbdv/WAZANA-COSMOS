@@ -22,7 +22,6 @@ import { IntroUI } from './Ui/intro';
 // Tableau de récap à la fin
 // Create particle in show/hide to avoid creating 100 particleSystem
 // Use Saved Star and avoid checkactivemeshes
-// Add fog in order to not see white in sides
 // Add star style to custom and make people pay for it
 // Tu deviens une supernova et un trou noir quand tu est trop gros comme ça ça donne un objectif pour continuer à grossir
 // Faire annonce forum babylonjs
@@ -140,7 +139,7 @@ export class GameEngine {
         // In order to test
         setTimeout(() => {
             // this.gameOver();
-            // let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
+            let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
         }, 3000);
     }
 

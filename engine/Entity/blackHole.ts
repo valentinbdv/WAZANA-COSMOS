@@ -30,6 +30,7 @@ export class BlackHole extends MovingEntity {
         this.gravityGrid = gravityGrid;
 
         this.setPosition(position);
+        this.setSize(30);
         this.build();
         this.startMovingAround();
     }
@@ -59,7 +60,7 @@ export class BlackHole extends MovingEntity {
         this.introAnimation = new Animation(this.system.animationManager);
         this.introAnimation.simple(200, (count, perc) => {
             this.gravityGrid.setBlackHolePoint(this.key, this.position, this.size, perc * this.depth);
-            this.gravityField = perc * this.fullGravityField;
+            this.setGravity(perc);
         }, () => {
             this.startMovingAround();
             this.moveAround();

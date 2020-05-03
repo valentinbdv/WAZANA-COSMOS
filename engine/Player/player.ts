@@ -100,7 +100,7 @@ export class Player extends StarFighter {
     }
 
     distanceAbsorbRatio = 0.005;
-    sizeAbsorbRatio = 3;
+    starAbsorbRatio = 3;
     distanceWithTarget: number;
     currentSound: Sound;
     absorbTarget(target: Player, distanceWithTarget: number) {
@@ -121,7 +121,7 @@ export class Player extends StarFighter {
         this.absorbAnimation.infinite((count) => {
             let change = count - lastCount;
             lastCount = count;
-            let sizeSpeed = this.target.size * this.sizeAbsorbRatio;
+            let sizeSpeed = this.target.size * this.starAbsorbRatio;
             let distanceSpeed = this.distanceAbsorbRatio / this.distanceWithTarget;
             let up = change * distanceSpeed / sizeSpeed;
             this.changeSize(up);
@@ -131,28 +131,34 @@ export class Player extends StarFighter {
         });
     }
 
-    setAbsorber(absorber: MovingEntity, proximity: number) {
-        this.absorber = absorber;
-        let newVelocity = Math.pow(proximity, 2)
-        this.setRealVelocity(newVelocity);
-    }
-
+    blackHoleAbsorbRatio = 3;
     blackHoleAbsorber: BlackHole;
-    absorbByBlackHole(absorber: BlackHole, proximity: number) {
+    absorbByBlackHole(absorber: BlackHole, distanceWithTarget: number) {
         if (this.blackHoleAbsorber) return;
+        this.distanceWithTarget = distanceWithTarget;
         this.absorbStop();
         this.blackHoleAbsorber = absorber;
         this.absorbing = absorber.key;
-        this.setAbsorber(absorber, proximity);
         this.setGetAbsobByBlackHoleFunction();
-        this.system.checkActiveMeshes();
 
         let lastCount = 0;
         this.absorbAnimation.infinite((count) => {
             let change = count - lastCount;
             lastCount = count;
-            this.changeSize(-change * this.absorbRatio * 2 * this.size);
+            let sizeSpeed = this.absorber.size * this.blackHoleAbsorbRatio;
+            let distanceSpeed = this.distanceAbsorbRatio / this.distanceWithTarget;
+            let up = change * distanceSpeed / sizeSpeed;
+            this.absorber.changeSize(up);
+            let down = -change * distanceSpeed * sizeSpeed;
+            this.changeSize(down);
+            // if (this.absorber.isDead) this.absorbStop();
         });
+    }
+
+    setAbsorber(absorber: MovingEntity, proximity: number) {
+        this.absorber = absorber;
+        let newVelocity = Math.pow(proximity, 2)
+        this.setRealVelocity(newVelocity);
     }
 
     absorbStop() {

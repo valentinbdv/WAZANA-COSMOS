@@ -60,7 +60,7 @@ export class MovingEntity extends PositionEntity {
     gravityField = 1;
     setGravity(gravity: number) {
         this.gravity = gravity;
-        this.updateGravityFiesld();
+        this.updateGravityField();
     }
 
     setSize(size: number) {
@@ -77,10 +77,15 @@ export class MovingEntity extends PositionEntity {
     size: number;
     _setSize(size: number) {
         this.size = size;
-        this.updateGravityFiesld();
+        this.updateGravityField();
+    }
+
+    changeSize(change: number) {
+        let newSize = this.size + change;
+        this.setSize(newSize);
     }
     
-    updateGravityFiesld() {
+    updateGravityField() {
         this.gravityField = Math.sqrt(this.size * this.gravity) * gravityRatio;
     }
 
