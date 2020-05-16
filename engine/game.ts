@@ -5,12 +5,13 @@ import { StarCategories } from './Entity/star';
 import { RealPlayer } from './Player/realPlayer';
 import { PauseUI } from './Ui/pause';
 import { PlayUI } from './Ui/play';
-import { Player } from "./player/player";
 import { startSize } from './Entity/star';
 import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
 import { TileMap } from './Map/tileMap';
+import { Player } from "./player/player";
 import { Vector2 } from '@babylonjs/core/Maths/math';
+import { ParticleHelper } from '@babylonjs/core/Particles/particleHelper';
 
 // import 'https://cosmos.wazana.io/font/style.css';
 // import '../asset/icons/style.css';
@@ -48,8 +49,8 @@ export class GameEngine {
         this.system.optimize();
         this.animation = new Animation(this.system.animationManager);
 
-        let test = new IntroUI(this.system);
-        test.hideAnim();
+        let intro = new IntroUI(this.system);
+        intro.hideAnim();
 
         this.gravityGrid = new GravityGrid(this.system);
         this.tileMap = new TileMap(this.system, this.gravityGrid);
@@ -133,7 +134,7 @@ export class GameEngine {
         // In order to test
         setTimeout(() => {
             // this.gameOver();
-            // let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
+            let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
         }, 3000);
     }
 

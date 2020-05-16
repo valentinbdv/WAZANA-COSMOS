@@ -90,7 +90,7 @@ export class Star extends MovingEntity {
         this.shineAnimation = new Animation(this.system.animationManager);
 
         let p = options.position;
-        this.movingMesh.position = new Vector3(p.x, 0, p.y);
+        this.transformMesh.position = new Vector3(p.x, 0, p.y);
         this.setSize(options.size);
         this.setTemperature(options.temperature);
      
@@ -147,7 +147,7 @@ export class Star extends MovingEntity {
         this.heart.alwaysSelectAsActiveMesh = true;
         this.heart.doNotSyncBoundingInfo = true;
         this.heart.isVisible = true;
-        this.heart.parent = this.movingMesh;
+        this.heart.parent = this.transformMesh;
     }
 
     surface: Mesh;
@@ -158,7 +158,7 @@ export class Star extends MovingEntity {
         this.surface.alwaysSelectAsActiveMesh = true;
         this.surface.doNotSyncBoundingInfo = true;
         this.surface.isVisible = true;
-        this.surface.parent = this.movingMesh;
+        this.surface.parent = this.transformMesh;
         if (this.system.sceneTexture) this.setTexture(this.system.sceneTexture);
     }
 
@@ -172,7 +172,7 @@ export class Star extends MovingEntity {
         this.light = new PointLight('light', new Vector3(0, 0, 0), this.system.scene);
         this.light.radius = 0.1;
         this.light.shadowEnabled = false;
-        this.light.parent = this.movingMesh;
+        this.light.parent = this.transformMesh;
         this.light.includedOnlyMeshes.push(this.surface);	
         // console.log(this.light);
     }

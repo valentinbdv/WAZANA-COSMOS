@@ -3,7 +3,6 @@ import { PositionEntity, PositionEntityInterface } from './positionEntity';
 import { MoveCatcher } from '../Player/moveCatcher';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
-import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
 export interface MovingEntityInterface extends PositionEntityInterface {
     velocity ? : number,
@@ -13,7 +12,6 @@ export let gravityRatio = 10;
 
 export class MovingEntity extends PositionEntity {
 
-    movingMesh: TransformNode;
     moveCatcher: MoveCatcher;
     moving = true;
 
@@ -21,7 +19,6 @@ export class MovingEntity extends PositionEntity {
         super(type, system, options);
 
         this.addCactcher();
-        this.addMovingMesh();
     }
 
     setMoving(moving: boolean) {
@@ -52,10 +49,6 @@ export class MovingEntity extends PositionEntity {
         this.setPosition(pos);
     }
 
-    addMovingMesh() {
-        this.movingMesh = new TransformNode(this.key, this.system.scene);
-    }
-
     gravity = 1;
     gravityField = 1;
     setGravity(gravity: number) {
@@ -65,13 +58,13 @@ export class MovingEntity extends PositionEntity {
 
     setSize(size: number) {
         this._setSize(size);
-        this.setMovingMeshSize(size);
+        this.settransformMeshSize(size);
     }
 
-    setMovingMeshSize(size: number) {
-        this.movingMesh.scaling.x = size;
-        this.movingMesh.scaling.y = size;
-        this.movingMesh.scaling.z = size;
+    settransformMeshSize(size: number) {
+        this.transformMesh.scaling.x = size;
+        this.transformMesh.scaling.y = size;
+        this.transformMesh.scaling.z = size;
     }
     
     size: number;
@@ -91,9 +84,9 @@ export class MovingEntity extends PositionEntity {
 
     setPosition(pos: Vector2) {
         this._setPosition(pos);
-        this.movingMesh.position.x = pos.x;
-        this.movingMesh.position.z = pos.y;
-        this.movingMesh.position.y = 1;
+        this.transformMesh.position.x = pos.x;
+        this.transformMesh.position.z = pos.y;
+        this.transformMesh.position.y = 1;
     }
 
     show() {}

@@ -40,7 +40,7 @@ export class StarFighter extends Star {
         this.particle.emitRate = 50;
         this.particle.renderingGroupId = 1;
 
-        this.particle.emitter = this.movingMesh.position;
+        this.particle.emitter = this.transformMesh.position;
         this.particle.gravity = new Vector3(0, -0.5, 0);
         this.particle.minEmitBox = new Vector3(0, 0, 0); // Starting all from
         this.particle.maxEmitBox = new Vector3(0, 0, 0);
@@ -204,12 +204,12 @@ export class StarFighter extends Star {
     }
     _explode(callback?: Function) {
         this.system.checkMaterials();
-        this.system.soundManager.playMesh('explodeStart', this.movingMesh);
+        this.system.soundManager.playMesh('explodeStart', this.transformMesh);
         this.updateSize(10, 80, () => {
             this.setReflectionLevel(1);
             this.updateSize(0.01, 30, () => {
                 this.system.cameraShake(this.position);
-                this.system.soundManager.playMesh('explodeEnd', this.movingMesh);
+                this.system.soundManager.playMesh('explodeEnd', this.transformMesh);
                 setTimeout(() => {
                     // Wait for the particle effect to end
                     if (callback) callback();
@@ -230,17 +230,18 @@ export class StarFighter extends Star {
         // this.particle.dispose();
     }
 
-    diveAnimationLength = 50;
+    diveAnimationLength = 100;
     dive(position: Vector2, callback?: Function) {
         let changeposition: Vector2 = position.subtract(this.position);
         this.diveAnimation.simple(this.diveAnimationLength, (count, perc) => {
             let easePerc = this.particleCurve.ease(perc);
-            let progressposition: Vector2 = changeposition.multiply(new Vector2(perc, perc));
+            let progressposition: Vector2 = changeposition.multiply(new Vector2(easePerc, easePerc));
             let pos: Vector2 = this.position.add(progressposition);
 
-            this.movingMesh.position.x = pos.x;
-            this.movingMesh.position.z = pos.y;
-            this.movingMesh.position.y = - easePerc * BlackHoleDepth;
+            this.transformMesh.position.x = pos.x;
+            this.transformMesh.position.z = pos.y;
+            this.transformMesh.position.y = - easePerc * BlackHoleDepth/4;
+            this.setSizeWithoutLimit(1 - easePerc);
         }, () => {
             this.hide();
             if (callback) callback();

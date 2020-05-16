@@ -99,7 +99,7 @@ export class TileMap extends PlanetMap {
 
     disposeBlackHole(blackHole: BlackHole) {
         this.removeBlackHole(blackHole);
-        blackHole.movingMesh.dispose();
+        blackHole.transformMesh.dispose();
     }
 
     eraseAllBlackHoles() {

@@ -1,21 +1,18 @@
 import { MeshSystem } from '../System/meshSystem';
 
 import { Vector3, Vector2 } from '@babylonjs/core/Maths/math';
-import { PositionEntity, PositionEntityInterface } from './positionEntity';
+import { GeostationaryEntity, GeostationaryEntityInterface } from './geostationaryEntity';
 import { Animation } from '../System/animation';
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
-import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
-export interface PlanetInterface extends PositionEntityInterface {
+export interface PlanetInterface extends GeostationaryEntityInterface {
     radius ? : number,
     velocity ? : number,
 }
 
-export class Planet extends PositionEntity {
+export class Planet extends GeostationaryEntity {
 
     color?: Array<number>;
-    radius?: number;
-    velocity?: number;
 
     offset = 0; // Used to determine beginning position around star
     cycle = 0; // Around its star % Math.PI
@@ -27,7 +24,6 @@ export class Planet extends PositionEntity {
         this.animation = new Animation(this.system.animationManager);
 
         this.addMesh();
-        this.setOptions(options);
         this.hide();
     }
 
@@ -35,11 +31,6 @@ export class Planet extends PositionEntity {
         if (options.radius && options.velocity) this.setGeostationnaryMovement(options.radius, options.velocity);
         if (options.size) this.setSize(options.size);
         if (options.position) this.setPosition(new Vector2(options.position.x, options.position.y));
-    }
-
-    setGeostationnaryMovement(radius: number, velocity: number) {
-        this.radius = radius;
-        this.velocity = Math.max(velocity, 2);
     }
 
     mesh: InstancedMesh;
@@ -53,14 +44,7 @@ export class Planet extends PositionEntity {
         this.mesh.rotation.x = Math.random() * Math.PI;
         this.mesh.rotation.y = Math.random() * Math.PI;
         this.mesh.rotation.z = Math.random() * Math.PI;
-    }
-
-    setParent(parent: TransformNode) {
-        this.mesh.parent = parent;
-    }
-
-    setOffset(offset: number) {
-        this.offset = offset;
+        this.mesh.parent = this.transformMesh;
     }
 
     setSize(size: number) {

@@ -111,7 +111,7 @@ export class Player extends StarFighter {
         if (this.absorbing && target == this.target) return;
         if (!this.currentSound) {
             // this.currentSound = this.system.soundManager.play('absorb');
-            this.currentSound = this.system.soundManager.playMesh('absorb', this.movingMesh);
+            this.currentSound = this.system.soundManager.playMesh('absorb', this.transformMesh);
         }
 
         this.absorbStop();
@@ -197,8 +197,8 @@ export class Player extends StarFighter {
 
     setPosition(pos: Vector2) {
         this._setPosition(pos);
-        this.movingMesh.position.x = this.position.x;
-        this.movingMesh.position.z = this.position.y;
+        this.transformMesh.position.x = this.position.x;
+        this.transformMesh.position.z = this.position.y;
         this.updateGravityGrid();
     }
 
@@ -217,7 +217,7 @@ export class Player extends StarFighter {
     }
 
     fixePlanet(planet: Planet) {
-        planet.setParent(this.movingMesh);
+        planet.setParent(this.transformMesh);
         this.planets.push(planet);
     }
     
@@ -253,7 +253,7 @@ export class Player extends StarFighter {
         let planet = this.planets.pop();
         if (!planet) return false;
 
-        // this.system.soundManager.playMesh('accelerate', this.movingMesh);
+        // this.system.soundManager.playMesh('accelerate', this.transformMesh);
         if (this.realPlayer) this.system.soundManager.play('accelerate');
 
         this.accelerating = true;

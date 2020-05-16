@@ -18,7 +18,6 @@ export class PlanetMap extends DustMap {
     constructor(system: MeshSystem) {
         super(system);
         this.system = system;
-
         this.createAllPlanets();
     }
 

@@ -71,7 +71,7 @@ export class BlackHole extends MovingEntity {
         clearInterval(this.moveInt);
         this.moveCatcher.stop();
         this.setMoving(false);
-        this.movingMesh.dispose();
+        this.transformMesh.dispose();
         this.gravityGrid.eraseMass(this.key);
     }
 }

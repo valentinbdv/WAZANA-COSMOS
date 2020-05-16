@@ -141,13 +141,13 @@ export class RealPlayer extends Player {
             this.system.camera.alpha = 0;
             this.system.camera.beta = Math.PI / 6;
             this.system.camera.radius = 10;
-            this.system.camera.parent = this.movingMesh;
+            this.system.camera.parent = this.transformMesh;
         } else {
             this.system.camera.parent = null;
             let cameraPos = this.system.camera.getFrontPosition(0.01);
-            let absolutPos = this.movingMesh.absolutePosition.add(cameraPos);
+            let absolutPos = this.transformMesh.absolutePosition.add(cameraPos);
             this.system.camera.setPosition(absolutPos);
-            this.system.camera.setTarget(this.movingMesh.absolutePosition.clone());
+            this.system.camera.setTarget(this.transformMesh.absolutePosition.clone());
         }
     }
 
@@ -159,7 +159,7 @@ export class RealPlayer extends Player {
         this.setMoving(false);
         this.setPosition(Vector2.Zero());
         this.gravityGrid.setCenterAndSize(this.position, this.size);
-        this.movingMesh.position.y = 0;
+        this.transformMesh.position.y = 0;
         this.isDead = false;
         
         this.shine();

@@ -2,6 +2,7 @@ import { MeshSystem } from '../System/meshSystem';
 import { point2D } from '../System/interface';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
+import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
 export interface PositionEntityInterface {
     key?: string,
@@ -27,6 +28,12 @@ export class PositionEntity {
             this._setPosition(pos);
         }
         if (options && options.size) this._setSize(options.size);
+        this.addTransformMesh();
+    }
+
+    transformMesh: TransformNode;
+    addTransformMesh() {
+        this.transformMesh = new TransformNode(this.key, this.system.scene);
     }
     
     position: Vector2;
