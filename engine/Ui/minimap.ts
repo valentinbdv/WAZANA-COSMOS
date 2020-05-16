@@ -6,7 +6,7 @@ import { ui_panel } from './group';
 import { ui_text, ui_node } from './node';
 import { colormain } from './color';
 import { TileMap } from '../Map/tileMap';
-import { starMapDistance } from '../Entity/star';
+import { starMapDistance } from '../Objects/star';
 
 import { Ellipse } from '@babylonjs/gui/2D/controls/ellipse';
 import { Line } from '@babylonjs/gui/2D/controls/line';

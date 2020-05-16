@@ -1,7 +1,7 @@
 import { UiSystem } from '../System/uiSystem'
 import { Animation } from '../System/animation'
 import { Player } from '../Player/player';
-import { minSize, maxSize } from '../Entity/star';
+import { minSize, maxSize } from '../Objects/star';
 import { RealPlayer } from '../Player/realPlayer';
 import { ui_group, ui_panel, ui_control } from './group';
 import { ui_text, ui_back } from './node';

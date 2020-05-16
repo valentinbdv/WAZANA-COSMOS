@@ -1,6 +1,6 @@
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
-import { minSize, maxSize } from '../Entity/star';
+import { minSize, maxSize } from '../Objects/star';
 import { Player } from './player';
 import { PlanetMap } from '../Map/planetMap';
 

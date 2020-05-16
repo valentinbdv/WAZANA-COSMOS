@@ -1,9 +1,9 @@
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
-import { StarDust } from '../Entity/starDust';
+import { StarDust } from '../Objects/starDust';
 import { Player } from '../player/player';
-import { BlackHole } from '../Entity/blackHole';
-import { StarInterface } from '../Entity/star';
+import { BlackHole } from '../Objects/blackHole';
+import { StarInterface } from '../Objects/star';
 import { PlanetMap } from './planetMap';
 
 import { EasingFunction } from '@babylonjs/core/Animations/easing';

@@ -1,7 +1,7 @@
 import { MeshSystem } from '../System/meshSystem';
 import { Animation } from '../System/animation';
 import { GravityGrid } from '../System/GravityGrid';
-import { MovingEntity, MovingEntityInterface } from './movingEntity';
+import { MovingEntity, MovingEntityInterface } from '../Entity/movingEntity';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 

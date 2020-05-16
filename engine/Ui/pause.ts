@@ -1,6 +1,6 @@
 import { UiSystem } from '../System/uiSystem'
 import { Animation } from '../System/animation'
-import { StarCategories, StarCategory } from '../Entity/star';
+import { StarCategories, StarCategory } from '../Objects/star';
 import { RealPlayer } from '../Player/realPlayer';
 import { ui_group, ui_control } from './group';
 import { Vector2 } from '@babylonjs/core/Maths/math';

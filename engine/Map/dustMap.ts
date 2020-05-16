@@ -1,5 +1,5 @@
 import { MeshSystem } from '../System/meshSystem';
-import { StarDust } from '../Entity/starDust';
+import { StarDust } from '../Objects/starDust';
 
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
 import { Vector2 } from '@babylonjs/core/Maths/math';

@@ -1,15 +1,15 @@
-import { Planet, PlanetInterface } from '../Entity/planet';
+import { Planet, PlanetInterface } from '../Objects/planet';
 import { Player } from '../player/player';
-import { minSize, maxSize } from '../Entity/star';
+import { minSize, maxSize } from '../Objects/star';
 import { TileMap } from './tileMap';
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
-import { BlackHole } from '../Entity/blackHole';
+import { BlackHole } from '../Objects/blackHole';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import find from 'lodash/find';
 import { IAPlayer } from '../Player/iaPlayer';
-import { StarCategory, StarCategories, starMapDistance } from '../Entity/star';
+import { StarCategory, StarCategories, starMapDistance } from '../Objects/star';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)

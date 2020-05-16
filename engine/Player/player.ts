@@ -1,13 +1,13 @@
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
 import { Animation } from '../System/animation';
-import { Planet, PlanetInterface } from '../Entity/planet';
-import { StarFighter } from '../Entity/starFighter';
-import { StarCategory, StarInterface } from '../Entity/star';
+import { Planet, PlanetInterface } from '../Objects/planet';
+import { StarFighter } from '../Objects/starFighter';
+import { StarCategory, StarInterface } from '../Objects/star';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
-import { BlackHole } from '../Entity/blackHole';
+import { BlackHole } from '../Objects/blackHole';
 import { MovingEntity } from '../Entity/movingEntity';
 import { Sound } from '@babylonjs/core/Audio/sound';
 import { PlanetMap } from '../Map/planetMap';

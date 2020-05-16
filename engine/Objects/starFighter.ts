@@ -1,7 +1,7 @@
 import { MeshSystem } from '../System/meshSystem';
 import { Star, StarInterface } from './star';
 import { Animation } from '../System/animation';
-import { MovingEntity } from './movingEntity';
+import { MovingEntity } from '../Entity/movingEntity';
 import { BlackHoleDepth } from './blackHole';
 import { PlanetMap } from '../Map/planetMap';
 

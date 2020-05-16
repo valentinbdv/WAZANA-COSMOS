@@ -1,5 +1,5 @@
 import { MeshSystem } from '../System/meshSystem';
-import { Planet, PlanetInterface } from '../Entity/planet';
+import { Planet, PlanetInterface } from '../Objects/planet';
 import { DustMap } from './dustMap';
 
 import remove from 'lodash/remove';

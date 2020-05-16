@@ -1,5 +1,5 @@
 import { MeshSystem } from '../System/meshSystem';
-import { PositionEntity, PositionEntityInterface } from './positionEntity';
+import { PositionEntity, PositionEntityInterface } from '../Entity/positionEntity';
 import { Animation } from '../System/animation';
 
 import { Vector2, Vector3, Color3 } from '@babylonjs/core/Maths/math';

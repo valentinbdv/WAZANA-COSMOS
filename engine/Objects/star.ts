@@ -1,6 +1,6 @@
 import { MeshSystem, StarTemperatures } from '../System/meshSystem';
 import { Animation } from '../System/animation';
-import { MovingEntity, MovingEntityInterface } from './movingEntity';
+import { MovingEntity, MovingEntityInterface } from '../Entity/movingEntity';
 import { Planet } from './planet';
 import { PlanetMap } from '../Map/planetMap';
 

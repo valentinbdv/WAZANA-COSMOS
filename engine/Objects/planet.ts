@@ -1,7 +1,7 @@
 import { MeshSystem } from '../System/meshSystem';
 
 import { Vector3, Vector2 } from '@babylonjs/core/Maths/math';
-import { GeostationaryEntity, GeostationaryEntityInterface } from './geostationaryEntity';
+import { GeostationaryEntity, GeostationaryEntityInterface } from '../Entity/geostationaryEntity';
 import { Animation } from '../System/animation';
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
 

@@ -1,11 +1,11 @@
 import { UiSystem } from './System/uiSystem'
 import { Animation } from './System/animation'
 import { GravityGrid } from './System/GravityGrid';
-import { StarCategories } from './Entity/star';
+import { StarCategories } from './Objects/star';
 import { RealPlayer } from './Player/realPlayer';
 import { PauseUI } from './Ui/pause';
 import { PlayUI } from './Ui/play';
-import { startSize } from './Entity/star';
+import { startSize } from './Objects/star';
 import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
 import { TileMap } from './Map/tileMap';

@@ -3,7 +3,7 @@ import { MouseCatcher } from './mouseCatcher';
 import { TouchCatcher } from './touchCatcher';
 import { GravityGrid } from '../System/GravityGrid';
 import { Player } from './player';
-import { startSize } from '../Entity/star';
+import { startSize } from '../Objects/star';
 import { onlineMap } from '../Map/onlineMap';
 import { PlanetMap } from '../Map/planetMap';
 
