@@ -1,7 +1,7 @@
 import { MeshSystem } from '../System/meshSystem';
 import { GravityGrid } from '../System/GravityGrid';
 import { Animation } from '../System/animation';
-import { Planet, PlanetInterface } from '../Objects/planet';
+import { Planet } from '../Objects/planet';
 import { StarFighter } from '../Objects/starFighter';
 import { StarCategory, StarInterface } from '../Objects/star';
 
@@ -202,15 +202,13 @@ export class Player extends StarFighter {
         let radius = 2 + planetNumber;
         let velocity = 1 / (1 + planetNumber / 2) + Math.random() / 2;
         if (!planet) {
-            let planetInterface: PlanetInterface = { radius: radius, size: 1, velocity: velocity };
-            planet = new Planet(this.system, planetInterface);
+            planet = new Planet(this.system);
             planet.setGeostationnaryMovement(radius, velocity);
             planet.show();
         } else {
             this.grabSatellite(planet, radius, velocity);
             if (this.realPlayer) this.system.soundManager.play('catchPlanet');
         }
-        if (this.realPlayer) console.log(this.satellites.length)
         this.fixeSatellite(planet);
     }
 

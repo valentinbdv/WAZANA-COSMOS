@@ -1,21 +1,16 @@
 import { MeshSystem } from '../System/meshSystem';
-import { PositionEntityInterface } from './positionEntity';
 import { MoveCatcher } from '../Player/moveCatcher';
 import { GravityEntity } from './gravityEntity';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
-
-export interface MovingEntityInterface extends PositionEntityInterface {
-    velocity ? : number,
-}
 
 export class MovingEntity extends GravityEntity {
 
     moveCatcher: MoveCatcher;
     moving = true;
 
-    constructor(type:string, system: MeshSystem, options: MovingEntityInterface) {
-        super(type, system, options);
+    constructor(type:string, system: MeshSystem) {
+        super(type, system);
 
         this.addCactcher();
     }

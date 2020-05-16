@@ -1,16 +1,12 @@
 import { MeshSystem } from '../System/meshSystem';
 import { Animation } from '../System/animation';
 import { GravityGrid } from '../System/GravityGrid';
-import { MovingEntity, MovingEntityInterface } from '../Entity/movingEntity';
+import { MovingEntity } from '../Entity/movingEntity';
+import { Star } from './star';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
 export let BlackHoleDepth = 150;
-
-export interface BlackHoleInterface extends MovingEntityInterface {
-    life?: number,
-    power?: number,
-}
 
 export class BlackHole extends MovingEntity {
 
@@ -26,7 +22,7 @@ export class BlackHole extends MovingEntity {
     depth = BlackHoleDepth;
 
     constructor(system: MeshSystem, gravityGrid: GravityGrid, position: Vector2) {
-        super('blackhole', system, {});
+        super('blackhole', system);
         this.gravityGrid = gravityGrid;
 
         this.setPosition(position);
@@ -65,6 +61,13 @@ export class BlackHole extends MovingEntity {
             this.startMovingAround();
             this.moveAround();
         });
+    }
+
+    eatStar(star: Star) {
+        let radius = 0;
+        let velocity = 100;
+        this.grabSatellite(star, radius, velocity);
+        this.fixeSatellite(star);
     }
 
     dispose() {

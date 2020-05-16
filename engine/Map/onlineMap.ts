@@ -3,7 +3,6 @@ import { TileMap } from "./tileMap";
 
 import * as Colyseus from "colyseus.js";
 import { Vector2 } from "@babylonjs/core/Maths/math";
-import { Planet, PlanetInterface } from "../Objects/planet";
 
 interface State {
     players: Array<Player>;

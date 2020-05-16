@@ -1,29 +1,18 @@
 import { MeshSystem } from '../System/meshSystem';
 
-import { Vector3, Vector2 } from '@babylonjs/core/Maths/math';
-import { SatelliteEntity, SatelliteEntityInterface } from '../Entity/satelliteEntity';
+import { Vector2 } from '@babylonjs/core/Maths/math';
+import { SatelliteEntity } from '../Entity/satelliteEntity';
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
-
-export interface PlanetInterface extends SatelliteEntityInterface {
-    radius ? : number,
-    velocity ? : number,
-}
 
 export class Planet extends SatelliteEntity {
 
     color?: Array<number>;
 
-    constructor(system: MeshSystem, options: PlanetInterface) {
-        super('planet', system, options);
+    constructor(system: MeshSystem) {
+        super('planet', system);
 
         this.addMesh();
         this.hide();
-    }
-
-    setOptions(options: PlanetInterface) {
-        if (options.radius && options.velocity) this.setGeostationnaryMovement(options.radius, options.velocity);
-        if (options.size) this.setSize(options.size);
-        if (options.position) this.setPosition(new Vector2(options.position.x, options.position.y));
     }
 
     mesh: InstancedMesh;

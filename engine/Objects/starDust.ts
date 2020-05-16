@@ -1,14 +1,11 @@
 import { MeshSystem } from '../System/meshSystem';
-import { PositionEntity, PositionEntityInterface } from '../Entity/positionEntity';
+import { PositionEntity } from '../Entity/positionEntity';
 import { Animation } from '../System/animation';
 
-import { Vector2, Vector3, Color3 } from '@babylonjs/core/Maths/math';
+import { Vector2 } from '@babylonjs/core/Maths/math';
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
 import { EasingFunction, CubicEase } from '@babylonjs/core/Animations/easing';
 
-export interface StarDustInterface extends PositionEntityInterface {
-    temperature: number,
-}
 
 export class StarDust extends PositionEntity {
 

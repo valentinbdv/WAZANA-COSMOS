@@ -1,4 +1,4 @@
-import { Planet, PlanetInterface } from '../Objects/planet';
+import { Planet } from '../Objects/planet';
 import { Player } from '../player/player';
 import { minSize, maxSize } from '../Objects/star';
 import { TileMap } from './tileMap';
@@ -170,13 +170,9 @@ export class LocalMap {
     }
 
     addNewPlanet() {
-        let planetNumber = Object.keys(this.tileMap.planets).length;
-        let radius = 2 + planetNumber;
-        let velocity = 5 / (1 + planetNumber / 2);
-        // let pos = this.tileMap.getNewRandomPosition();
+        let newPlanet = this.tileMap.addPlanet();
         let pos = this.getFreePosition(10, 50, 50);
-        let planetInterface: PlanetInterface = { position: pos, radius: radius, size: 1, velocity: velocity };
-        let newPlanet = this.tileMap.addPlanet(planetInterface);
+        newPlanet.setPosition(pos);
         return newPlanet;
     }
 

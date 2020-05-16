@@ -1,5 +1,5 @@
 import { MeshSystem } from '../System/meshSystem';
-import { Planet, PlanetInterface } from '../Objects/planet';
+import { Planet } from '../Objects/planet';
 import { DustMap } from './dustMap';
 
 import remove from 'lodash/remove';
@@ -26,24 +26,22 @@ export class PlanetMap extends DustMap {
     planetsWithStar: Array<Planet> = [];
     createAllPlanets() {
         for (let i = 0; i < this.planetNumbers; i++) {
-            let planetInterface: PlanetInterface = { size: 1 };
-            let planet = new Planet(this.system, planetInterface);
+            let planet = new Planet(this.system);
             this.planetsStorage.push(planet);
         }
     }
 
     planets: Object = {};
-    addPlanet(planetInterface: PlanetInterface) {
+    addPlanet(): Planet {
         let planetsAvailable = filter(this.planetsStorage, (p) => { return !p.attachedToStar });
         if (planetsAvailable.length != 0) {
-            let planet = planetsAvailable.pop();
+            let planet: Planet = planetsAvailable.pop();
             remove(this.planetsStorage, (p) => { return p.key == planet.key });
-            planet.setOptions(planetInterface);
             planet.show();
             this.planets[planet.key] = planet;
             return planet;
         }
-        return false;
+        return null;
     }
 
     removePlanet(planet: Planet) {

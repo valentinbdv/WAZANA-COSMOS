@@ -1,18 +1,15 @@
-import { PositionEntity, PositionEntityInterface } from './positionEntity';
+import { PositionEntity } from './positionEntity';
 import { MeshSystem } from '../System/meshSystem';
 import { Animation } from '../System/animation';
 
 import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
-export interface SatelliteEntityInterface extends PositionEntityInterface {
-    velocity ? : number,
-}
 
 export class SatelliteEntity extends PositionEntity {
 
     satelliteAnimation: Animation;
-    constructor(type: string, system: MeshSystem, options: SatelliteEntityInterface) {
-        super(type, system, options);
+    constructor(type: string, system: MeshSystem) {
+        super(type, system);
         this.satelliteAnimation = new Animation(system.animationManager);
     }
 

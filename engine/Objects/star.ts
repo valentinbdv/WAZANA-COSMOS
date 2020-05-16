@@ -1,6 +1,6 @@
 import { MeshSystem, StarTemperatures } from '../System/meshSystem';
 import { Animation } from '../System/animation';
-import { MovingEntity, MovingEntityInterface } from '../Entity/movingEntity';
+import { MovingEntity } from '../Entity/movingEntity';
 import { Planet } from './planet';
 import { PlanetMap } from '../Map/planetMap';
 
@@ -57,7 +57,7 @@ export let StarCategories: Array<StarCategory> = [
     },
 ];
 
-export interface StarInterface extends MovingEntityInterface {
+export interface StarInterface {
     temperature: number,
     maxPlanet: number,
     texture?: string,
@@ -83,16 +83,12 @@ export class Star extends MovingEntity {
     accelerating = false;
 
     constructor(system: MeshSystem, planetMap: PlanetMap, options: StarInterface) {
-        super('star', system, options);
+        super('star', system);
         this.planetMap = planetMap;
 
         this.shineAnimation = new Animation(this.system.animationManager);
 
-        let p = options.position;
-        this.transformMesh.position = new Vector3(p.x, 0, p.y);
-        this.setSize(options.size);
         this.setTemperature(options.temperature);
-     
         this.curve = new BezierCurveEase(.76, .01, .51, 1.33);
         // this.curve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
     }
