@@ -1,27 +1,20 @@
 import { MeshSystem } from '../System/meshSystem';
 
 import { Vector3, Vector2 } from '@babylonjs/core/Maths/math';
-import { GeostationaryEntity, GeostationaryEntityInterface } from '../Entity/geostationaryEntity';
-import { Animation } from '../System/animation';
+import { SatelliteEntity, SatelliteEntityInterface } from '../Entity/satelliteEntity';
 import { InstancedMesh } from '@babylonjs/core/Meshes/instancedMesh';
 
-export interface PlanetInterface extends GeostationaryEntityInterface {
+export interface PlanetInterface extends SatelliteEntityInterface {
     radius ? : number,
     velocity ? : number,
 }
 
-export class Planet extends GeostationaryEntity {
+export class Planet extends SatelliteEntity {
 
     color?: Array<number>;
 
-    offset = 0; // Used to determine beginning position around star
-    cycle = 0; // Around its star % Math.PI
-
-    animation: Animation;
-
     constructor(system: MeshSystem, options: PlanetInterface) {
         super('planet', system, options);
-        this.animation = new Animation(this.system.animationManager);
 
         this.addMesh();
         this.hide();
@@ -47,28 +40,13 @@ export class Planet extends GeostationaryEntity {
         this.mesh.parent = this.transformMesh;
     }
 
-    setSize(size: number) {
-        this._setSize(size);
-        let newsize = Math.sqrt(size / 2);
-        let sizeVector = new Vector3(newsize, newsize, newsize);
-        this.mesh.scaling = sizeVector;
-    }
-
-    position: Vector2;
-    setPosition(pos: Vector2) {
-        this._setPosition(pos);
-        this.mesh.position.x = pos.x;
-        this.mesh.position.z = pos.y;
-        this.mesh.position.y = 1;
-    }
-
     show() {
         // this.mesh.isVisible = true;
         let size = 0.8 + Math.random() * 0.4;
-        this.animation.simple(50, (count, perc) => {
-            this.mesh.scaling = new Vector3(perc * size, perc * size, perc * size);
+        this.satelliteAnimation.simple(50, (count, perc) => {
+            this.setTransformMeshSize(perc * size)
         }, () => {
-            this.mesh.scaling = new Vector3(size, size, size);
+            this.setTransformMeshSize(size)
         });
     }
 
@@ -80,7 +58,7 @@ export class Planet extends GeostationaryEntity {
     
     reset() {
         this.setOffset(0);
-        this.animation.stop();
+        this.satelliteAnimation.stop();
         this.setPosition(Vector2.Zero());
         this.cycle = 0;
         this.setParent(null);

@@ -154,11 +154,11 @@ export class LocalMap {
     checkPlanetMap(player: Player) {
         // add planet while accelerating create bug with planet
         if (player.accelerating) return;
-        if (Object.keys(player.planets).length < player.maxPlanet) {
+        if (Object.keys(player.satellites).length < player.maxPlanet) {
             for (const key in this.tileMap.planets) {
                 const planet: Planet = this.tileMap.planets[key];
                 // New check maxPlanet because in the loop it can change
-                if (Object.keys(player.planets).length < player.maxPlanet) {
+                if (Object.keys(player.satellites).length < player.maxPlanet) {
                     let dist = Vector2.Distance(planet.position, player.position);
                     if (dist < player.gravityField) {
                         this.tileMap.setPlanetWithStar(planet);

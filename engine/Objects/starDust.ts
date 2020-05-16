@@ -32,6 +32,7 @@ export class StarDust extends PositionEntity {
         // else this.mesh = this.system.dustMesh4.createInstance(this.key + "duststar");
         this.mesh.alwaysSelectAsActiveMesh = true;
         this.mesh.doNotSyncBoundingInfo = true;
+        this.mesh.parent = this.transformMesh;
         this.setSize(0);
         this.hide();
     }
@@ -45,26 +46,12 @@ export class StarDust extends PositionEntity {
         });
     }
 
-    setSize(size: number) {
-        this._setSize(size);
-        let newsize = Math.sqrt(size);
-        let sizeVector = new Vector3(newsize, newsize, newsize);
-        this.mesh.scaling = sizeVector;
-    }
-
-    setPosition(pos: Vector2) {
-        this._setPosition(pos);
-        this.mesh.position.x = pos.x;
-        this.mesh.position.z = pos.y;
-        this.mesh.position.y = 1;
-    }
-
     fixeAnimationLength = 40;
     goToEntity(entity: PositionEntity, callback?: Function) {
         this.animation.simple(this.fixeAnimationLength / 2, (count, perc) => {
             let progress = this.curve.ease(perc);
-            let sizeProgress = Math.sqrt(this.size) * (1 - progress/2);
-            this.mesh.scaling = new Vector3(sizeProgress, sizeProgress, sizeProgress);
+            let sizeProgress = this.size * (1 - progress/2);
+            this.setTransformMeshSize(sizeProgress);
             
             let change = entity.position.subtract(this.position);
             // let changePos = change.multiply(new Vector2(step, step));
@@ -79,7 +66,7 @@ export class StarDust extends PositionEntity {
 
     show() {
         // this.mesh.isVisible = true;
-        let size = 0.01 + Math.random() * 0.1;
+        let size = 0.04 + Math.random() * 0.4;
         this.animation.simple(50, (count, perc) => {
             this.setSize(perc * size);
         }, () => {

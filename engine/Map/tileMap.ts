@@ -137,7 +137,10 @@ export class TileMap extends PlanetMap {
     checkPlayersCycle() {
         for (const key in this.players) {
             const player: Player = this.players[key];
-            if (player.isStarVisible) player.starCycle();
+            if (player.isStarVisible) {
+                player.starCycle();
+                player.satelliteCycle();
+            }
         }
     }
 

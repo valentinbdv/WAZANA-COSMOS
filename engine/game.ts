@@ -65,7 +65,7 @@ export class GameEngine {
         this.realPlayer.onDied = () => {
             this.gameOver();
         };
-        
+
         this.tileMap.setPlayerToFollow(this.realPlayer);
         this.tileMap.addPlayer(this.realPlayer);
 
@@ -130,6 +130,7 @@ export class GameEngine {
 
         this.realPlayer.setMoving(true);
         this.realPlayer.removeAllPlanets();
+        
 
         // In order to test
         setTimeout(() => {

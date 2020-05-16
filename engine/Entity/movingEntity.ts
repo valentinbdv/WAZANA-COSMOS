@@ -1,6 +1,7 @@
 import { MeshSystem } from '../System/meshSystem';
-import { PositionEntity, PositionEntityInterface } from './positionEntity';
+import { PositionEntityInterface } from './positionEntity';
 import { MoveCatcher } from '../Player/moveCatcher';
+import { GravityEntity } from './gravityEntity';
 
 import { Vector2 } from '@babylonjs/core/Maths/math';
 
@@ -8,9 +9,7 @@ export interface MovingEntityInterface extends PositionEntityInterface {
     velocity ? : number,
 }
 
-export let gravityRatio = 10;
-
-export class MovingEntity extends PositionEntity {
+export class MovingEntity extends GravityEntity {
 
     moveCatcher: MoveCatcher;
     moving = true;
@@ -49,44 +48,9 @@ export class MovingEntity extends PositionEntity {
         this.setPosition(pos);
     }
 
-    gravity = 1;
-    gravityField = 1;
-    setGravity(gravity: number) {
-        this.gravity = gravity;
-        this.updateGravityField();
-    }
-
-    setSize(size: number) {
-        this._setSize(size);
-        this.settransformMeshSize(size);
-    }
-
-    settransformMeshSize(size: number) {
-        this.transformMesh.scaling.x = size;
-        this.transformMesh.scaling.y = size;
-        this.transformMesh.scaling.z = size;
-    }
-    
-    size: number;
-    _setSize(size: number) {
-        this.size = size;
-        this.updateGravityField();
-    }
-
     changeSize(change: number) {
         let newSize = this.size + change;
         this.setSize(newSize);
-    }
-    
-    updateGravityField() {
-        this.gravityField = Math.sqrt(this.size * this.gravity) * gravityRatio;
-    }
-
-    setPosition(pos: Vector2) {
-        this._setPosition(pos);
-        this.transformMesh.position.x = pos.x;
-        this.transformMesh.position.z = pos.y;
-        this.transformMesh.position.y = 1;
     }
 
     show() {}

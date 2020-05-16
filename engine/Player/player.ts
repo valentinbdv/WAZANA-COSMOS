@@ -20,7 +20,6 @@ export interface PlayerInterface {
     maxPlanet: number; 
     gravityField: number;
     velocity: number;
-    planets: Array< string >;
     absorbing: string;
     absorbed: string;
     realVelocity: number;
@@ -44,7 +43,6 @@ export class Player extends StarFighter {
 
     accelerateAnimation: Animation;
     absorbAnimation: Animation;
-    fixeCurve: EasingFunction;
     particleCurve: EasingFunction;
     ia = false;
     realPlayer = false;
@@ -58,9 +56,6 @@ export class Player extends StarFighter {
         this.key = 'player' +Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.accelerateAnimation = new Animation(this.system.animationManager);
         this.absorbAnimation = new Animation(this.system.animationManager);
-
-        this.fixeCurve = new CubicEase();
-        this.fixeCurve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
 
         this.particleCurve = new CubicEase();
     }
@@ -87,12 +82,12 @@ export class Player extends StarFighter {
         this.system.checkActiveMeshes();
     }
 
-    updateGravityGrid() {
-        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField);
-    }
-
     setVelocity(velocity: number) {
         this.velocity = velocity;
+    }
+
+    updateGravityGrid() {
+        this.gravityGrid.setStarPoint(this.key, this.position, this.gravityField);
     }
     
     setRealVelocity(realVelocity: number) {
@@ -203,42 +198,20 @@ export class Player extends StarFighter {
     }
 
     addPlanet(planet?: Planet) {
-        let planetNumber = this.planets.length;
+        let planetNumber = this.satellites.length;
         let radius = 2 + planetNumber;
         let velocity = 1 / (1 + planetNumber / 2) + Math.random() / 2;
         if (!planet) {
             let planetInterface: PlanetInterface = { radius: radius, size: 1, velocity: velocity };
             planet = new Planet(this.system, planetInterface);
+            planet.setGeostationnaryMovement(radius, velocity);
             planet.show();
         } else {
-            this.animatePlanetToStar(planet, radius, velocity);
+            this.grabSatellite(planet, radius, velocity);
+            if (this.realPlayer) this.system.soundManager.play('catchPlanet');
         }
-        this.fixePlanet(planet);
-    }
-
-    fixePlanet(planet: Planet) {
-        planet.setParent(this.transformMesh);
-        this.planets.push(planet);
-    }
-    
-    fixeAnimationLength = 50;
-    animatePlanetToStar(planet: Planet, radius: number, velocity: number) {
-        if (this.realPlayer) this.system.soundManager.play('catchPlanet');
-        let xgap = this.position.x - planet.position.x;
-        let ygap = this.position.y - planet.position.y;
-        let offset = (xgap > 0) ? Math.atan(ygap / xgap) + Math.PI : Math.atan(ygap / xgap);
-        planet.setOffset(offset);
-        
-        let dist = Vector2.Distance(planet.position, this.position);
-        let radiusTemp = dist - this.size;
-        let radiusChange = radiusTemp - radius;
-        planet.setGeostationnaryMovement(radius +  radiusChange, 0);
-        planet.animation.simple(this.fixeAnimationLength, (count, perc) => {
-            let progress = this.fixeCurve.ease(perc);
-            planet.setGeostationnaryMovement(radius + (1 - progress) * radiusChange, progress * velocity);
-        }, () => {
-            planet.setGeostationnaryMovement(radius, velocity);
-        });
+        if (this.realPlayer) console.log(this.satellites.length)
+        this.fixeSatellite(planet);
     }
 
     addDust() {
@@ -246,11 +219,11 @@ export class Player extends StarFighter {
         this.changeSize(0.005 / (Math.pow(this.size, 3)));
         this.shine();
     }
-
+    
     launchAnimationLength = 80;
     accelerate(callback?: Function): boolean {
         if (!this.moving || this.accelerating || !this.isStarVisible) return false;
-        let planet = this.planets.pop();
+        let planet = this.satellites.pop();
         if (!planet) return false;
 
         // this.system.soundManager.playMesh('accelerate', this.transformMesh);

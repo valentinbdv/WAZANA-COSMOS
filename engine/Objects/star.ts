@@ -80,7 +80,6 @@ export class Star extends MovingEntity {
     // rotateProgress = 0;
     cycleSize = 0;
     planetMap: PlanetMap;
-    planets: Array<Planet> = [];
     accelerating = false;
 
     constructor(system: MeshSystem, planetMap: PlanetMap, options: StarInterface) {
@@ -100,13 +99,6 @@ export class Star extends MovingEntity {
     
     cycleAbsorb = 1;
     starCycle() {
-        for (let i = 0; i < this.planets.length; i++) {
-            const planet = this.planets[i];
-            planet.mesh.position.x = ((this.size * 1.5) + planet.radius) * Math.cos((planet.velocity * planet.cycle) / 100 + planet.offset);
-            planet.mesh.position.z = ((this.size * 1.5) + planet.radius) * Math.sin((planet.velocity * planet.cycle) / 100 + planet.offset);
-            planet.mesh.rotation.y = planet.velocity * ( this.cycleSize / 100 );
-            planet.cycle += this.cycleSize * this.system.fpsRatio;
-        }
         this.surface.rotation.y += this.cycleSize * this.cycleAbsorb * this.system.fpsRatio / 200;
     }
 
@@ -318,12 +310,13 @@ export class Star extends MovingEntity {
         });
     }
 
+    satellites: Array<Planet>;
     removeAllPlanets() {
-        for (let i = 0; i < this.planets.length; i++) {
-            const planet = this.planets[i];
+        for (let i = 0; i < this.satellites.length; i++) {
+            const planet = this.satellites[i];
             planet.hide();
             this.planetMap.storagePlanet(planet);
         }
-        this.planets = [];
+        this.removeAllSatellites();
     }
 }

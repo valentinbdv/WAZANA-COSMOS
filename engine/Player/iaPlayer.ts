@@ -61,7 +61,7 @@ export class IAPlayer extends Player {
         let direction = this.absorber.position.subtract(this.position);
         let moveToavoid = this.position.add(direction);
         this.moveCatcher.catch(moveToavoid);
-        if (Math.random() > 0.5 && this.planets.length && !this.accelerating) this.accelerate();
+        if (Math.random() > 0.5 && this.satellites.length && !this.accelerating) this.accelerate();
     }
 
     goingToPlayer = false;

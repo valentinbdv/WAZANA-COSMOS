@@ -1,7 +1,7 @@
 import { MeshSystem } from '../System/meshSystem';
 import { point2D } from '../System/interface';
 
-import { Vector2 } from '@babylonjs/core/Maths/math';
+import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
 import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
 export interface PositionEntityInterface {
@@ -14,8 +14,6 @@ export class PositionEntity {
 
     key: string;
     system: MeshSystem;
-
-    velocity?: number;
     
     constructor(type:string, system: MeshSystem, options?: PositionEntityInterface) {
         this.system = system;
@@ -44,5 +42,23 @@ export class PositionEntity {
     size: number;
     _setSize(size: number) {
         this.size = size;
+    }
+
+    setSize(size: number) {
+        this._setSize(size);
+        this.setTransformMeshSize(size);
+    }
+
+    setTransformMeshSize(size: number) {
+        this.transformMesh.scaling.x = size;
+        this.transformMesh.scaling.y = size;
+        this.transformMesh.scaling.z = size;
+    }
+
+    setPosition(pos: Vector2) {
+        this._setPosition(pos);
+        this.transformMesh.position.x = pos.x;
+        this.transformMesh.position.z = pos.y;
+        this.transformMesh.position.y = 1;
     }
 }
