@@ -78,7 +78,7 @@ export class Star extends MovingEntity {
     power: number;
 
     // rotateProgress = 0;
-    cycleProgress = 0;
+    cycleSize = 0;
     planetMap: PlanetMap;
     planets: Array<Planet> = [];
     accelerating = false;
@@ -98,15 +98,16 @@ export class Star extends MovingEntity {
         // this.curve.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
     }
     
+    cycleAbsorb = 1;
     starCycle() {
         for (let i = 0; i < this.planets.length; i++) {
             const planet = this.planets[i];
             planet.mesh.position.x = ((this.size * 1.5) + planet.radius) * Math.cos((planet.velocity * planet.cycle) / 100 + planet.offset);
             planet.mesh.position.z = ((this.size * 1.5) + planet.radius) * Math.sin((planet.velocity * planet.cycle) / 100 + planet.offset);
-            planet.mesh.rotation.y = planet.velocity * ( this.cycleProgress / 100 );
-            planet.cycle += this.cycleProgress * this.system.fpsRatio;
+            planet.mesh.rotation.y = planet.velocity * ( this.cycleSize / 100 );
+            planet.cycle += this.cycleSize * this.system.fpsRatio;
         }
-        this.surface.rotation.y += this.cycleProgress * this.system.fpsRatio / 200;
+        this.surface.rotation.y += this.cycleSize * this.cycleAbsorb * this.system.fpsRatio / 200;
     }
 
     createStar() {
@@ -178,14 +179,34 @@ export class Star extends MovingEntity {
 
     shine() {
         if (!this.isStarVisible) return;
-        if (this.shineAnimation.running || this.accelerating) return;
-        let size = this.size;
+        if (this.shineAnimation.running || this.accelerating || this.cycleAbsorb != 1) return;
+        this.startReflect(() => {
+            this.endReflect();
+        })
+    }
+
+    startReflect(callback?: Function) {
         this.shineAnimation.simple(20, (count, perc) => {
-            let y = 1 - 4 * Math.pow(perc - 0.5, 2);
-            this.setReflectionLevel(y/2);
-            this.setHeartScale(size + y / 10);
+            let y = Math.pow(perc, 2);
+            this.cycleAbsorb = 1 + y;
+            this.setReflectionLevel(y);
+            this.setHeartScale(this.size + y / 10);
         }, () => {
+            if (callback) callback();
+        });
+    }
+
+    endReflect(callback?: Function) {
+        let cycleChange = this.cycleAbsorb - 1;
+        this.shineAnimation.simple(20, (count, perc) => {
+            let y = 1 - Math.pow(perc, 2);
+            this.setReflectionLevel(y);
+            this.cycleAbsorb = 1 + y * cycleChange;
+            this.setHeartScale(this.size + y / 10);
+        }, () => {
+            this.cycleAbsorb = 1;
             this.setReflectionLevel(0);
+            if (callback) callback();
         });
     }
 
@@ -205,7 +226,7 @@ export class Star extends MovingEntity {
         if (!this.isStarVisible) return;
         this.setSurfaceScale(size)
         this.light.intensity = 1000 * size;
-        this.cycleProgress = 1 / Math.sqrt(this.size);
+        this.cycleSize = 1 / Math.sqrt(this.size);
         if (!this.shineAnimation.running) this.setHeartScale(size);
     }
 
@@ -223,7 +244,6 @@ export class Star extends MovingEntity {
 
     updateSize(size: number, time?:number, callback?: Function) {
         if (!this.isStarVisible) return;
-        this.shineAnimation.stop();
         let currentsize = this.size;
         let change = size - currentsize;
         let animTime = (time)? time : 20;

@@ -36,8 +36,9 @@ export class StarFighter extends Star {
 
     particle: ParticleSystem;
     createParticle() {
-        this.particle = new ParticleSystem("particle", 50, this.system.scene);
+        this.particle = new ParticleSystem("particle", 200, this.system.scene);
         this.particle.emitRate = 50;
+        this.particle.renderingGroupId = 1;
 
         this.particle.emitter = this.movingMesh.position;
         this.particle.gravity = new Vector3(0, -0.5, 0);
@@ -64,7 +65,6 @@ export class StarFighter extends Star {
 
     setAbsobUpdateFunction() {
         // Use direction to initialize random value
-        this.particle.emitRate = 50;
         this.particle.minSize = 0.5;
         this.particle.maxSize = 0.5;
         this.particle.color1.a = 0;
@@ -105,6 +105,7 @@ export class StarFighter extends Star {
 
                     particle.position.x = pos.x + (particle.direction.x - 0.5) * (1 - progressPos) * that.size;
                     particle.position.z = pos.y + (particle.direction.z - 0.5) * (1 - progressPos) * that.size;
+                    // particle.position.y = 10 * particle.age * particle.direction.y;
                 }
             } 
         }
@@ -114,7 +115,6 @@ export class StarFighter extends Star {
 
     setGetAbsobByBlackHoleFunction() {
         // Use direction to initialize random value
-        this.particle.emitRate = 50;
         this.particle.minSize = 0.5;
         this.particle.maxSize = 0.5;
         this.particle.particleTexture = this.system.circleTexture;

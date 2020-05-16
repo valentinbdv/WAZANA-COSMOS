@@ -4,7 +4,6 @@ import { DustMap } from './dustMap';
 
 import remove from 'lodash/remove';
 import filter from 'lodash/filter';
-import { Vector2 } from '@babylonjs/core/Maths/math';
 
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)

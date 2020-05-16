@@ -105,6 +105,8 @@ export class Player extends StarFighter {
     currentSound: Sound;
     absorbTarget(target: Player, distanceWithTarget: number) {
         this.distanceWithTarget = distanceWithTarget;
+        this.particle.emitRate = 500 / distanceWithTarget;
+        this.cycleAbsorb = 1 + 50 / distanceWithTarget;
         // Check target to make sure we always absorb closest target
         if (this.absorbing && target == this.target) return;
         if (!this.currentSound) {
@@ -113,6 +115,7 @@ export class Player extends StarFighter {
         }
 
         this.absorbStop();
+        this.startReflect();
         this.absorbing = target.key;
         this.target = target;
         this.setAbsobUpdateFunction();
@@ -134,8 +137,10 @@ export class Player extends StarFighter {
     blackHoleAbsorbRatio = 3;
     blackHoleAbsorber: BlackHole;
     absorbByBlackHole(absorber: BlackHole, distanceWithTarget: number) {
-        if (this.blackHoleAbsorber) return;
         this.distanceWithTarget = distanceWithTarget;
+        this.particle.emitRate = 1000 / distanceWithTarget;
+
+        if (this.blackHoleAbsorber) return;
         this.absorbStop();
         this.blackHoleAbsorber = absorber;
         this.absorbing = absorber.key;
@@ -162,11 +167,12 @@ export class Player extends StarFighter {
     }
 
     absorbStop() {
-        if (!this.absorbing && !this.target) return;
+        if (!this.absorbing) return;
         if (this.currentSound) {
             this.system.soundManager.stop('absorb', this.currentSound);
             this.currentSound = null;
         }
+        this.endReflect();
         this.particle.stop();
         this.absorbAnimation.stop();
         this.absorbing = null;

@@ -26,12 +26,6 @@ import { IntroUI } from './Ui/intro';
 // Tu deviens une supernova et un trou noir quand tu est trop gros comme ça ça donne un objectif pour continuer à grossir
 // Faire annonce forum babylonjs
 
-interface State {
-    players: Array<Player>;
-    blackHoles: Array<Player>;
-    planets: Array<Player>;
-}
-
 export interface GameInterface {
     canvas?: HTMLCanvasElement,
 }
@@ -139,7 +133,7 @@ export class GameEngine {
         // In order to test
         setTimeout(() => {
             // this.gameOver();
-            let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
+            // let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
         }, 3000);
     }
 
