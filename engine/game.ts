@@ -6,7 +6,7 @@ import { RealPlayer } from './Player/realPlayer';
 import { PauseUI } from './Ui/pause';
 import { PlayUI } from './Ui/play';
 import { startSize } from './Objects/star';
-import { onlineMap } from './Map/onlineMap';
+// import { onlineMap } from './Map/onlineMap';
 import { LocalMap } from './Map/localMap';
 import { TileMap } from './Map/tileMap';
 import { Player } from "./player/player";
@@ -42,7 +42,7 @@ export class GameEngine {
     realPlayer: RealPlayer;
     pauseUI: PauseUI;
     playUI: PlayUI;
-    onlineMap: onlineMap;
+    // onlineMap: onlineMap;
 
     constructor(gameOptions: GameInterface) {
         this.system = new UiSystem(gameOptions.canvas);
@@ -55,12 +55,12 @@ export class GameEngine {
         this.gravityGrid = new GravityGrid(this.system);
         this.tileMap = new TileMap(this.system, this.gravityGrid);
         this.localMap = new LocalMap(this.system, this.gravityGrid, this.tileMap);
-        this.onlineMap = new onlineMap(this.tileMap);
-        this.onlineMap.onLeave = () => {
-            this.gameOver();
-        }
+        // this.onlineMap = new onlineMap(this.tileMap);
+        // this.onlineMap.onLeave = () => {
+        //     this.gameOver();
+        // }
 
-        this.realPlayer = new RealPlayer(this.system, this.gravityGrid, this.tileMap, this.onlineMap);
+        this.realPlayer = new RealPlayer(this.system, this.gravityGrid, this.tileMap);
         this.realPlayer.setMoving(false);
         this.realPlayer.onDied = () => {
             this.gameOver();
@@ -73,8 +73,9 @@ export class GameEngine {
         this.playUI = new PlayUI(this.system, this.realPlayer, this.tileMap);
         this.pauseUI = new PauseUI(this.system, this.realPlayer, this.playUI);
         this.pauseUI.onStart = (mode: 'local' | 'online') => {
-            if (mode == 'online') this.joinGameServer();
-            else this.joinGameLocal();
+            // if (mode == 'online') this.joinGameServer();
+            // else this.joinGameLocal();
+            this.joinGameLocal();
         };
         
         this.system.scene.freezeActiveMeshes();
@@ -156,14 +157,14 @@ export class GameEngine {
         this.tileMap.addPlayer(this.realPlayer);
     }
     
-    joinGameServer() {
-        this.onlineMap.join((newRoom) => {
-            this.gameStart();
-            this.tileMap.checkPlayerAndRessources(true);
-            this.realPlayer.key = this.onlineMap.sessionId;
-            this.tileMap.addPlayer(this.realPlayer);
-        });
-    }
+    // joinGameServer() {
+    //     this.onlineMap.join((newRoom) => {
+    //         this.gameStart();
+    //         this.tileMap.checkPlayerAndRessources(true);
+    //         this.realPlayer.key = this.onlineMap.sessionId;
+    //         this.tileMap.addPlayer(this.realPlayer);
+    //     });
+    // }
 }
 
 new GameEngine({canvas: document.getElementById('gameCanvas')});

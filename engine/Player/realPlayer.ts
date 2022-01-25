@@ -4,7 +4,7 @@ import { TouchCatcher } from './touchCatcher';
 import { GravityGrid } from '../System/GravityGrid';
 import { Player } from './player';
 import { startSize } from '../Objects/star';
-import { onlineMap } from '../Map/onlineMap';
+// import { onlineMap } from '../Map/onlineMap';
 import { PlanetMap } from '../Map/planetMap';
 
 import hotkeys from 'hotkeys-js';
@@ -12,18 +12,18 @@ import { Vector2, Vector3 } from '@babylonjs/core/Maths/math';
 
 export class RealPlayer extends Player {
 
-    map: onlineMap;
+    // map: onlineMap;
     dustField = false;
     realPlayer = true;
     system: UiSystem;
 
-    constructor(system: UiSystem, gravityGrid: GravityGrid, planetMap: PlanetMap, map: onlineMap) {
+    constructor(system: UiSystem, gravityGrid: GravityGrid, planetMap: PlanetMap) {
         super(system, gravityGrid, planetMap, { temperature: 5000, size: startSize, position: { x: 0, y: 0 }, maxPlanet: 5 });
         this.addMouseEvent();
         this.addKeyEvent();
         this.addZoomCatcher();
         this.fixeCamera(true);
-        this.map = map;
+        // this.map = map;
 
         hotkeys('space', (event, param) => {
             if (this.moving) this.realPlayerAccelerate();
@@ -33,13 +33,13 @@ export class RealPlayer extends Player {
             if (this.moving) this.realPlayerAccelerate();
         });
 
-        setInterval(() => {
-            if (this.moving) {
-                this.gravityGrid.setCenterAndSize(this.position, this.size);
-                this.system.setCenterAndSize(this.position, this.size);
-                if (this.map.started) this.map.send({ position: this.position });
-            }
-        }, 500);
+        // setInterval(() => {
+        //     if (this.moving) {
+        //         this.gravityGrid.setCenterAndSize(this.position, this.size);
+        //         this.system.setCenterAndSize(this.position, this.size);
+        //         if (this.map.started) this.map.send({ position: this.position });
+        //     }
+        // }, 500);
 
         window.addEventListener("resize", () => {
             this.checkScreenSize();
@@ -99,11 +99,12 @@ export class RealPlayer extends Player {
 
     sendMove(pos: Vector2) {
         if (!this.moving) return;
-        if (!this.map.started) {
             this.moveCatcher.catch(pos);
-        } else {
-            this.map.send({ destination: pos });
-        }
+        //     if (!this.map.started) {
+        //     this.moveCatcher.catch(pos);
+        // } else {
+        //     this.map.send({ destination: pos });
+        // }
     }
 
     maxRadius = 70;
