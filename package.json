@@ -3,7 +3,7 @@
   "description": "Cosmos fight",
   "license": "UNLICENSED",
   "scripts": {
-    "clean": "rm -rf docs",
+    "clean": "find docs -maxdepth 1 -type f -delete",
     "dev": "set NODE_ENV=development",
     "start": "npm run clean && npm run dev && parcel index.html",
     "build": "npm run clean && parcel build index.html --public-url ./ --dist-dir docs"
