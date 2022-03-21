@@ -33,13 +33,13 @@ export class RealPlayer extends Player {
             if (this.moving) this.realPlayerAccelerate();
         });
 
-        // setInterval(() => {
-        //     if (this.moving) {
-        //         this.gravityGrid.setCenterAndSize(this.position, this.size);
-        //         this.system.setCenterAndSize(this.position, this.size);
-        //         if (this.map.started) this.map.send({ position: this.position });
-        //     }
-        // }, 500);
+        setInterval(() => {
+            if (this.moving) {
+                this.gravityGrid.setCenterAndSize(this.position, this.size);
+                this.system.setCenterAndSize(this.position, this.size);
+                // if (this.map.started) this.map.send({ position: this.position });
+            }
+        }, 500);
 
         window.addEventListener("resize", () => {
             this.checkScreenSize();

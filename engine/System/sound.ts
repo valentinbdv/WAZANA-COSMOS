@@ -36,15 +36,15 @@ let soundList: Array<SoundInterface> = [
     { name: 'nebulaChange', volume: 1, needClone: false, duration: 1, loop: false, spatial: false },
     { name: 'sunChange', volume: 1, needClone: false, duration: 1, loop: false, spatial: false },
     { name: 'play', volume: 1, needClone: false, duration: 2, loop: false, spatial: false },
-    { name: 'dead', volume: 1, needClone: false, duration: 3, loop: false, spatial: false },
+    { name: 'dead', volume: 0.6, needClone: false, duration: 3, loop: false, spatial: false },
     { name: 'catchPlanet', volume: 1, needClone: true, duration: 1, loop: false, spatial: false },
-    { name: 'catchDust', volume: 0.2, needClone: true, duration: 0.5, loop: false, spatial: false },
+    { name: 'catchDust', volume: 0.06, needClone: true, duration: 0.5, loop: false, spatial: false },
     { name: 'absorb', volume: 0.2, needClone: true, duration: 1, loop: true, spatial: true },
     { name: 'explodeStart', volume: 1, needClone: true, duration: 1, loop: false, spatial: true },
     { name: 'explodeEnd', volume: 0.5, needClone: true, duration: 3, loop: false, spatial: true },
-    { name: 'levelDown', volume: 0.3, needClone: false, duration: 1, loop: false, spatial: false },
-    { name: 'levelUp', volume: 0.3, needClone: false, duration: 1, loop: false, spatial: false },
-    { name: 'accelerate', volume: 1, needClone: true, duration: 2, loop: false, spatial: true },
+    { name: 'levelDown', volume: 0.5, needClone: false, duration: 1, loop: false, spatial: false },
+    { name: 'levelUp', volume: 0.5, needClone: false, duration: 1, loop: false, spatial: false },
+    { name: 'accelerate', volume: 0.6, needClone: true, duration: 2, loop: false, spatial: true },
 ];
 
 export class SoundManager {
@@ -68,7 +68,7 @@ export class SoundManager {
         for (let i = 0; i < soundList.length; i++) {
             const sound = soundList[i];
             let n = sound.name;
-            this.Sounds[n] = new Sound(n, ASSETURL + 'sounds/' + n + ".wav", this.scene, null, {
+            this.Sounds[n] = new Sound(n, ASSETURL + 'sounds/' + n + ".mp3", this.scene, null, {
                 loop: sound.loop,
                 // spatialSound: sound.spatial,
             });
