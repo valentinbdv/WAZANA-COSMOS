@@ -18,6 +18,8 @@ import remove from 'lodash/remove';
 
 import { System } from './system';
 
+export const ASSETURL = 'https://valentinbdv.github.io/WAZANA-COSMOS/assets/';
+
 /**
  * Manage all the essential assets needed to build a 3D scene (Engine, Scene Cameras, etc)
  *
@@ -110,9 +112,8 @@ export class EnvironmentSystem extends System {
         this.skyDesign = this.skyDesignOrder[design];
         this.skyColor = this.skyColors[this.skyDesign];
         
-        let asseturl = 'https://valentinbdv.github.io/WAZANA-COSMOS/assets/env/';
         let mapcolor = 'mapcolor' + this.skyDesign.toString();
-        let envUrl = asseturl + mapcolor + '.env';
+        let envUrl = ASSETURL + 'env/' + mapcolor + '.env';
         // let envUrl = offlineEnvTexture;
         
         this.sceneTexture = new CubeTexture(envUrl, this.scene, null, false, null, () => {

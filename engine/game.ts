@@ -13,10 +13,7 @@ import { Player } from "./player/player";
 import { Vector2 } from '@babylonjs/core/Maths/math';
 import { ParticleHelper } from '@babylonjs/core/Particles/particleHelper';
 
-// import 'https://cosmos.wazana.io/font/style.css';
-// import '../asset/icons/style.css';
 import { IntroUI } from './Ui/intro';
-// import '../asset/meshWriter.js';
 
 // Improve dive function to reproduce planet attraction effect
 // Faire étoile filante plutôt que point blanc

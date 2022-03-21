@@ -8,8 +8,7 @@ import find from 'lodash/find';
 import remove from 'lodash/remove';
 
 import { Animation } from './Animation';
-
-let soundUrl = 'https://cosmos.wazana.io/sounds/';
+import { ASSETURL } from './environmentSystem';
 
 interface SoundInterface {
     name: 
@@ -69,7 +68,7 @@ export class SoundManager {
         for (let i = 0; i < soundList.length; i++) {
             const sound = soundList[i];
             let n = sound.name;
-            this.Sounds[n] = new Sound(n, soundUrl + n + ".wav", this.scene, null, {
+            this.Sounds[n] = new Sound(n, ASSETURL + 'sounds/' + n + ".wav", this.scene, null, {
                 loop: sound.loop,
                 // spatialSound: sound.spatial,
             });
