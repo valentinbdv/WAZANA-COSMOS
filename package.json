@@ -3,10 +3,10 @@
   "description": "Cosmos fight",
   "license": "UNLICENSED",
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf docs",
     "dev": "set NODE_ENV=development",
     "start": "npm run clean && npm run dev && parcel index.html",
-    "build": "npm run clean && parcel build index.html --public-url ./"
+    "build": "npm run clean && parcel build index.html --public-url ./ --dist-dir docs"
   },
   "dependencies": {
     "@babylonjs/core": "^4.1.0-beta.4",
