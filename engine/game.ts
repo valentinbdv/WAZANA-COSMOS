@@ -131,10 +131,10 @@ export class GameEngine {
         
 
         // In order to test
-        setTimeout(() => {
-            // this.gameOver();
-            let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
-        }, 3000);
+        // setTimeout(() => {
+        //     // this.gameOver();
+        //     let blackHole = this.tileMap.createBlackHole(Vector2.Zero());
+        // }, 3000);
     }
 
     gameStartAnim(callback: Function) {
