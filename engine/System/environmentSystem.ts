@@ -10,10 +10,10 @@ import { CubeTexture } from '@babylonjs/core/Materials/Textures/cubetexture';
 import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
 
-import sparkleTexture from '../../asset/star_08.png';
-import smokeTexture from '../../asset/smoke_04.png';
-import circleTexture from '../../asset/circle_05.png';
-import offlineEnvTexture from '../../asset/ENV/mapcolor5.env';
+import sparkleTexture from '../../docs/assets/images/star_08.png';
+import smokeTexture from '../../docs/assets/images/smoke_04.png';
+import circleTexture from '../../docs/assets/images/circle_05.png';
+
 import remove from 'lodash/remove';
 
 import { System } from './system';
@@ -109,10 +109,10 @@ export class EnvironmentSystem extends System {
     setSky(design: number, callback?: Function) {
         this.skyDesign = this.skyDesignOrder[design];
         this.skyColor = this.skyColors[this.skyDesign];
-        let mapcolor = 'mapcolor' + this.skyDesign.toString();
         
-        let asseturl = 'https://asset.wazana.io/';
-        let envUrl = asseturl + 'env/' + mapcolor + '.env';
+        let asseturl = 'https://valentinbdv.github.io/WAZANA-COSMOS/assets/env/';
+        let mapcolor = 'mapcolor' + this.skyDesign.toString();
+        let envUrl = asseturl + mapcolor + '.env';
         // let envUrl = offlineEnvTexture;
         
         this.sceneTexture = new CubeTexture(envUrl, this.scene, null, false, null, () => {

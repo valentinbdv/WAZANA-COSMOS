@@ -26,7 +26,7 @@ export class IntroUI {
     addLayout() {
         this.layout = new ui_control(this.system, { x: 0, y: 0 }, { width: 100, height: 100 }, { zIndex: 1000, background: colorbackground });
         this.layout.setFullScreen();
-        let lgo = this.layout.addImage('https://asset.wazana.io/logos/Cosmos.png', { x: 0, y: 0 }, { width: '50%', height: '50%' });
+        // let lgo = this.layout.addImage('https://asset.wazana.io/logos/Cosmos.png', { x: 0, y: 0 }, { width: '50%', height: '50%' });
     }
 
     showAnim(callback?: Function) {
