@@ -169,19 +169,19 @@ export class PauseUI {
     iconSize = 35;
     addMenu() {
         this.menuLayout = new ui_control(this.system, { x: 0, y: this.menuTop }, { width: 300, height: 100 }, { zIndex: 100 });
-        let homeIcon = this.menuLayout.addIcon('home', { x: 0, y: 0 }, { color: colormain, fontSize: this.iconSize, width: this.iconSize, height: this.iconSize });
-        homeIcon.on('click', () => {
-            window.location = 'https://wazana.io';
-        });
+        // let homeIcon = this.menuLayout.addIcon('home', { x: 0, y: 0 }, { color: colormain, fontSize: this.iconSize, width: this.iconSize, height: this.iconSize });
+        // homeIcon.on('click', () => {
+        //     window.location = 'https://wazana.io';
+        // });
 
         let chatIcon = this.menuLayout.addIcon('chat', { x: this.iconSize + 30, y: 0 }, { color: colormain, fontSize: this.iconSize - 5, width: this.iconSize + 10, height: this.iconSize + 10 });
         chatIcon.on('click', () => {
-            window.open('https://discord.gg/EX5yNM');
+            window.open('https://discord.gg/dm4fXme3');
         });
 
         let twitterIcon = this.menuLayout.addIcon('twitter', { x: -(this.iconSize + 30), y: 0 }, { color: colormain, fontSize: this.iconSize, width: this.iconSize, height: this.iconSize });
         twitterIcon.on('click', () => {
-            window.open('https://twitter.com/wazana_io');
+            window.open('https://twitter.com/PichouPichou');
         });
 
         // if (way == 'next') soundManager.setOn();
